@@ -9,7 +9,7 @@ Set TV_HOST ke IP TV (atau IP:port). Usage:
     tv.py --batch < commands.txt       satu perintah per baris, koneksi yang sama
     tv.py --push <local> <remote>      file kecil saja (lihat b64push.py untuk yang lebih besar)
     tv.py --pull <remote> <local>
-    tv.py --reboot                     kembali begitu permintaan reboot diterima; TV mungkin masih menyala ulang
+    tv.py --reboot                     return once the reboot request is accepted; TV mungkin masih menyala ulang
 """
 import os
 import re
@@ -225,7 +225,7 @@ def main():
             dev.reboot()
         finally:
             dev.close()
-        print("Reboot request accepted; tunggu TV menyala ulang sebelum menyambung lagi.")
+        print("Reboot request accepted; tunggu TV menyala ulang (wait for the TV to restart) before connecting again.")
         return 0
     status = 0
     if not args or args == ["--probe"]:

@@ -81,8 +81,8 @@ Membuka `com.cvte.tv.hkcfac` (aplik "production" dengan ikon launcher yang tidak
   dan `com.google.android.apps.mediashell`, dan shell tidak bisa aktifkan paket itu lagi;
 - casting dan store mati sampai factory mode dibersihkan.
 
-Jalan keluar tanpa root, dilaporkan: start apl, kirim keycode exit factory 218 dua kali **saat
-di depan**, reboot, lalu nyalakan CEC lagi:
+Jalan keluar tanpa root, dilaporkan: start apl, kirim keycode exit factory 218 dua kali **while it
+is in front**, reboot, lalu nyalakan CEC lagi:
 
 ```sh
 tools/tv.py 'am start -n com.cvte.tv.hkcfac/.MainActivity'

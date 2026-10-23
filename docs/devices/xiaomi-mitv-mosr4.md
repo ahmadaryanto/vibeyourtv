@@ -61,7 +61,7 @@ di `capabilities=8` (`CAPABILITY_CAN_FILTER_KEY_EVENTS`) - [#944](https://github
 Disabling launcherx while setupwraith was still enabled left Home on
 `setupwraith/.RecoveryActivity`. Bisect, cara kembali ke salah satu perilaku dan cara repeat hilang ada di
 [catatan G09](tcl-55p71b-g09-key-repeat.md). Kontrol daftar kosong tidak dicoba di sini: mengosongkan daftar
-melepas tombol yang bagian ini pasang helper untuk, jadi "the ramp returns with nothing bound"
+unhooks the buttons yang bagian ini pasang helper untuk, jadi "the ramp returns with nothing bound"
 pengukuran catatan itu, bukan set ini.
 
 ## Lainnya

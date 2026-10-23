@@ -31,7 +31,7 @@ SCREENSHOT_WANTED = {
     "library_button", "live_tv_action", "live_tv_input_id", "live_tv_package", "module_cards",
     "race_calendar", "reduced_motion", "reorder_button", "restore_key_services", "rows_below_dock",
     "settings_fallback_components", "settings_key_keycodes", "shamsi_date",
-    "show_home_settings_shortcut", "show_inputs_pill", "show_network_pill", "show_stats",
+    "crypto_ticker", "show_home_settings_shortcut", "show_inputs_pill", "show_network_pill", "show_stats",
     "source_panel_action", "source_panel_extra", "source_panel_service", "stock_home_redirect",
     "tile_menu", "top_menu", "vpn_app", "wallpaper", "wallpaper_captions", "wallpaper_dim",
     "wallpaper_moods", "wallpaper_order", "wallpaper_true_color", "wifi_label_width",

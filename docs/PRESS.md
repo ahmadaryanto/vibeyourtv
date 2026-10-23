@@ -1,8 +1,10 @@
-# CleanYourTV in the press
+# VibeYourTV di media
 
 Every article about CleanYourTV (called tv-vibehack until 19 October 2026) that we could open and check: **187 articles**, 152 of them from outlets in 31 countries, 9 from Spanish-language sites in Latin America and 26 from newsletters, blogs and AI news sites. Headlines are in the language they were published in. Syndicated copies and auto-generated listings are left out. [40 videos](#videos) follow the articles.
 
-Wrote about it and not here? Open an issue or a pull request with the link.
+Fork ini (VibeYourTV) berbasis CleanYourTV. Daftar di bawah adalah liputan tentang proyek aslinya. Judul artikel dibiarkan dalam bahasa terbitannya. Salinan sindikasi dan daftar otomatis tidak dimasukkan.
+
+Pernah menulis tentang proyek ini dan belum tercantum? Buka issue atau pull request dengan tautannya.
 
 [United States](#united-states)&nbsp;18 · [United Kingdom](#united-kingdom)&nbsp;3 · [India](#india)&nbsp;4 · [Denmark](#denmark)&nbsp;1 · [Japan](#japan)&nbsp;2 · [Bangladesh](#bangladesh)&nbsp;1 · [United Arab Emirates](#united-arab-emirates)&nbsp;1 · [France](#france)&nbsp;12 · [Germany](#germany)&nbsp;5 · [Spain](#spain)&nbsp;6 · [Italy](#italy)&nbsp;14 · [Norway](#norway)&nbsp;1 · [Portugal](#portugal)&nbsp;4 · [Czechia](#czechia)&nbsp;1 · [Ukraine](#ukraine)&nbsp;2 · [Greece](#greece)&nbsp;1 · [Egypt](#egypt)&nbsp;5 · [Brazil](#brazil)&nbsp;11 · [Latin America (Spanish-language)](#latin-america-spanish-language)&nbsp;9 · [China](#china)&nbsp;9 · [Taiwan](#taiwan)&nbsp;4 · [Indonesia](#indonesia)&nbsp;12 · [Thailand](#thailand)&nbsp;3 · [Vietnam](#vietnam)&nbsp;4 · [Netherlands](#netherlands)&nbsp;3 · [Poland](#poland)&nbsp;5 · [Russia](#russia)&nbsp;8 · [Belarus](#belarus)&nbsp;2 · [Turkey](#turkey)&nbsp;3 · [Jordan](#jordan)&nbsp;1 · [South Korea](#south-korea)&nbsp;4 · [Australia](#australia)&nbsp;2 · [Online (newsletters, blogs, AI news)](#online-newsletters-blogs-ai-news)&nbsp;26
 

@@ -76,7 +76,7 @@ home, and the [G09 example list](../../examples/tcl-g09-google-tv/debloat.txt) d
 after the cleanup only a helper can answer them. That is where the trade comes from: on this firmware
 the buttons and the volume ramp cannot both be had, because both need the same filter capability.
 
-## Trade yang sama di set Xiaomi MediaTek
+## The same trade on a Xiaomi MediaTek set
 
 Pemilik kedua melaporkan [#944](https://github.com/Gathin23/cleanyourtv/issues/944): Xiaomi
 MiTV-MOSR4 (`irobot`, MediaTek), Google TV / Android 11 (SDK 30), firmware `RTM5.220609.003.1265`.
@@ -84,7 +84,7 @@ Holding volume up with `InputKeyService` and `HomeKeyService` bound moves it one
 `InputKeyService` alone is still one step; `dumpsys accessibility` lists the bound service with
 `capabilities=8`. Same symptom, same capability, second vendor and second Android version.
 
-Dua hal beda dari bisect di atas, keduanya perlu dipertahankan. Kontrol daftar kosong tidak dijalankan:
+Dua hal beda dari bisect di atas, keduanya perlu dipertahankan. The empty-list control was not run:
 di set ini mengosongkan daftar melepas tombol yang helper dipasang — dengan launcherx
 nonaktif, tombol Input, Settings, YouTube dan Netflix hanya sampai
 `com.xiaomi.android.tvsetup.partnercustomizer/.GlobalKeyReceiver`, yang memulai aktivitas launcherx dan
@@ -96,7 +96,7 @@ family and the behaviour are what they agree on.
 
 Itu cukup melepas mekanisme dari "firmware ini": tombol volume dapat pertanyaan awal dari window policy di Android 11 dan 12, di dua vendor, saat layanan terikat memegang
 `CAPABILITY_CAN_FILTER_KEY_EVENTS`. Trade dan pilihan di bawah sama di kedua set. Saran reporter sendiri — helper yang mensintesis repeat dengan `adjustSuggestedStreamVolume` saat
-tombol volume ditekan — kode launcher, dan switch off-by-default paling banget; tidak ada di catatan ini.
+tombol volume ditekan — kode launcher, dan switch off-by-default paling banget; is not in this note.
 
 ## Choices
 

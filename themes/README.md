@@ -47,7 +47,7 @@ Key baru butuh screenshot di sana dalam PR yang sama.
 | `launch_actions` | list of `"package=action"` | Tile membuka layar app, bukan start screen; action yang tidak resolve lagi membuka app normal (panduan MagentaTV: `com.telekom.onetv.tv.pl=com.telekom.onetv.tv.pl.action.PROGRAM_GUIDE`) |
 | `app_labels` | list of `"package=Name"` | Nama tile menggantikan nama app (MagentaTV sebagai `com.telekom.onetv.tv.pl=TV`) |
 | `app_banners` | list of `"package=banner_name"` | Artwork tile dari drawable `banner_*` di launcher (`banner_tv`: magenta dengan glyph Live TV) |
-| `input_action` | string | Action dikirim dengan URI saluran baris HDMI/AV jika tidak ada yang menangani `VIEW` standar (XGIMI: `com.xgimi.action.hdmiPlayer`). Hanya set tanpa handler; app yang klaim MIME saluran mengambil baris — cek `query-activities` ([#805](https://github.com/Gathin23/cleanyourtv/issues/805)) |
+| `input_action` | string | Action dikirim dengan URI saluran baris HDMI/AV jika nothing handles the standard `VIEW` (XGIMI: `com.xgimi.action.hdmiPlayer`). Hanya set tanpa handler; app yang klaim MIME saluran mengambil baris — cek `query-activities` ([#805](https://github.com/Gathin23/cleanyourtv/issues/805)) |
 | `input_uri_scheme` | string | Skema URI passthrough baris HDMI/AV selain `content://`, tanpa MIME (YaOS: `live-tv`, dijawab source player-nya) |
 | `input_sources` | list, `config.xml` only | Nomor sumber vendor untuk menu Inputs, `HW<n>=<number>` dari bagian akhir id input; input terpetakan dibuka dengan `input_action` dan int extra `input`; `HW<n>=-` mengecualikan port yang tidak ada. Firmware Xiaomi/Redmi China: [redmi-mitv-mftp0](../examples/redmi-mitv-mftp0/). Tidak dibaca dari tema |
 | `columns` | 1 to 8 | Tile per baris; tile mengecil mulai dari 5 ke atas |
@@ -58,7 +58,7 @@ Key baru butuh screenshot di sana dalam PR yang sama.
 | `show_network_pill` | bool | Pill Wi-Fi/Ethernet di bar atas (default `true`); `false` menyembunyikannya |
 | `show_inputs_pill` | bool | Pill Inputs di bar atas, tampil jika TV punya input (default `true`); `false` menyembunyikan; dengan `top_menu` Inputs tidak ada di menu gear (streamer tanpa HDMI, mis. Chromecast with Google TV); tombol Input remote tidak berubah |
 | `icon_only_buttons` | bool | Wi-Fi dan Settings tombol bulat icon-only; Inputs tetap berlabel (default `false`) |
-| `icon_only_inputs` | bool | Pill Inputs juga tombol bulat; label tetap sebagai deskripsi TalkBack (default `false`). Bisa dengan/tanpa `icon_only_buttons` |
+| `icon_only_inputs` | bool | Pill Inputs juga tombol bulat; label tetap sebagai deskripsi TalkBack (`false` by default). Bisa dengan/tanpa `icon_only_buttons` |
 | `top_menu` | bool | Inputs, Wi-Fi, Settings digabung satu gear bulat di tengah header: OK buka menu tiga itu plus Reorder apps, hold OK menu launcher (default `false`) |
 | `launcher_settings_button` | bool | Aksi Settings header membuka Launcher settings langsung dengan ikon home 22dp; mengubah baris Settings saat `top_menu` on. Hold OK tetap module-card dan ordering. Halaman settings mencakup Reorder apps dan TV settings (default `false`) |
 | `wifi_status_color` | bool | Ikon pill Wi-Fi hijau saat online, putih saat offline (default `false`) |

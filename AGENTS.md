@@ -1,175 +1,175 @@
 # AGENTS.md
 
-Instructions for coding agents (Claude Code, Codex, Gemini CLI, Cursor, Copilot and others) working in
-this repository. People should start with [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md);
-this file repeats their rules in the form an agent needs, and links to them for the detail.
+Panduan untuk agen coding (Claude Code, Codex, Gemini CLI, Cursor, Copilot, dan lainnya) yang kerja di
+repo ini, VibeYourTV. Orang mulai dari [README.md](README.md) dan [CONTRIBUTING.md](CONTRIBUTING.md);
+file ini mengulang aturan yang sama dalam bentuk yang agen butuhkan, lalu menaut ke sana untuk detailnya.
 
-## First: which job are you doing?
+## Pertama: kamu lagi mengerjakan yang mana?
 
-| You were asked to | Do this |
+| Kamu diminta | Lakukan ini |
 |---|---|
-| Clean up a TV: debloat it, install the launcher, push a theme | Read [PROMPT.md](PROMPT.md) and follow it exactly, on the real TV. Use the tools in `tools/` and the launcher in `launcher/` rather than writing new ones; the only file you need to change is `launcher/app/src/main/res/values/config.xml`, or a theme's `config.json`, for this TV. Do not edit the repo's docs, tests or other code, and do not open issues or pull requests unless the person asks you to. |
-| Change this repo: a TV list, a fix, a translation, a theme, docs | Skip the next section and read on from [Repo map](#repo-map). |
+| Bereskan TV: debloat, pasang launcher, dorong tema | Baca [PROMPT.md](PROMPT.md) dan ikuti persis, di TV sungguhan. Pakai alat di `tools/` dan launcher di `launcher/`, jangan menulis yang baru; satu-satunya file yang perlu kamu ubah adalah `launcher/app/src/main/res/values/config.xml`, atau `config.json` sebuah tema, untuk TV ini. Jangan edit dokumen, tes, atau kode lain di repo, dan jangan buka issue atau pull request kecuali orangnya memintamu. |
+| Ubah repo ini: daftar TV, perbaikan, terjemahan, tema, dokumen | Lewati bagian berikutnya dan lanjut dari [Peta repo](#repo-map). |
 
-### Cleaning a TV: the rules that are not negotiable
+### Membereskan TV: aturan yang tidak bisa ditawar
 
-[PROMPT.md](PROMPT.md) is the procedure. Its safety rules, in brief:
+[PROMPT.md](PROMPT.md) adalah prosedurnya. Aturan amannya, singkatnya:
 
-- **Disable, never uninstall.** `pm disable-user --user 0`, one package per shell call. No
-  `pm uninstall`, no root, nothing flashed. Every step must be undone by `tools/restore.sh`.
-- **Back up first.** Package list, disabled list, `getprop` and settings into `backup/` before the first
-  change. `tools/disable.sh` also writes its own record in `~/.cleanyourtv/`; keep the list you applied.
-- **Leave alone what the TV needs to work:** the TV app and input services behind HDMI and the tuner,
-  the input/source menu, remote and Bluetooth pairing, the on-screen keyboard, Play Store and Play
-  Services. When a package name says nothing, read `dumpsys package <name>`, then ask.
-- **Never disable Android's core packages:** the permission controller, package installer, ext
-  services/shared and module metadata (`com.android.*` and `com.google.android.*`),
-  `com.google.android.overlay.modules*`, `com.android.providers.*` (calendar, contacts, user dictionary
-  and blocked numbers aside), `com.android.systemui`, `com.android.shell`, `com.android.phone`,
-  `com.android.settings`, `com.android.tv.settings`, `android`. Without them Android may not boot (#884);
-  `tools/disable.sh`, `disable.ps1` and `check.py --fix` refuse such a list, with no override.
-- **Never start a factory or test package** (`com.cvte.tv.hkcfac`, `mediatek.factorymenu.ui` and the like),
-  not even to look. On some boards that flips a factory-mode flag the shell cannot undo.
-- **Keep the Home guard.** The stock launcher is disabled only after the new launcher is installed and
-  confirmed as Home (`dumpsys activity activities | grep mFocusedApp`). On Google TV, check
-  `dumpsys wifi | grep -o 'cname=[^ ]*'` before disabling setupwraith: if it owns the saved Wi-Fi
-  network, disabling it takes the TV off Wi-Fi and ADB. `tools/disable.sh` and
-  `launcher/build-and-install.sh` already enforce this. Use `FORCE_HOME=1` or `FORCE_SETUPWRAITH=1` only in
-  the situation the script's own message describes, and only with the person's agreement.
-  - On a CVTE board (any `com.cvte.*` package), leave its stock launcher (`com.cvte.tv.launcher.*`) enabled
-    unless the `examples/` folder for that exact board disables it. Make the new launcher Home with
-    `cmd package set-home-activity`, reboot once, and confirm Home and ADB come back before anything else.
-    Don't enable a remote-key helper in the same pass: a JVC set hung on its boot animation with ADB gone
-    after both were done before one reboot (#741).
-- **Ask before anything the family uses.** Streaming apps, the voice assistant, Chromecast, Miracast and
-  the firmware updater go into one checklist question; disable only what the person does not tick.
-- **Disable in small batches** and screenshot between them (`tools/tv.py --screenshot shots/01.png`).
-  Live TV, HDMI and some streaming apps give empty screenshots; that is the TV, not damage.
-- **An injected key is not proof** for a remote button that goes through an accessibility helper: ask the
-  person to press the real button. `am force-stop com.gathin.tvhome` switches those helpers off.
-- **Close ADB afterwards.** USB debugging and Network/ADB debugging off, authorisations revoked, reboot,
-  then `tools/adb-closed.py <tv ip>` must report the port closed. Port 5555 is plaintext.
-- **Stop and say so** when the TV refuses: `pm disable-user` refused for every package, a sideload that
-  fails verification, or an SDK below the launcher's `minSdk` 26. Do not retry in a loop, and do not lower
-  `minSdk` or hand over an APK built elsewhere.
+- **Nonaktifkan, jangan pernah uninstall.** `pm disable-user --user 0`, satu paket per panggilan shell. Tidak ada
+  `pm uninstall`, tidak ada root, tidak ada yang di-flash. Setiap langkah harus bisa dibatalkan `tools/restore.sh`.
+- **Cadangkan dulu.** Daftar paket, daftar yang nonaktif, `getprop`, dan settings ke `backup/` sebelum perubahan
+  pertama. `tools/disable.sh` juga menulis catatannya sendiri di `~/.cleanyourtv/`; simpan daftar yang kamu terapkan.
+- **Biarkan yang TV butuhkan untuk jalan:** aplikasi TV dan layanan input di balik HDMI dan tuner,
+  menu input/sumber, pemasangan remote dan Bluetooth, keyboard di layar, Play Store, dan Play
+  Services. Kalau nama paket tidak menjelaskan apa-apa, baca `dumpsys package <name>`, lalu tanya.
+- **Jangan pernah menonaktifkan paket inti Android:** pengontrol izin, pemasang paket, ext
+  services/shared dan metadata modul (`com.android.*` dan `com.google.android.*`),
+  `com.google.android.overlay.modules*`, `com.android.providers.*` (selain kalender, kontak, kamus pengguna,
+  dan nomor diblokir), `com.android.systemui`, `com.android.shell`, `com.android.phone`,
+  `com.android.settings`, `com.android.tv.settings`, `android`. Tanpa mereka Android bisa gagal boot (#884);
+  `tools/disable.sh`, `disable.ps1`, dan `check.py --fix` menolak daftar seperti itu, tanpa penimpaan.
+- **Jangan pernah menjalankan paket pabrik atau uji** (`com.cvte.tv.hkcfac`, `mediatek.factorymenu.ui`, dan sejenisnya),
+  bahkan hanya untuk melihat. Di beberapa papan itu membalikkan bendera mode pabrik yang shell tidak bisa urungkan.
+- **Jaga Home guard.** Launcher bawaan baru dinonaktifkan setelah launcher baru terpasang dan
+  terkonfirmasi sebagai Home (`dumpsys activity activities | grep mFocusedApp`). Di Google TV, cek
+  `dumpsys wifi | grep -o 'cname=[^ ]*'` sebelum menonaktifkan setupwraith: kalau dialah pemilik jaringan Wi-Fi
+  tersimpan, menonaktifkannya membuat TV lepas dari Wi-Fi dan ADB. `tools/disable.sh` dan
+  `launcher/build-and-install.sh` sudah menegakkan ini. Pakai `FORCE_HOME=1` atau `FORCE_SETUPWRAITH=1` hanya pada
+  situasi yang pesan skrip itu sendiri jelaskan, dan hanya dengan persetujuan orangnya.
+  - Di papan CVTE (paket `com.cvte.*` mana pun), biarkan launcher bawaannya (`com.cvte.tv.launcher.*`) tetap aktif
+    kecuali folder `examples/` untuk papan yang persis itu menonaktifkannya. Jadikan launcher baru sebagai Home dengan
+    `cmd package set-home-activity`, reboot sekali, dan pastikan Home serta ADB kembali sebelum hal lain.
+    Jangan menghidupkan helper tombol remote di langkah yang sama: sebuah TV JVC menggantung di animasi boot dengan ADB hilang
+    setelah keduanya dilakukan sebelum satu reboot (#741).
+- **Tanya dulu sebelum menyentuh yang keluarga pakai.** Aplikasi streaming, asisten suara, Chromecast, Miracast, dan
+  pembaru firmware masuk satu pertanyaan centang; nonaktifkan hanya yang orangnya tidak centang.
+- **Nonaktifkan dalam batch kecil** dan ambil screenshot di antaranya (`tools/tv.py --screenshot shots/01.png`).
+  Live TV, HDMI, dan beberapa aplikasi streaming memberi screenshot kosong; itu TV-nya, bukan kerusakan.
+- **Tombol yang disuntikkan bukan bukti** untuk tombol remote yang lewat helper aksesibilitas: minta
+  orangnya menekan tombol sungguhan. `am force-stop com.gathin.tvhome` mematikan helper itu.
+- **Tutup ADB setelahnya.** USB debugging dan Network/ADB debugging mati, otorisasi dicabut, reboot,
+  lalu `tools/adb-closed.py <tv ip>` harus melaporkan port tertutup. Port 5555 berupa teks polos.
+- **Berhenti dan katakan** saat TV menolak: `pm disable-user` ditolak untuk setiap paket, sideload yang
+  gagal verifikasi, atau SDK di bawah `minSdk` 26 launcher. Jangan mengulang dalam putaran, dan jangan turunkan
+  `minSdk` atau menyerahkan APK yang dibangun di tempat lain.
 
-The person's backups (`backup/`), screenshots (`shots/`), notes (`work/`) and the ADB key
-(`tools/adbkey/`) are listed in `.gitignore` and must never be committed. If the person wants to
-share their TV's list afterwards, follow [`docs/workflows/tv-list.md`](docs/workflows/tv-list.md).
+Cadangan orang itu (`backup/`), screenshot (`shots/`), catatan (`work/`), dan kunci ADB
+(`tools/adbkey/`) ada di `.gitignore` dan tidak boleh pernah di-commit. Kalau orangnya mau
+membagikan daftar TV-nya setelahnya, ikuti [`docs/workflows/tv-list.md`](docs/workflows/tv-list.md).
 
 ## Repo map
 
-| Path | What it is |
+| Path | Apa itu |
 |---|---|
-| `PROMPT.md` | The prompt people paste into their agent. Brand-neutral; safety rules live here. |
-| `README.md` | Front page, with the TV table and the Tools table. `README.zh-CN.md` and `README.vi.md` are translations. |
-| `CONTRIBUTING.md` | The contributor guide for people. "Where does my idea go?" is the routing table. |
-| `SECURITY.md` | Private vulnerability reporting. |
-| `SHOWCASE.md` | Projects built on this repo that live in their own repositories. |
-| `CODE_OF_CONDUCT.md` | Includes the rule against publishing device identifiers, Wi-Fi names and IPs. |
-| `examples/` | One folder per tested TV model: `debloat.txt`, sometimes a `README.md` and a `config.json`. Indexed in `examples/README.md`. |
-| `docs/` | `docs/TROUBLESHOOTING.md`, the module-card contract (`docs/modules.md`), `docs/devices/` for models with notes but no tested list, and the [workflows](#workflows). |
-| `launcher/` | The reference launcher, package `com.gathin.tvhome`: plain Java, AndroidX RecyclerView and DynamicAnimation, `minSdk` 26, no `INTERNET` permission. |
-| `themes/` | One folder per theme: `config.json`, a required `screenshot.jpg`, optional wallpapers. Keys are documented in `themes/README.md`. |
-| `addons/` | Optional module-card apps, each its own Gradle project, never built into the launcher. |
-| `tools/` | The ADB client (`tv.py`) and the scripts, listed in the README's Tools table. Shell scripts have PowerShell twins. Each script's usage is in its first lines, and the larger ones have a guide beside them (`tools/*.md`): read it before running the script. |
-| `tests/` | Python `unittest` suite: list format, README tables, press counts, themes, add-ons, the Home guard and the tools against fake TVs. |
-| `.github/workflows/` | `ci.yml` (tests, launcher build, APK size gate), `addons.yml`, `maintainer-bot.yml`. |
-| `.github/maintainer/MAINTAINER.md` | The review policy the maintainer and the PR bot apply. |
-| `.github/pull_request_template.md` | The PR checklist. Fill it in. |
+| `PROMPT.md` | Prompt yang orang tempel ke agen mereka. Netral merek; aturan aman tinggal di sini. |
+| `README.md` | Halaman depan, dengan tabel TV dan tabel Tools. `README.zh-CN.md` dan `README.vi.md` adalah terjemahan. |
+| `CONTRIBUTING.md` | Panduan kontributor untuk orang. "Ide saya taruh di mana?" adalah tabel rutenya. |
+| `SECURITY.md` | Pelaporan kerentanan secara privat. |
+| `SHOWCASE.md` | Proyek yang dibangun di atas repo ini dan tinggal di repositori mereka sendiri. |
+| `CODE_OF_CONDUCT.md` | Termasuk aturan jangan memublikasikan pengenal perangkat, nama Wi-Fi, dan IP. |
+| `examples/` | Satu folder per model TV yang sudah diuji: `debloat.txt`, kadang `README.md` dan `config.json`. Terindeks di `examples/README.md`. |
+| `docs/` | `docs/TROUBLESHOOTING.md`, kontrak kartu modul (`docs/modules.md`), `docs/devices/` untuk model yang ada catatannya tapi belum punya daftar teruji, dan [alur kerja](#workflows). |
+| `launcher/` | Launcher acuan, paket `com.gathin.tvhome`: Java polos, AndroidX RecyclerView dan DynamicAnimation, `minSdk` 26, tanpa izin `INTERNET`. |
+| `themes/` | Satu folder per tema: `config.json`, `screenshot.jpg` wajib, wallpaper opsional. Kunci didokumentasikan di `themes/README.md`. |
+| `addons/` | Aplikasi kartu modul opsional, masing-masing proyek Gradle sendiri, tidak pernah ikut terpasang ke launcher. |
+| `tools/` | Klien ADB (`tv.py`) dan skrip-skripnya, tercantum di tabel Tools README. Skrip shell punya kembaran PowerShell. Cara pakai tiap skrip ada di baris pertamanya, dan yang besar punya panduan di sampingnya (`tools/*.md`): baca sebelum menjalankan skrip. |
+| `tests/` | Rangkaian `unittest` Python: format daftar, tabel README, jumlah pers, tema, add-on, Home guard, dan alat terhadap TV palsu. |
+| `.github/workflows/` | `ci.yml` (tes, build launcher, gerbang ukuran APK), `addons.yml`, `maintainer-bot.yml`. |
+| `.github/maintainer/MAINTAINER.md` | Kebijakan tinjauan yang maintainer dan bot PR terapkan. |
+| `.github/pull_request_template.md` | Daftar centang PR. Isi. |
 
-## Where a change goes
+## Perubahan taruh di mana
 
-The core stays small on purpose. Pick the smallest home that fits (CONTRIBUTING, "Where does my idea go?"):
+Intinya sengaja kecil. Pilih rumah terkecil yang muat (CONTRIBUTING, "Ide saya taruh di mana?"):
 
-| The change | Where it goes |
+| Perubahannya | Taruh di |
 |---|---|
-| A TV list, a fix, a translation, docs, a tool fix | A pull request here |
-| A small launcher switch that is off by default | A pull request here: see [`docs/workflows/launcher-switch.md`](docs/workflows/launcher-switch.md) |
-| A new look: colours, wallpaper, dock, columns, that existing config keys can carry | `themes/<name>/` |
-| A widget or tile that can be its own small app | `addons/<name>/`, as a module card that never touches `launcher/` |
-| A whole new launcher, a heavy restyle, a port to another platform, a lower `minSdk`, new permissions or network access, Fire TV Home takeover, a changed default for every TV | Your own repository, plus one row in `SHOWCASE.md` |
-| Safety rules in `PROMPT.md`, the Home-safety logic in the scripts, protected packages, CI and workflows, the APK size gate | Open an issue for the maintainer; do not change it in a PR |
+| Daftar TV, perbaikan, terjemahan, dokumen, perbaikan alat | Pull request di sini |
+| Sakelar launcher kecil yang mati secara default | Pull request di sini: lihat [`docs/workflows/launcher-switch.md`](docs/workflows/launcher-switch.md) |
+| Tampilan baru: warna, wallpaper, dock, kolom, yang kunci config yang ada bisa bawa | `themes/<name>/` |
+| Widget atau ubin yang bisa jadi aplikasinya sendiri yang kecil | `addons/<name>/`, sebagai kartu modul yang tidak pernah menyentuh `launcher/` |
+| Launcher yang sama sekali baru, restyle berat, port ke platform lain, `minSdk` yang lebih rendah, izin atau akses jaringan baru, pengambilalihan Home Fire TV, default yang berubah untuk setiap TV | Repositorimu sendiri, plus satu baris di `SHOWCASE.md` |
+| Aturan aman di `PROMPT.md`, logika keamanan Home di skrip, paket yang dilindungi, CI dan alur kerja, gerbang ukuran APK | Buka issue untuk maintainer; jangan mengubahnya di PR |
 
-Every PR is reviewed by the maintainer and by a bot that apply `.github/maintainer/MAINTAINER.md`: read its
-verdicts before a non-trivial PR. Changes to the Home or launch path (Home key, boot, return to Home, the
-install scripts) are usually held for a run on a real TV.
+Setiap PR ditinjau maintainer dan bot yang menerapkan `.github/maintainer/MAINTAINER.md`: baca
+vonisnya sebelum PR yang tidak sepele. Perubahan pada jalur Home atau peluncuran (tombol Home, boot, kembali ke Home,
+skrip pemasangan) biasanya ditahan sampai dijalankan di TV sungguhan.
 
 ## Workflows
 
-Step-by-step methods in `docs/workflows/`. Read the one that fits before you start; each opens with when to
-use it and ends with the check to run.
+Metode langkah demi langkah di `docs/workflows/`. Baca yang cocok sebelum mulai; masing-masing dibuka dengan kapan
+memakainya dan ditutup dengan pemeriksaan yang dijalankan.
 
-- [`tv-list.md`](docs/workflows/tv-list.md): add a tested TV's debloat list with its README rows, or update one.
-- [`launcher-switch.md`](docs/workflows/launcher-switch.md): add an off-by-default launcher switch, within the size gate.
-- [`translation.md`](docs/workflows/translation.md): add a launcher language, or fill strings missing from one.
-- [`theme.md`](docs/workflows/theme.md): add a theme from existing keys, with its screenshot from a real TV.
-- [`addon.md`](docs/workflows/addon.md): add a module-card app that never touches `launcher/`.
-- [`showcase.md`](docs/workflows/showcase.md): list a project that lives in its own repository.
-- [`press.md`](docs/workflows/press.md): add an article and update the four press counts.
-- [`docs-notes.md`](docs/workflows/docs-notes.md): add a troubleshooting entry or a `PROMPT.md` fix, keeping pinned facts.
-- [`perf-ab.md`](docs/workflows/perf-ab.md): an optional check of a launcher change for performance regressions with
-  `tools/bench.py`, and measure an improvement or a failed check with traces, a report and flame charts.
+- [`tv-list.md`](docs/workflows/tv-list.md): tambah daftar debloat TV yang sudah diuji beserta baris README-nya, atau perbarui satu.
+- [`launcher-switch.md`](docs/workflows/launcher-switch.md): tambah sakelar launcher yang mati secara default, di dalam gerbang ukuran.
+- [`translation.md`](docs/workflows/translation.md): tambah bahasa launcher, atau isi string yang hilang dari satu bahasa.
+- [`theme.md`](docs/workflows/theme.md): tambah tema dari kunci yang ada, dengan screenshot dari TV sungguhan.
+- [`addon.md`](docs/workflows/addon.md): tambah aplikasi kartu modul yang tidak pernah menyentuh `launcher/`.
+- [`showcase.md`](docs/workflows/showcase.md): daftarkan proyek yang tinggal di repositorinya sendiri.
+- [`press.md`](docs/workflows/press.md): tambah artikel dan perbarui keempat jumlah pers.
+- [`docs-notes.md`](docs/workflows/docs-notes.md): tambah entri pemecahan masalah atau perbaikan `PROMPT.md`, dengan fakta yang dipatok tetap ada.
+- [`perf-ab.md`](docs/workflows/perf-ab.md): pemeriksaan opsional perubahan launcher terhadap regresi kinerja dengan
+  `tools/bench.py`, dan ukur perbaikan atau pemeriksaan yang gagal dengan trace, laporan, dan flame chart.
 
-## Before opening a PR
+## Sebelum membuka PR
 
-| Check | Command or rule |
+| Pemeriksaan | Perintah atau aturan |
 |---|---|
-| Tests, as CI runs them | `python3 -m unittest discover -s tests -v` after `python3 -m venv tools/venv` and `tools/venv/bin/pip install -r tools/requirements.txt`. On `main`, CI sets `CLEANYOURTV_STRICT=1`, which also checks the README's TV-model count. |
-| Launcher, if you touched `launcher/` | JDK 17, Android SDK platform 34, build-tools 34.0.0. In `launcher/`: `./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease`. Lint must stay at zero errors. |
-| APK size gate | `launcher/app/build/outputs/apk/release/app-release.apk` must be under 491,520 B (480 KB). Linux: `stat -c %s`, macOS: `stat -f %z`. |
-| README rows | A new list has its row in `README.md` and `examples/README.md`; a theme in `themes/README.md`; an add-on in `addons/README.md`. |
-| One topic per PR | A TV list never rides inside a launcher feature PR. A device's list plus small fixes for that same device can be one PR. |
-| Tested on | Say which TV, Android version and firmware you tested on, in the PR template's "Tested on" line. |
-| Real TV | Launcher changes are verified on a real TV, not only the emulator: `tools/tv.py --screenshot shots/after.png DPAD_DOWN`. D-pad from every edge (Up, Down, Left, Right). A button handled by an accessibility helper needs a press on the real remote, and a force-stop of the launcher switches the helpers off (`docs/TROUBLESHOOTING.md`). |
-| Screenshots | Every visual change has a screenshot from the TV in the PR description. |
-| Performance | A performance claim shows `tools/bench.py` before and after, plus trace numbers. For any other launcher change the regression check in [`docs/workflows/perf-ab.md`](docs/workflows/perf-ab.md) is optional but welcome. |
-| Stray files | No files that nothing links to: screenshots belong in the PR description, not the tree. |
+| Tes, seperti yang CI jalankan | `python3 -m unittest discover -s tests -v` setelah `python3 -m venv tools/venv` dan `tools/venv/bin/pip install -r tools/requirements.txt`. Di `main`, CI menyetel `CLEANYOURTV_STRICT=1`, yang juga memeriksa jumlah model TV di README. |
+| Launcher, kalau kamu menyentuh `launcher/` | JDK 17, Android SDK platform 34, build-tools 34.0.0. Di `launcher/`: `./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease`. Lint harus tetap nol error. |
+| Gerbang ukuran APK | `launcher/app/build/outputs/apk/release/app-release.apk` harus di bawah 491,520 B (480 KB). Linux: `stat -c %s`, macOS: `stat -f %z`. |
+| Baris README | Daftar baru punya barisnya di `README.md` dan `examples/README.md`; tema di `themes/README.md`; add-on di `addons/README.md`. |
+| Satu topik per PR | Daftar TV tidak pernah menumpang di dalam PR fitur launcher. Daftar sebuah perangkat plus perbaikan kecil untuk perangkat yang sama boleh satu PR. |
+| Dicoba di | Sebutkan TV, versi Android, dan firmware yang kamu coba, di baris "Tested on" templat PR. |
+| TV sungguhan | Perubahan launcher dicek di TV sungguhan, bukan hanya emulator: `tools/tv.py --screenshot shots/after.png DPAD_DOWN`. D-pad dari setiap tepi (Up, Down, Left, Right). Tombol yang ditangani helper aksesibilitas perlu tekanan di remote sungguhan, dan force-stop launcher mematikan helper itu (`docs/TROUBLESHOOTING.md`). |
+| Screenshot | Setiap perubahan visual punya screenshot dari TV di deskripsi PR. |
+| Kinerja | Klaim kinerja menampilkan `tools/bench.py` sebelum dan sesudah, plus angka trace. Untuk perubahan launcher lain, pemeriksaan regresi di [`docs/workflows/perf-ab.md`](docs/workflows/perf-ab.md) opsional tapi diterima. |
+| Berkas liar | Tidak ada berkas yang tidak ditaut apa pun: screenshot milik deskripsi PR, bukan pohon repo. |
 
-## Hard rules
+## Aturan keras
 
-Never do these in a PR:
+Jangan pernah lakukan ini di PR:
 
-- **No prebuilt APKs or binaries** in the repo, not even as CI artifacts. People build from source.
-- **No uninstalling.** No `pm uninstall` in a list or a script. `pm hide` or `pm block` only with the matching
-  undo written in the list header.
-- **No network in the launcher:** no `INTERNET` permission, no network features, no analytics or telemetry, no
-  background services or polling, no blur or video. It targets TVs with 1 GB of RAM.
-- **No new launcher dependencies** without discussing them in an issue first.
-- **No changes to the safety rules** in `PROMPT.md`, the Home guard and other safety checks in
-  `tools/disable.sh`, `tools/check.py` and `launcher/build-and-install.sh`, or the list of packages the TV
-  needs, without the maintainer.
-- **No changing a default for every TV.** New behaviour is off until a theme or `config.xml` turns it on.
-- **Firmware updaters are better left enabled** (commented out in the list); a list that disables one says
-  why in its header.
-- **No Private DNS or AdGuard setup, and no install or restore scripts, inside a list folder.** The README
-  already has the optional DNS extra; a note that Private DNS works on that TV is fine.
-- **No secrets or identifiers** in commits, lists or screenshots: no IP addresses, Wi-Fi names, account emails,
-  serial numbers, Android IDs, MAC addresses or ADB keys. Use `<tv ip>` or `192.168.1.50` in docs.
-- **Don't edit `.github/workflows/`** or the APK size gate in a normal PR. A PR whose main content is a new CI
-  workflow that builds or publishes releases is closed.
-- **No root, no getting around app-store protection, no private builds** others cannot reproduce from this repo.
-- **No extras added to the PROMPT flow** beyond debloating and the launcher.
-- **Don't relax `minSdk`** (26) or the launcher's permissions; those are forks for `SHOWCASE.md`.
-- **Blur or crop** Wi-Fi names, people's names and cities (the top bar, a theme's `greeting_name`) before a
-  screenshot goes anywhere public. No TV Settings screenshots that show accounts, emails or device names.
-  From `tools/tv.py --probe`, `getprop` and backups, quote only the model, Android version and firmware build.
-- **Security problems are reported privately**, as [SECURITY.md](SECURITY.md) describes, never in a public issue.
+- **Tidak ada APK atau biner siap pakai** di repo, bahkan sebagai artefak CI. Orang membangun dari sumber.
+- **Tidak ada uninstall.** Tidak ada `pm uninstall` di daftar atau skrip. `pm hide` atau `pm block` hanya dengan
+  pembatalan yang cocok tertulis di header daftar.
+- **Tidak ada jaringan di launcher:** tidak ada izin `INTERNET`, tidak ada fitur jaringan, tidak ada analitik atau telemetri, tidak ada
+  layanan latar atau polling, tidak ada blur atau video. Sasarannya TV dengan RAM 1 GB.
+- **Tidak ada dependensi launcher baru** tanpa membahasnya di issue lebih dulu.
+- **Tidak ada perubahan aturan aman** di `PROMPT.md`, Home guard dan pemeriksaan aman lain di
+  `tools/disable.sh`, `tools/check.py`, dan `launcher/build-and-install.sh`, atau daftar paket yang TV
+  butuhkan, tanpa maintainer.
+- **Jangan mengubah default untuk setiap TV.** Perilaku baru mati sampai tema atau `config.xml` menghidupkannya.
+- **Pembaru firmware lebih baik tetap aktif** (dikomentari di daftar); daftar yang menonaktifkan satu harus menyebut
+  alasannya di header.
+- **Tidak ada penyiapan Private DNS atau AdGuard, dan tidak ada skrip pasang atau pulihkan, di dalam folder daftar.** README
+  sudah punya ekstra DNS opsional; catatan bahwa Private DNS jalan di TV itu boleh.
+- **Tidak ada rahasia atau pengenal** di commit, daftar, atau screenshot: tidak ada alamat IP, nama Wi-Fi, email akun,
+  nomor seri, Android ID, alamat MAC, atau kunci ADB. Pakai `<tv ip>` atau `192.168.1.50` di dokumen.
+- **Jangan edit `.github/workflows/`** atau gerbang ukuran APK di PR biasa. PR yang isi utamanya alur CI
+  baru yang membangun atau menerbitkan rilis ditutup.
+- **Tidak ada root, tidak ada cara mengakali perlindungan toko aplikasi, tidak ada build privat** yang orang lain tidak bisa ulang dari repo ini.
+- **Tidak ada tambahan pada alur PROMPT** di luar debloat dan launcher.
+- **Jangan longgarkan `minSdk`** (26) atau izin launcher; itu fork untuk `SHOWCASE.md`.
+- **Blur atau pangkas** nama Wi-Fi, nama orang, dan kota (bilah atas, `greeting_name` sebuah tema) sebelum
+  screenshot pergi ke mana pun yang publik. Tidak ada screenshot Setelan TV yang menampilkan akun, email, atau nama perangkat.
+  Dari `tools/tv.py --probe`, `getprop`, dan cadangan, kutip hanya model, versi Android, dan build firmware.
+- **Masalah keamanan dilaporkan secara privat**, seperti yang [SECURITY.md](SECURITY.md) jelaskan, jangan di issue publik.
 
-## Commit and PR style
+## Gaya commit dan PR
 
-- Titles are `area: what changed`, in plain words, with the issue in parentheses when there is one:
+- Judulnya `area: what changed`, dengan kata biasa, dengan issue dalam tanda kurung kalau ada:
   `examples: add Epson LS800 laser projector (Askey HA90, Amlogic), Android TV 14`,
   `docs: an HDMI row opens any app that claims the channel MIME type (#805)`,
-  `Launcher: show_inputs_pill, to hide the Inputs pill`. The area is the folder or file the change is in:
+  `Launcher: show_inputs_pill, to hide the Inputs pill`. Areanya folder atau berkas tempat perubahan itu:
   `examples`, `Launcher`, `docs`, `tools`, `tests`, `themes`, `addons`, `SHOWCASE`, `README`, `Press`.
-- The body is one or two sentences on what changed and the TV it was tried on, then the template's checklist.
-  `Fixes #N` or `Closes #N` when it resolves an issue.
-- One topic per PR. Small is fine. Be kind in reviews.
-- Contributions are released under the repo's MIT licence.
+- Isinya satu atau dua kalimat tentang apa yang berubah dan TV tempat dicoba, lalu daftar centang templat.
+  `Fixes #N` atau `Closes #N` kalau menyelesaikan sebuah issue.
+- Satu topik per PR. Kecil boleh. Bersikap baik di tinjauan.
+- Kontribusi dirilis di bawah lisensi MIT repo.
 
-## Where to ask
+## Tempat bertanya
 
-Questions go to [GitHub Discussions](https://github.com/Gathin23/cleanyourtv/discussions); bugs, TV lists and
-ideas that need a launcher change or a new dependency go to an issue first, with the templates in
+Pertanyaan ke [GitHub Discussions](https://github.com/Gathin23/cleanyourtv/discussions); bug, daftar TV, dan
+ide yang butuh perubahan launcher atau dependensi baru masuk issue dulu, dengan templat di
 `.github/ISSUE_TEMPLATE/`.

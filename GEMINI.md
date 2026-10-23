@@ -1,3 +1,3 @@
-Gemini CLI reads this file. The guide for every coding agent in this repo is AGENTS.md, imported below.
+Gemini CLI baca file ini. Panduan untuk setiap agen coding di repo ini ada di AGENTS.md, diimpor di bawah.
 
 @AGENTS.md

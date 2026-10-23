@@ -41,16 +41,40 @@ ini ([#1004](https://github.com/Gathin23/cleanyourtv/issues/1004)).
 
 ## Sesuaikan sendiri
 
-Layar beranda ini bisa kamu ubah tanpa menyentuh kode.
+Layar beranda ini bisa kamu ubah tanpa menyentuh kode. Ini tampilannya di Sharp AQUOS Google TV:
 
-- **Ganti tema.** Pilih tampilan di `themes/` lalu pasang dengan `tools/theme.sh`. Warna, dock, dan jumlah kolom ikut tema.
+<p align="center">
+  <img src="docs/images/vibeyourtv-home.jpg" alt="Beranda VibeYourTV: sapaan dengan nama, harga BTC di bawah tanggal, dock kaca buram lima aplikasi, wallpaper foto sendiri" width="800">
+</p>
+
+*Sapaan memakai namamu (`greeting_name`). Harga BTC hidup di bawah tanggal (`crypto_ticker`). Dock-nya kaca buram, berisi aplikasi yang kamu pilih. Wallpaper-nya fotomu sendiri.*
+
+- **Ganti tema.** Pilih tampilan di `themes/` lalu pasang dengan `tools/theme.sh`. Warna, dock, dan jumlah kolom ikut tema. Contohnya di bawah.
 - **Pakai fotomu sebagai wallpaper.** Simpan gambar 16:9 (1920×1080 sudah pas) sebagai `wallpaper.jpg` di folder tema. Kalau ada wajah, taruh di sepertiga tengah dan sisakan ruang di tepi. TV memotong pinggir, jadi jangan tempel wajah di ujung kiri atau kanan.
 - **Sapa dengan namamu.** Di `config.json` isi `"greeting_name": "Nama Kamu"`. Sapaan waktu (pagi, siang, sore, malam) akan diikuti nama itu.
 - **Harga Bitcoin langsung.** Isi `"crypto_ticker": true` supaya baris harga BTC muncul di bawah tanggal. Harganya diambil dari CoinGecko dan disegarkan tiap 5 menit selama Beranda sedang terbuka. Mati secara bawaan.
 
+| | | | |
+|---|---|---|---|
+| ![Tema bawaan](themes/default/screenshot.jpg) | ![Tema aurora](themes/aurora/screenshot.jpg) | ![Tema kaca](themes/glass/screenshot.jpg) | ![Tema enam kolom](themes/six-columns/screenshot.jpg) |
+| *Bawaan* | *Aurora* | *Kaca* | *Enam kolom* |
+| ![Tema adegan](themes/scenes/screenshot.jpg) | ![Tema ruska](themes/ruska/screenshot.jpg) | ![Tema Swedia](themes/sweden/screenshot.jpg) | ![Tema Dussehra](themes/dussehra/screenshot.jpg) |
+| *Adegan, berganti tiap jam* | *Ruska* | *Swedia* | *Dussehra* |
+
 <a id="how-it-works"></a>
 
 ## Cara kerjanya
+
+Dari komputer, lewat adb di Wi-Fi yang sama, urutannya begini:
+
+```mermaid
+flowchart LR
+  PC["Komputer<br/>adb lewat Wi-Fi"] --> CAD["Cadangkan"]
+  CAD --> MAT["Matikan bloat"]
+  MAT --> PAS["Pasang peluncur"]
+  PAS --> HOM["Jadikan Beranda"]
+  HOM --> TEM["Pasang tema<br/>config.json + wallpaper"]
+```
 
 Android TV punya jembatan debug yang sama dengan ponsel Android. Nyalakan USB debugging di opsi
 pengembang TV, izinkan komputermu sekali, dan sisanya perkakas Android biasa:

@@ -3,9 +3,9 @@
 - **TV:** TCL 75C845X2, UK/Europe build. Model string "Smart TV Pro", product `G08_4K_GB`, MediaTek `tcl9618`, Android TV OS 14 (Google TV).
 - **Firmware:** `V8-0012T01-LF1V667`, fingerprint `TCL/G08_4K_GB/G08:14/UTT2.250416.001/AU04:user/release-keys`.
 - **Based on:** [`tcl-c755-google-tv`](../tcl-c755-google-tv/debloat.txt), the same G08 board and package set.
-- **Tested:** applied on a real 75C845X2 on 2026-10-20. Home, the launcher and its dock apps worked afterwards.
+- **Tested:** diterapkan di 75C845X2 asli 2026-10-20. Home, launcher, dan app dock jalan setelahnya.
 
-## Differences from the C755 list
+## Perbedaan dari daftar C755
 
 - YouTube (`com.google.android.youtube.tv`) and Google Play Movies & TV (`com.google.android.videos`) are disabled, because SmartTube is used instead.
 - Chromecast, AirPlay (three packages) and the game bar are kept (commented out).

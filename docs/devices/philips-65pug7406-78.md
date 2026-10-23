@@ -1,8 +1,8 @@
-# Philips 65PUG7406/78: initial launcher compatibility notes
+# Philips 65PUG7406/78: catatan kompatibilitas launcher awal
 
-Checked on the owner's real TV in a single ADB session. This is **not a tested debloat list**: the package changes were owner-specific, and no several-day stability or cold-boot regression test was completed. Do not copy the changes below as a safe package list.
+Dicek di TV pemilik sungguhan dalam satu sesi ADB. Ini **bukan daftar debloat yang sudah diuji**: perubahan paket spesifik pemilik, dan tidak ada uji stabilitas beberapa hari atau regresi cold boot. Jangan salin perubahan di bawah sebagai daftar paket yang aman.
 
-## Identify the exact firmware
+## Kenali firmware persisnya
 
 | Field | Observed value |
 |---|---|
@@ -15,24 +15,23 @@ Checked on the owner's real TV in a single ADB session. This is **not a tested d
 | `ro.product.device` | `PH0M_EA_T32` |
 | `ro.product.name` | `PH0M_LT_T32` |
 
-The generic About-screen model is not the retail model. Match the firmware identifiers before applying any future list for another Philips set.
+Model generik di layar About bukan model ritel. Cocokkan pengenal firmware sebelum menerapkan daftar apa pun untuk set Philips lain.
 
-## HOME handover observed on this unit
+## Serah terima HOME yang diamati di unit ini
 
-The original HOME activity was `com.google.android.tvlauncher/.MainActivity`. On this firmware, `cmd package set-home-activity` reported success while the stock launcher was still enabled, but HOME continued to resolve to the stock launcher. After the replacement launcher was installed and the stock launcher was disabled for user 0, HOME resolved to `com.gathin.tvhome/.MainActivity` and the launcher was verified running.
+Aktivitas HOME asli adalah `com.google.android.tvlauncher/.MainActivity`. Di firmware ini, `cmd package set-home-activity` melaporkan sukses sementara launcher bawaan masih aktif, tetapi HOME tetap mengarah ke launcher bawaan. Setelah launcher pengganti terinstal dan launcher bawaan dinonaktifkan untuk user 0, HOME mengarah ke `com.gathin.tvhome/.MainActivity` dan launcher terverifikasi berjalan.
 
-This records one successful handover on this unit; it does not establish that every Android 11 Philips TV needs the same sequence. The launcher trial used source checkout `022c57da7c4f07466141229cb5625f6ae4fd7ba0`, so it is not validation of the current upstream main branch.
+Ini mencatat satu serah terima sukses di unit ini; bukan bukti bahwa setiap TV Philips Android 11 butuh urutan yang sama. Uji launcher memakai checkout sumber `022c57da7c4f07466141229cb5625f6ae4fd7ba0`, jadi bukan validasi cabang main upstream saat ini.
 
-## Owner-selected app changes
+## Perubahan aplikasi pilihan pemilik
 
-The owner later disabled Live TV (`com.mediatek.wwtv.tvcenter`) and Assistant / voice search (`com.google.android.katniss`). These were individual preferences, not a recommended default. Their effect on antenna channels, voice controls, HDMI switching, and remote shortcuts was not fully tested.
+Pemilik kemudian menonaktifkan Live TV (`com.mediatek.wwtv.tvcenter`) dan Assistant / pencarian suara (`com.google.android.katniss`). Itu preferensi individu, bukan default yang direkomendasikan. Dampaknya pada saluran antena, kontrol suara, switching HDMI, dan pintasan remote tidak diuji sepenuhnya.
 
-Other manufacturer and recommendation packages were changed during the same setup, including packages removed for user 0. This repository's contribution policy uses reversible `pm disable-user` lists and asks for several days of use before calling a list tested; those owner-specific removals are therefore intentionally not turned into a debloat list here.
+Paket produsen dan rekomendasi lain diubah saat setup yang sama, termasuk paket yang dihapus untuk user 0. Kebijakan kontribusi VibeYourTV memakai daftar `pm disable-user` yang bisa dibalik dan meminta beberapa hari pemakaian sebelum menyebut daftar teruji; penghapusan spesifik pemilik itu sengaja tidak dijadikan daftar debloat di sini.
 
-## Validation limits
+## Batas validasi
 
-- Confirmed the TV model and software identifiers in Android Settings.
-- Confirmed the original HOME activity, installed the replacement launcher, and verified its activity after the handover.
-- No cold boot, multi-day stability, antenna scan, channel playback, HDMI switching, casting, or full physical-remote test was performed after the package changes.
-- ADB was used for setup. Turn debugging off and revoke debugging authorisations when maintenance is finished.
-
+- Model TV dan pengenal perangkat lunak dikonfirmasi di Pengaturan Android.
+- Aktivitas HOME asli dikonfirmasi, launcher pengganti diinstal, dan aktivitasnya diverifikasi setelah serah terima.
+- Tidak ada cold boot, stabilitas multi-hari, scan antena, pemutaran saluran, switching HDMI, casting, atau uji remote fisik penuh setelah perubahan paket.
+- ADB dipakai untuk setup. Matikan debugging dan cabut otorisasi debugging saat perawatan selesai.

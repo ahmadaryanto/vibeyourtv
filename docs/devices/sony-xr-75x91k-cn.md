@@ -1,12 +1,12 @@
-# Sony XR-75X91K (China firmware): launcher compatibility notes
+# Sony XR-75X91K (firmware China): catatan kompatibilitas launcher
 
-This is a launcher-only device report, not a tested debloat list. The retail
-model was supplied by the owner; Android exposes a generic platform model.
-The observations below were made using a locally customized launcher derived
-from upstream commit `31eb392042009d41bc4ab4b9afadc253db7ab6d6`.
-They do not constitute a test of the current upstream main branch.
+Laporan perangkat launcher saja, bukan daftar debloat teruji. Model ritel
+diberikan pemilik; Android menampilkan model platform generik.
+Observasi di bawah memakai launcher lokal kustom turunan
+upstream commit `31eb392042009d41bc4ab4b9afadc253db7ab6d6`.
+Bukan uji cabang main upstream saat ini.
 
-## Observed firmware
+## Firmware yang diamati
 
 | Field | Observed value |
 |---|---|
@@ -18,21 +18,21 @@ They do not constitute a test of the current upstream main branch.
 | Firmware build | `BRAVIA_VH21_M_CN-user 12 STT2.230505.001.S136 682241 release-keys` |
 | Application ABIs | `armeabi-v7a,armeabi` |
 
-The existing `sony-bravia-4k-vh21` example describes a KD-65X85K with Australian
-`M_PA` firmware and a different stock Home package. Sharing `BRAVIA_VH21` does
-not establish that its debloat choices apply to this `M_CN` firmware.
+Contoh `sony-bravia-4k-vh21` ada untuk KD-65X85K dengan firmware Australia
+`M_PA` dan paket Home bawaan berbeda. Berbagi `BRAVIA_VH21` tidak
+membuktikan pilihan debloatnya berlaku untuk firmware `M_CN` ini.
 
-## Stock Home and handover
+## Home bawaan dan serah terima
 
-The original Home component on this unit was:
+Komponen Home asli di unit ini:
 
 ```text
 com.dangbei.TVHomeLauncher/com.dangbei.leard.leradlauncher.ui.sony.main.MainActivity
 ```
 
-The reference launcher's APK installed successfully and an explicit start of
-`com.gathin.tvhome/.MainActivity` completed with `Status: ok`. These commands
-were then used in the TV's ADB shell:
+APK launcher referensi terinstal sukses dan start eksplisit
+`com.gathin.tvhome/.MainActivity` selesai `Status: ok`. Perintah berikut
+dipakai di shell ADB TV:
 
 ```sh
 cmd package set-home-activity --user 0 com.gathin.tvhome/.MainActivity
@@ -40,48 +40,48 @@ cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.in
 input keyevent 3
 ```
 
-The resolver and foreground activity both identified the new launcher after
-the injected Home key. The original `com.dangbei.TVHomeLauncher` package
-remained enabled. No additional packages were disabled for this setup, and
-the launcher's optional Home/Input accessibility helpers were not enabled.
+Resolver dan aktivitas foreground keduanya mengidentifikasi launcher baru setelah
+tombol Home disuntik. Paket `com.dangbei.TVHomeLauncher` asli
+tetap aktif. Tidak ada paket tambahan dinonaktifkan untuk setup ini, dan
+helper aksesibilitas Home/Input opsional launcher tidak diaktifkan.
 
-When using an installation script that normally disables a stock launcher,
-use its leave-stock-enabled option (`STOCK_LAUNCHER=none`) and independently
-verify Home ownership. On this tested build, package disabling was unnecessary.
+Saat memakai skrip instal yang biasanya menonaktifkan launcher bawaan,
+pakai opsi biarkan-bawaan-aktif (`STOCK_LAUNCHER=none`) dan verifikasi
+kepemilikan Home sendiri. Di build teruji ini, disable paket tidak perlu.
 
-For restoration planning, record the original component and enablement state
-before making changes. The original component above is the intended Home
-restore target; changing Home back to it was not exercised in this report.
+Untuk perencanaan restore, catat komponen dan state enablement asli
+sebelum mengubah. Komponen asli di atas target restore Home
+yang dimaksud; mengembalikan Home ke sana tidak dilatih di laporan ini.
 
-## Live TV and HDMI
+## Live TV dan HDMI
 
-The Live TV/player package is `com.sony.dtv.tvx`; its launcher activity resolves
-to `com.sony.dtv.tvx/.MainActivity`. Use `live_tv_package=com.sony.dtv.tvx` in
-`config.xml`, and optionally include that package in `hidden_apps` so its tile
-is represented by the Inputs menu instead.
+Paket Live TV/player `com.sony.dtv.tvx`; aktivitas launcher mengarah
+ke `com.sony.dtv.tvx/.MainActivity`. Pakai `live_tv_package=com.sony.dtv.tvx` di
+`config.xml`, dan opsional masukkan paket itu ke `hidden_apps` agar tile
+diwakili menu Inputs.
 
-The Inputs menu listed HDMI 1-4, AV and Live TV. Selecting HDMI 2 brought the
-Sony TV player to the foreground with the corresponding external-input
-session (`com.sony.dtv.tvinput.external/.ExternalTvInputService/HW3`). An
-injected Home key then returned to the custom launcher. This verifies routing,
-not external-source picture/audio quality or tuner reception.
+Menu Inputs mencantumkan HDMI 1-4, AV dan Live TV. Pilih HDMI 2 bawa
+pemain TV Sony ke foreground dengan sesi input eksternal
+(`com.sony.dtv.tvinput.external/.ExternalTvInputService/HW3`). Tombol Home disuntik
+kemudian kembali ke launcher kustom. Ini verifikasi routing,
+bukan kualitas gambar/suara sumber eksternal atau reception tuner.
 
-The TV did not return a usable screenshot while showing the HDMI input in
-that check. The player activity and input session were used as evidence;
-launcher screenshots were available after returning Home.
+TV tidak mengembalikan screenshot usable saat menampilkan input HDMI di
+cek itu. Aktivitas player dan sesi input dipakai sebagai bukti;
+screenshot launcher tersedia setelah kembali Home.
 
-## Validation scope
+## Ruang lingkup validasi
 
-- APK installation, explicit launcher start, preferred-Home resolution and
-  return via an ADB-injected Home key were checked on this unit.
-- Basic directional navigation, installed-app launch and return Home were
-  exercised. These checks do not establish video playback or account login.
-- Restarting the launcher process retained the local launcher settings.
-- No new debloat recommendations are provided. Existing app/service states
-  were preserved; no raw package inventory is included.
-- Cold boot, TV reboot, standby/wake, casting, voice input, firmware updates,
-  USB peripherals, tuner reception, every physical remote key and several-day
-  stability were not independently verified.
+- Instal APK, start launcher eksplisit, resolusi Home preferensi dan
+  kembali lewat tombol Home ADB dicek di unit ini.
+- Navigasi arah dasar, launch apl terinstal dan kembali Home
+  dilatih. Cek ini tidak membuktikan pemutaran video atau login akun.
+- Restart proses launcher mempertahankan pengaturan launcher lokal.
+- Tidak ada rekomendasi debloat baru. State apl/layanan existing
+  dipertahankan; tidak ada inventori paket mentah.
+- Cold boot, reboot TV, standby/wake, casting, input suara, update firmware,
+  periferal USB, reception tuner, setiap tombol remote fisik dan stabilitas beberapa hari
+  tidak diverifikasi terpisah.
 
-This report intentionally omits network addresses, hardware serials, Android
-IDs, account details, installed-app preferences, screenshots and raw dumps.
+Laporan ini sengaja tidak memuat alamat jaringan, serial hardware, Android
+ID, detail akun, preferensi apl terinstal, screenshot dan dump mentah.

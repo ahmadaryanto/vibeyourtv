@@ -1,3 +1,9 @@
+# Hisense 65D62QH: catatan debloat dan launcher
+
+Ringkasan Bahasa Indonesia: TV Hisense — daftar paket, urutan Home, Wi-Fi/setupwraith, dan fitur yang dipertahankan. Catatan perangkat, bukan daftar teruji jangka panjang.
+
+---
+
 # Hisense 65D62QH (China, JuUI 9): debloat, and what a launcher swap costs
 
 Owner report for a China-market Hisense 65D62QH running 聚好看 JuUI 9. The tested package list for

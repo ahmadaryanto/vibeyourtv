@@ -1,3 +1,9 @@
+# TCL 75C63B: catatan setup
+
+Ringkasan Bahasa Indonesia: TCL 75C63B — debloat, Home, dan konfigurasi launcher.
+
+---
+
 # TCL 75c63b: launcher-only compatibility notes
 
 Checked on a real TV in one session on 2026-10-20, using upstream

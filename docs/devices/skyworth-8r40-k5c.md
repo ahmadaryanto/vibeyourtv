@@ -1,10 +1,10 @@
-# Skyworth / Coocaa 8R40_K5C (China domestic, Android 8.0)
+# Skyworth / Coocaa 8R40_K5C (China domestik, Android 8.0)
 
-Report for the mainland-China Coocaa/Skyworth firmware (`com.tianci.*` / `com.coocaa.*`) on a Realtek RTD285x set. Source: issue #692. Related older-sibling-in-family report: #417 (8R145_P3DM / K3 Pro, Android 11), whose notes do **not** transfer directly.
+Laporan firmware Coocaa/Skyworth daratan (`com.tianci.*` / `com.coocaa.*`) di set Realtek RTD285x. Sumber: issue #692. Laporan saudara keluarga lebih tua: #417 (8R145_P3DM / K3 Pro, Android 11), catatan **tidak** transfer langsung.
 
 > **Warning:** Disabling the wrong package crashes the "About this TV" page, which is the only place ADB can be turned on. Recovery is a factory reset. Read the traps before running any debloat list.
 
-## Device
+## Perangkat
 
 | Field | Value |
 | :--- | :--- |
@@ -19,49 +19,49 @@ Report for the mainland-China Coocaa/Skyworth firmware (`com.tianci.*` / `com.co
 | RAM | 1 GB |
 | Packages | 56 total |
 
-## Result
+## Hasil
 
-16 packages disabled, RAM freed, boot ad removed. Verified across a reboot with ADB reconnecting on its own and the stock home screen intact. List: `examples/skyworth-8r40-k5c/debloat.txt`.
+16 paket dinonaktifkan, RAM bebas, iklan boot hilang. Diverifikasi lewat reboot dengan ADB reconnect sendiri dan layar home bawaan utuh. Daftar: `examples/skyworth-8r40-k5c/debloat.txt`.
 
-## Traps
+## Jebakan
 
-### Trap 1: debloating can destroy the only ADB entry
+### Jebakan 1: debloat bisa hancurkan satu-satunya pintu ADB
 
-- There is no `com.android.settings` and no Developer options page. `com.tianci.setting` has no develop/debug activities.
-- The ADB switch is in `com.coocaa.factory`, reached via Settings → 基本设置 → 设备信息 → 更多信息 → up up down down left right left right.
-- That page depends on `com.tianci.de` (process `com.tianci.de:TianciDaemons`) and `com.skyworthdigital.stb.dataprovider`. Disabling either crashes About instantly. Wi-Fi ADB and port 5555 are then unreachable and a factory reset is the only recovery (the reporter needed two).
-- On the second attempt `com.coocaa.sky.ccapi` and/or `com.tianci.user` caused the same crash. Treat `ccapi` as must-keep. `com.tianci.user` was in the final verified-safe list, so the evidence is inconclusive; disable it last and re-check About.
-- **Escape hatch (no root):** `com.tianci.setting/.factorysetting.FactorySetting` declares the unguarded public action `coocaa.intent.action.TIANCI_FACTORY`, so any app can open the factory menu. Install Activity Launcher (`de.szalkowski.activitylauncher.oss`, has a leanback entry so it appears in the TV launcher) **before** debloating and test it.
-- **Recommended workflow:** apply in small batches, reopen About after each batch.
+- Tidak ada `com.android.settings` dan halaman Developer options. `com.tianci.setting` tidak punya aktivitas develop/debug.
+- Switch ADB di `com.coocaa.factory`, lewat Settings → 基本设置 → 设备信息 → 更多信息 → up up down down left right left right.
+- Halaman itu bergantung `com.tianci.de` (proses `com.tianci.de:TianciDaemons`) dan `com.skyworthdigital.stb.dataprovider`. Disabling either crashes About instantly. Wi-Fi ADB and port 5555 are then unreachable and a factory reset is the only recovery (the reporter needed two).
+- Percobaan kedua `com.coocaa.sky.ccapi` dan/atau `com.tianci.user` crash About sama. Anggap `ccapi` must-keep. `com.tianci.user` ada di daftar final verified-safe, bukti tidak konklusif; nonaktifkan terakhir dan cek About lagi.
+- **Jalan keluar (tanpa root):** `com.tianci.setting/.factorysetting.FactorySetting` mendeklarasikan aksi publik tanpa guard `coocaa.intent.action.TIANCI_FACTORY`, jadi aplikasi mana pun bisa buka menu pabrik. Instal Activity Launcher (`de.szalkowski.activitylauncher.oss`, punya entri leanback jadi muncul di launcher TV) **sebelum** debloat dan uji.
+- **Alur disarankan:** terapkan batch kecil, buka About setelah setiap batch.
 
-### Trap 2: HOME is hardcoded; a third-party launcher cannot own it
+### Jebakan 2: HOME hardcoded; launcher pihak ketiga tidak bisa punya
 
-- `cmd package resolve-activity -c android.intent.category.HOME` returns "No activity found". No package, the stock launcher included, declares HOME.
-- `com.tianci.system` (SkySystemService) starts the home page from `persist.service.homepage.pkg` / `.cls`, and the remote's Home key goes through `HotKeyHandler` to the same pair.
-- The props accept a third-party launcher at runtime but are rewritten at boot from read-only `/system/pcfg/8R40_K5C/config/general_config.xml` (`DEFAULT_HOMEPAGE` = `com.tianci.movieplatform/com.coocaa.homepage.vast.HomePageActivity`). Changing this needs root.
-- What breaks boot:
-  - `cmd package set-home-activity ...` is refused: `cannot be home on user 0` (it worked on the Android 11 unit in #417).
-  - `pm disable-user com.tianci.movieplatform` gives a black screen; `sys.boot_completed` never set.
-  - `pm disable-user app.orchard.tv` (Aerial launcher on some units) gives a black screen too. Never disable the current launcher.
-  - `setprop persist.service.homepage.switch 0` plus pointing pkg/cls at a third-party launcher: after reboot `adbd` did not start and About crashed. Leave that prop unset.
-- Practical answer for now: keep the stock launcher and open other launchers from My Apps.
+- `cmd package resolve-activity -c android.intent.category.HOME` mengembalikan "No activity found". Tidak ada paket, launcher bawaan termasuk, mendeklarasikan HOME.
+- `com.tianci.system` (SkySystemService) memulai halaman home dari `persist.service.homepage.pkg` / `.cls`, dan tombol Home remote lewat `HotKeyHandler` ke pasangan sama.
+- Prop menerima launcher pihak ketiga runtime tapi ditulis ulang saat boot dari read-only `/system/pcfg/8R40_K5C/config/general_config.xml` (`DEFAULT_HOMEPAGE` = `com.tianci.movieplatform/com.coocaa.homepage.vast.HomePageActivity`). Ubah ini butuh root.
+- Yang merusak boot:
+  - `cmd package set-home-activity ...` ditolak: `cannot be home on user 0` (jalan di unit Android 11 #417).
+  - `pm disable-user com.tianci.movieplatform` layar hitam; `sys.boot_completed` tidak pernah set.
+  - `pm disable-user app.orchard.tv` (Aerial launcher di beberapa unit) layar hitam juga. Jangan nonaktifkan launcher saat ini.
+  - `setprop persist.service.homepage.switch 0` plus arahkan pkg/cls ke launcher pihak ketiga: setelah reboot `adbd` tidak start dan About crash. Biarkan prop itu unset.
+- Jawaban praktis sekarang: biarkan launcher bawaan dan buka launcher lain dari My Apps.
 
-### Trap 3: boot video ad and autostart queue
+### Jebakan 3: iklan video boot dan antrian autostart
 
-- Ad: 15 s video at `/data/local/bootvideo.ts` (system-owned), played by `com.skyworth.tv`, ad SDK in `com.coocaa.adsdk`.
-- Fix (survives reboot, no root):
+- Iklan: video 15 d di `/data/local/bootvideo.ts` (milik system), diputar `com.skyworth.tv`, SDK iklan di `com.coocaa.adsdk`.
+- Perbaikan (bertahan reboot, tanpa root):
   ```
   tools/tv.py 'setprop persist.sys.bootvideo.time 1'
   ```
-- `bootQueue.xml` in the same pcfg folder starts `com.tianci.push` at 1.2 s and `com.tianci.ad` at 5.0 s. Also `persist.sys.ad.startboot = com.tianci.ad/ui.BootViewActivity`.
-- Other pcfg switches that exist but need write access to `/system`: `CURRENT_AD_SERVER` (`hoisin.coocaatv.com`), `HIDE_LAUNCHER`.
+- `bootQueue.xml` di folder pcfg sama start `com.tianci.push` 1,2 d dan `com.tianci.ad` 5,0 d. Juga `persist.sys.ad.startboot = com.tianci.ad/ui.BootViewActivity`.
+- Switch pcfg lain ada tapi butuh write ke `/system`: `CURRENT_AD_SERVER` (`hoisin.coocaatv.com`), `HIDE_LAUNCHER`.
 
-### Trap 4: input quirks that break automation
+### Jebakan 4: keanehan input yang merusak otomasi
 
-- TVBox-based players (e.g. 影视仓 `com.tencent.qqlivehuawei`) swallow injected `KEYCODE_HOME` / `KEYCODE_BACK`. The physical remote Home still works.
-- The stock home ignores `input tap` and only responds to `KEYCODE_DPAD_*`. Screenshot-driven clicking fails: uiautomator bounds are 1280x720 but screencap is scaled.
+- Pemutar berbasis TVBox (mis. 影视仓 `com.tencent.qqlivehuawei`) telan `KEYCODE_HOME` / `KEYCODE_BACK` disuntik. Home remote fisik masih jalan.
+- Home bawaan abaikan `input tap` dan hanya jawab `KEYCODE_DPAD_*`. Klik berbasis screenshot gagal: bounds uiautomator 1280x720 tapi screencap diskala.
 
-## Must stay enabled
+## Harus tetap aktif
 
 | Package | Why |
 | :--- | :--- |
@@ -75,17 +75,17 @@ Report for the mainland-China Coocaa/Skyworth firmware (`com.tianci.*` / `com.co
 | `com.coocaa.tvmanager` | TV management |
 | `com.coocaa.guide`, `com.coocaa.miracast` | System guide and casting |
 
-## Verified safe to disable (16)
+## Diverifikasi aman dinonaktifkan (16)
 
 `com.tianci.ad`, `com.tianci.appstore`, `com.tianci.push`, `com.tianci.user`, `com.tianci.ipc`, `com.tianci.autoinstaller`, `com.baidu.oases`, `com.coocaa.mall`, `com.coocaa.activecenter`, `com.coocaa.app_browser`, `com.coocaa.messageprovider`, `com.coocaa.tvpitv`, `com.coocaa.theme.child`, `com.icoolme.tv.weather`, `com.skyworth.blockchain`, `com.skyworth.smarthome_tv`.
 
-The first six (`ad`, `push`, `appstore`, `user`, `ipc`, `autoinstaller`) are already disabled from the factory on this unit, so they are the lowest risk.
+Enam pertama (`ad`, `push`, `appstore`, `user`, `ipc`, `autoinstaller`) sudah nonaktif dari pabrik di unit ini, risiko terendah.
 
-## Related report: Coocaa 8R145 / K3 Pro (#417)
+## Laporan terkait: Coocaa 8R145 / K3 Pro (#417)
 
-Same vendor family (`com.tianci.*` / `com.coocaa.*`), but a different firmware: Realtek RTD2885N, Android 11, board `8R145_P3DM`. Its notes and package list do **not** transfer to this TV, and this one does not transfer to that one.
+Keluarga vendor sama (`com.tianci.*` / `com.coocaa.*`), firmware berbeda: Realtek RTD2885N, Android 11, board `8R145_P3DM`. Catatan dan daftar **tidak** transfer ke TV ini, dan sebaliknya.
 
-| | 8R145 (#417, Android 11) | 8R40_K5C (this guide, Android 8.0) |
+| | 8R145 (#417, Android 11) | 8R40_K5C (panduan ini, Android 8.0) |
 | :--- | :--- | :--- |
 | `cmd package set-home-activity` | accepted | refused: `cannot be home on user 0` |
 | Package declaring `android.intent.category.HOME` | the Coocaa launcher | none at all |
@@ -93,11 +93,11 @@ Same vendor family (`com.tianci.*` / `com.coocaa.*`), but a different firmware: 
 | `com.coocaa.guide` | disabled in the #417 list | **must stay enabled** here |
 | About page / ADB lockout (Trap 1) | not reported | the main hazard on this firmware |
 
-Packages that appear in both reports as disabled without problems: `com.tianci.ad`, `com.tianci.push`, `com.tianci.autoinstaller`, `com.coocaa.app_browser`, `com.coocaa.messageprovider`.
+Paket muncul di kedua laporan nonaktif tanpa masalah: `com.tianci.ad`, `com.tianci.push`, `com.tianci.autoinstaller`, `com.coocaa.app_browser`, `com.coocaa.messageprovider`.
 
-Do not copy either list onto the other TV. Packages that appear only in the #417 list (for example `com.skyworth.aisense`, `com.coocaa.sysreport`, `com.coocaa.tvpi`) were not tested on the 8R40_K5C and are not in this one.
+Jangan salin daftar mana pun ke TV lain. Paket hanya di daftar #417 (mis. `com.skyworth.aisense`, `com.coocaa.sysreport`, `com.coocaa.tvpi`) tidak diuji di 8R40_K5C dan tidak ada di sini.
 
-## Open questions (from #692)
+## Pertanyaan terbuka (dari #692)
 
-1. Can a third-party launcher persist across reboot without root (`HIDE_LAUNCHER`, broadcast `com.skyworth.broadcast.homepage.switch`, hotel mode `persist.sky.hotel_switch`)? Untested.
-2. Root on RTD285x with kernel 4.4.3: CVE-2019-2215 PoCs are arm64 and need a 4 GB mmap; the arm32 port needs kernel symbol offsets that require the boot image.
+1. Bisa launcher pihak ketiga persist lewat reboot tanpa root (`HIDE_LAUNCHER`, broadcast `com.skyworth.broadcast.homepage.switch`, hotel mode `persist.sky.hotel_switch`)? Belum diuji.
+2. Root di RTD285x kernel 4.4.3: PoC CVE-2019-2215 arm64 butuh mmap 4 GB; port arm32 butuh offset simbol kernel dari boot image.

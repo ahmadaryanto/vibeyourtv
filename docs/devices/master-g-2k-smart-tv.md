@@ -1,8 +1,8 @@
-# Master-G 2K Smart TV (KTC `jagalchi`, Android 14): a same-day Google TV session
+# Master-G 2K Smart TV (KTC `jagalchi`, Android 14): sesi Google TV satu hari
 
-One owner-reported session on 2026-10-22, done with the prompt over Wi-Fi from a Windows PC. It is a note,
-not a several-day list: everything below was disabled and checked in one sitting, plus one reboot. A
-`debloat.txt` will follow once the set has been lived with for a few days.
+Satu sesi dilaporkan pemilik 2026-10-22, dengan prompt lewat Wi-Fi dari PC Windows. Ini catatan,
+bukan daftar beberapa hari: semua di bawah dinonaktifkan dan dicek dalam satu duduk, plus satu reboot.
+`debloat.txt` menyusul setelah set dipakai beberapa hari.
 
 | Field | Observed value |
 |---|---|
@@ -15,46 +15,46 @@ not a several-day list: everything below was disabled and checked in one sitting
 
 ## ADB
 
-- Port 5555 was open once USB debugging was on; the first `adb connect` answered `failed to authenticate` and the
-  "Allow USB debugging?" prompt then appeared on the TV. Wireless debugging was also on and advertises a second
-  random port, which `adb connect` could not use without pairing.
-- `adb install` of the launcher worked normally (no confirmation dialog).
+- Port 5555 terbuka setelah USB debugging nyala; `adb connect` pertama menjawab `failed to authenticate` dan
+  prompt "Allow USB debugging?" muncul di TV. Wireless debugging juga nyala dan mengiklankan port acak kedua,
+  yang `adb connect` tidak bisa pakai tanpa pairing.
+- `adb install` launcher jalan normal (tanpa dialog konfirmasi).
 
-## Home takeover
+## Ambil alih Home
 
-- Stock launcher: `com.google.android.apps.tv.launcherx` (HOME priority 2). HOME claimants on the set:
-  `launcherx`, `com.google.android.tungsten.setupwraith/.RecoveryActivity`, the launcher, and
+- Launcher bawaan: `com.google.android.apps.tv.launcherx` (HOME priority 2). Klaim HOME di set:
+  `launcherx`, `com.google.android.tungsten.setupwraith/.RecoveryActivity`, launcher, dan
   `com.android.tv.settings.system.FallbackHome`.
-- `cmd package set-home-activity` printed `Success` and Home still opened Google TV.
-- With only `launcherx` disabled, Home fell to `setupwraith`'s `RecoveryActivity` (it opened the last Settings
-  screen). Disabling `setupwraith` too gave the launcher Home.
-- The saved Wi-Fi network belonged to `setupwraith` (`cname=com.google.android.tungsten.setupwraith` in
-  `dumpsys wifi`). The owner forgot it and joined it again in Settings first, after which the owner was
-  `android.uid.system:1000`, and only then was `setupwraith` disabled; the TV stayed on Wi-Fi. This is the
-  same Home-safety dance as `aipro2k` and `tcl-75qm751g-qm7`.
-- Reboot-checked: nothing re-enabled itself, and the launcher stayed Home.
+- `cmd package set-home-activity` mencetak `Success` dan Home tetap membuka Google TV.
+- Hanya `launcherx` nonaktif, Home jatuh ke `RecoveryActivity` setupwraith (membuka layar Settings terakhir).
+  Menonaktifkan `setupwraith` juga memberi launcher Home.
+- Jaringan Wi-Fi tersimpan milik `setupwraith` (`cname=com.google.android.tungsten.setupwraith` di
+  `dumpsys wifi`). Pemilik lupa dan gabung lagi di Settings dulu, setelah itu owner
+  `android.uid.system:1000`, barulah `setupwraith` dinonaktifkan; TV tetap di Wi-Fi. Ini
+  langkah Home-safety yang sama seperti `aipro2k` dan `tcl-75qm751g-qm7`.
+- Dicek reboot: tidak ada yang mengaktifkan diri lagi, launcher tetap Home.
 
-## What was disabled (`pm disable-user --user 0`, nothing uninstalled)
+## Yang dinonaktifkan (`pm disable-user --user 0`, tidak ada uninstall)
 
-- Home handover: `com.google.android.apps.tv.launcherx`, `com.google.android.tungsten.setupwraith`.
-- Android 14 ad/ML services: `com.android.adservices.api`, `com.android.ondevicepersonalization.services`,
+- Serah terima Home: `com.google.android.apps.tv.launcherx`, `com.google.android.tungsten.setupwraith`.
+- Layanan iklan/ML Android 14: `com.android.adservices.api`, `com.android.ondevicepersonalization.services`,
   `com.android.federatedcompute.services`.
-- Owner-chosen: `com.electronic.manual` (the on-TV manual), `com.google.android.play.games`, and the apps the
-  owner does not use (Prime Video, Netflix, Mercado Play, iQIYI, Jellytelly).
+- Pilihan pemilik: `com.electronic.manual` (manual di TV), `com.google.android.play.games`, dan aplikasi yang
+  pemilik tidak pakai (Prime Video, Netflix, Mercado Play, iQIYI, Jellytelly).
 
-## Left alone on purpose
+## Sengaja dibiarkan
 
-- Chromecast receiver (`com.google.android.apps.mediashell`), the Play Store, firmware updates, the voice
-  assistant (`com.google.android.katniss`, tied to the remote's microphone), the Live TV app
-  `com.mediatek.wwtv.tvcenter.plus` (launcher `live_tv_package`) and the media player
+- Penerima Chromecast (`com.google.android.apps.mediashell`), Play Store, update firmware, asisten suara
+  (`com.google.android.katniss`, terikat mikrofon remote), aplikasi Live TV
+  `com.mediatek.wwtv.tvcenter.plus` (launcher `live_tv_package`) dan pemutar media
   `com.mediatek.wwtv.mediaplayer`.
-- KTC factory packages, never launched or disabled: `com.ktc.tv.factory`, `com.ktc.serialport`.
-- Already disabled at the factory: `com.cltv.hybrid`, `fusion.android.tv.demo`,
-  `com.mediatek.wwtv.tvcenter.overlay`, `com.mediatek.tvinput.overlay`. `com.android.tv.settings` also shows in
-  `pm list packages -d` yet Settings opens normally.
+- Paket pabrik KTC, tidak pernah diluncurkan atau dinonaktifkan: `com.ktc.tv.factory`, `com.ktc.serialport`.
+- Sudah nonaktif di pabrik: `com.cltv.hybrid`, `fusion.android.tv.demo`,
+  `com.mediatek.wwtv.tvcenter.overlay`, `com.mediatek.tvinput.overlay`. `com.android.tv.settings` juga muncul di
+  `pm list packages -d` tetapi Settings tetap terbuka normal.
 
-## Launcher config used
+## Konfigurasi launcher yang dipakai
 
 Dock: `com.google.android.youtube.tv`, `com.disney.disneyplus`, `com.wbd.stream`, `cl.movistarplay`;
-`live_tv_package` and the hidden app `com.mediatek.wwtv.tvcenter.plus`. Verified with screenshots (dock, grid,
-Settings, Wi-Fi pill). HDMI input switching through the Inputs pill was not exercised.
+`live_tv_package` dan aplikasi tersembunyi `com.mediatek.wwtv.tvcenter.plus`. Diverifikasi dengan screenshot (dock, grid,
+Settings, pill Wi-Fi). Switching input HDMI lewat pill Inputs tidak diuji.

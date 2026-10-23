@@ -1,17 +1,17 @@
 # COOP COTV-0001 (Realtek rtd298x, Android 4.4.2, Argentina)
 
-Report for a KitKat-era set sold by Cooperativa RENACER (Ushuaia) as "TV LED HD SMART". Source:
-issue [#795](https://github.com/Gathin23/cleanyourtv/issues/795). The first report ended with the
-cause unknown and the set written off; the same reporter then isolated the cause, recovered the TV and
-re-applied the list in batches. That second half is why this note exists — the merged bullet in
-`docs/TROUBLESHOOTING.md` had said a set stuck this way was unrecoverable.
+Laporan untuk set era KitKat dijual Cooperativa RENACER (Ushuaia) sebagai "TV LED HD SMART". Sumber:
+issue [#795](https://github.com/Gathin23/cleanyourtv/issues/795). Laporan pertama berakhir penyebab
+tidak diketahui dan set dianggap write-off; reporter yang sama lalu mengisolasi penyebab, memulihkan TV dan
+menerapkan daftar lagi per batch. Bagian kedua itulah mengapa catatan ini ada — bullet gabungan di
+`docs/TROUBLESHOOTING.md` pernah bilang set macet begini tidak bisa dipulihkan.
 
-> **Warning:** `com.haiersoft.launcherproject2995hk` is the only Home app on this build, and the repo
-> launcher needs Android 8.0 (minSdk 26) where this set is SDK 19, so nothing can replace it. Disable
-> it and every boot stops on `INICIALIZANDO`. `com.tsb.tv` looks unrelated and is a dependency of that
-> launcher: disabling it crash-loops the launcher instead.
+> **Peringatan:** `com.haiersoft.launcherproject2995hk` satu-satunya aplikasi Home di build ini, dan launcher
+> repo VibeYourTV butuh Android 8.0 (minSdk 26) sementara set ini SDK 19, jadi tidak ada pengganti. Nonaktifkan
+> dan setiap boot berhenti di `INICIALIZANDO`. `com.tsb.tv` terlihat tidak terkait dan dependensi launcher itu:
+> menonaktifkannya membuat launcher crash-loop.
 
-## Device
+## Perangkat
 
 | Field | Value |
 | :--- | :--- |
@@ -27,44 +27,46 @@ re-applied the list in batches. That second half is why this note exists — the
 | Ports | 2× USB-A host, Ethernet, Wi-Fi; no visible recovery button or service port |
 | Developer options | USB debugging only (KitKat has no network-ADB toggle) |
 
-## How the set was reached
+## Cara set dijangkau
 
-- Wi-Fi (192.168.18.3): port 5555 closed, `nmap -Pn -p 1-65535` found no open TCP port at all.
-- Ethernet (192.168.18.32): 5555 open, and that is the only way in. `tools/tv.py` was used because no
-  `adb` binary was installed on the reporter's machine.
-- The first connection raised `ConnectionResetError`; a retry a few seconds later worked. The set
-  seems to accept one ADB session at a time, so a failed connect is not the end of it.
+- Wi-Fi (192.168.18.3): port 5555 tertutup, `nmap -Pn -p 1-65535` tidak menemukan port TCP terbuka sama sekali.
+- Ethernet (192.168.18.32): 5555 terbuka, dan itu satu-satunya jalan masuk. `tools/tv.py` dipakai karena tidak ada
+  binary `adb` di mesin reporter.
+- Koneksi pertama memunculkan `ConnectionResetError`; retry beberapa detik kemudian berhasil. Set
+  tampaknya menerima satu sesi ADB sekaligus, jadi connect gagal bukan akhir.
 
-## What went wrong
+## Apa yang salah
 
-17 packages were disabled with `pm disable-user --user 0`, each one echoing `new state: disabled-user`,
-and `pm list packages -d` read back all 17. The factory launcher
-`com.haiersoft.launcherproject2995hk` was among them and no replacement was installed, because the
-repo launcher cannot run below Android 8.0. After a power cycle the set sat on the green Android robot
-with `INICIALIZANDO` for 20+ minutes, and stayed there across a hard power cut and another off/on from
-the remote.
+17 paket dinonaktifkan dengan `pm disable-user --user 0`, masing-masing echo `new state: disabled-user`,
+dan `pm list packages -d` membaca kembali ke-17. Launcher pabrik
+`com.haiersoft.launcherproject2995hk` termasuk di antaranya dan tidak ada pengganti terinstal, karena
+launcher repo tidak bisa jalan di bawah Android 8.0. Setelah power cycle set diam di robot Android hijau
+dengan `INICIALIZANDO` 20+ menit, dan tetap di sana lewat hard power cut dan off/on lagi dari
+remote.
 
-## Cause, isolated
+## Penyebab, terisolasi
 
+Menonaktifkan launcher sendiri mereproduksi hang; mengaktifkan lagi dan reboot membawa set kembali.
 Disabling `com.haiersoft.launcherproject2995hk` alone reproduces the hang; re-enabling it and
 rebooting brings the set back. The hard power cut during the first boot was **not** the cause, and
 neither was the batch size: 15 of the same 17 packages are disabled today on a working set.
 
-## The second trap: `com.tsb.tv`
+## Jebakan kedua: `com.tsb.tv`
 
+Menonaktifkan paket itu membuat launcher crash-loop dengan "Se ha detenido la aplicación
+lancherProject", dan mengaktifkan lagi menghapus dialog. Tidak ada di daftar paket yang bilang paket
+vendor yang tampak tidak terkait adalah yang dijalankan launcher, argumen untuk menerapkan
+daftar per batch dengan reboot dan lihat layar di antaranya, bukan untuk nama paket tertentu.
 Disabling `com.tsb.tv` makes the launcher crash in a loop with "Se ha detenido la aplicación
-lancherProject", and re-enabling it clears the dialog. Nothing in a package list says that a
-seemingly unrelated vendor package is what the launcher runs on, which is the argument for applying a
-list in batches with a reboot and a look at the screen between them, rather than for any particular
-package name.
+lancherProject", and re-enabling it clears the dialog.
 
-## Recovery from `INICIALIZANDO`
+## Pemulihan dari `INICIALIZANDO`
 
-- **The stuck screen can still answer ADB.** After the set was written off as unreachable, ping and
-  port 5555 answered again on the Ethernet address while the display still said `INICIALIZANDO`. The
-  reporter suspects the Ethernet cable was loose during the earlier checks and could not confirm it,
-  but check the link and retry before concluding that a KitKat set is lost.
-- Re-enable every package from the pre-change backup, confirm the disabled list is empty, then reboot:
+- **Layar macet masih bisa jawab ADB.** The stuck screen can still answer ADB. Setelah set dianggap tidak terjangkau, ping dan
+  port 5555 menjawab lagi di alamat Ethernet sementara layar masih `INICIALIZANDO`.
+  Reporter curiga kabel Ethernet longgar saat cek sebelumnya dan tidak bisa konfirmasi,
+  tapi cek link dan retry sebelum simpulkan set KitKat hilang.
+- Aktifkan kembali setiap paket dari backup sebelum perubahan, konfirmasi daftar disabled kosong, lalu reboot:
 
   ```sh
   tools/tv.py 'pm list packages -d'
@@ -74,15 +76,15 @@ package name.
   tools/tv.py --reboot                   # returns once ADB accepts it; wait for the TV to come back
   ```
 
-  This set showed `INICIALIZANDO` once more on the reboot and then booted normally. Boots take 33–73 s.
-- A USB keyboard or a service port is not available on this board, and there is no public firmware, so
-  `tools/restore.sh` is only reachable while ADB answers — which is exactly why the two minutes spent
-  re-checking the Ethernet link matter.
+  Set ini menampilkan `INICIALIZANDO` sekali lagi saat reboot lalu boot normal. Boots take 33–73 s.
+- Keyboard USB atau port service tidak tersedia di papan ini, dan tidak ada firmware publik, jadi
+  `tools/restore.sh` hanya terjangkau saat ADB menjawab — itulah mengapa dua menit
+  cek ulang link Ethernet penting.
 
-## The list that worked
+## Daftar yang jalan
 
-15 of the original 17, applied in four groups with a reboot and a screen check after each, and the
-last two tried on their own once the set had been stable for a while:
+15 dari 17 asli, empat grup dengan reboot dan cek layar setelah masing-masing, dan
+dua terakhir dicoba sendiri setelah set stabil:
 
 | Group | Packages | Result |
 | :--- | :--- | :--- |
@@ -95,30 +97,30 @@ last two tried on their own once the set had been stable for a while:
 **Must stay enabled:** `com.haiersoft.launcherproject2995hk` (the only Home app) and `com.tsb.tv`
 (what that launcher runs on). Neither has a replacement on SDK 19.
 
-An earlier idea in the report — skipping `com.adups.*` on old builds — was withdrawn by the reporter:
-both adups packages disabled cleanly and the set booted, so the trap is the Home package, not the
+Ide awal di laporan — lewati `com.adups.*` di build lama — ditarik reporter:
+kedua paket adups nonaktif bersih dan set boot, jadi jebakannya paket Home, bukan
 updater.
 
 ## Limits
 
-- One unit, one eng/test-keys build, one evening. The groups were checked with a reboot and a look at
-  the menu and media playback, not package by package; only the launcher and `com.tsb.tv` were
-  isolated on their own.
+- Satu unit, satu build eng/test-keys, satu malam. Grup dicek dengan reboot dan lihat
+  menu dan pemutaran media, bukan paket per paket; hanya launcher dan `com.tsb.tv` yang
+  diisolasi sendiri.
 - No cold boot after the final list, and no second power cycle, so a delayed failure is still
   possible.
-- Nothing here says other `rtd298x` builds behave the same, and nothing was tested about
-  `com.realtek.*` packages beyond the two above.
-- `com.rtk.engmenu` was deliberately left untouched.
-- The launcher half is impossible on this set: minSdk 26 against SDK 19. Lowering minSdk is a source
-  change, and an APK rebuilt elsewhere is not something this repo verifies.
+- Tidak ada di sini yang bilang build `rtd298x` lain sama, dan tidak ada yang diuji tentang
+  paket `com.realtek.*` di luar dua di atas.
+- `com.rtk.engmenu` sengaja tidak disentuh.
+- Bagian launcher mustahil di set ini: minSdk 26 vs SDK 19. Menurunkan minSdk perubahan sumber,
+  dan APK dibangun di tempat lain bukan yang repo VibeYourTV verifikasi.
 
-## What to do differently
+## Apa yang dilakukan berbeda
 
-- Keep the stock launcher. `tools/disable.sh` skips the package that owns Home when no other installed
-  app can answer HOME, and on Android 6 and older it asks `dumpsys activity` when `cmd package` is
-  missing (see `docs/TROUBLESHOOTING.md`). On this set that check would have to name
-  `com.haiersoft.launcherproject2995hk` through `dumpsys activity`; the reporter disabled the packages
-  by hand, so it never ran, and whether it names this launcher here is unverified.
-- Keep the ADB path alive: Ethernet, since this firmware has no network-debugging toggle, and one
-  session at a time.
-- Batches with a reboot between them, not one long list: that is how `com.tsb.tv` was caught.
+- Biarkan launcher bawaan. `tools/disable.sh` lewati paket yang punya Home saat tidak ada apl
+  terinstal lain yang jawab HOME, dan di Android 6 ke bawah minta `dumpsys activity` saat `cmd package`
+  tidak ada (lihat `docs/TROUBLESHOOTING.md`). Di set ini cek itu harus menyebut
+  `com.haiersoft.launcherproject2995hk` lewat `dumpsys activity`; reporter nonaktifkan paket
+  manual, jadi tidak pernah jalan, dan apakah itu menyebut launcher ini di sini is unverified.
+- Jaga jalur ADB hidup: Ethernet, karena firmware ini tidak punya toggle network-debugging, dan satu
+  sesi sekaligus.
+- Batch dengan reboot di antaranya, bukan satu daftar panjang: begitu `com.tsb.tv` ketahuan.

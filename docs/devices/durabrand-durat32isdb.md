@@ -1,13 +1,13 @@
-# Durabrand DB Android TV 4K (`DURAT32ISDB`, dupont): a one-day owner report
+# Durabrand DB Android TV 4K (`DURAT32ISDB`, dupont): laporan pemilik satu hari
 
-Owner report from
-[#470](https://github.com/Gathin23/cleanyourtv/issues/470): one session and one day of use, no
-launcher installed. It is **not** a tested list in the `examples/` sense - CONTRIBUTING asks for
-several days of living with a list before it goes there - so the packages and the two traps that
-came with them are recorded here instead, and this note can graduate to `examples/` once the owner
-has run it for longer.
+Laporan pemilik
+[#470](https://github.com/Gathin23/cleanyourtv/issues/470): satu sesi dan satu hari pemakaian, tanpa
+launcher terinstal. It is **not** a tested list in the `examples/` sense — CONTRIBUTING asks for
+several days of living with a list before it goes there — jadi paket dan dua jebakan
+dicatat di sini, dan catatan bisa naik ke `examples/` setelah pemilik
+menjalankannya lebih lama.
 
-## Identify the firmware
+## Kenali firmware
 
 | Field | Reported value |
 |---|---|
@@ -19,16 +19,16 @@ has run it for longer.
 | `ro.build.display.id` | `RTM6.230109.232` |
 | Security patch | 2023-08-01 |
 
-The board is the same Haier/CVTE family as
-[`examples/haier-android-tv-dvb2k/`](../../examples/haier-android-tv-dvb2k/debloat.txt) and
-[`examples/haier-h32s80efx/`](../../examples/haier-h32s80efx/debloat.txt), but the package set
-differs: this unit has an mstar disclaimer app, a MediaTek input panel, and a system content
-launcher that the firmware restarts at every boot. Apply those lists here only after checking each
-name with `dumpsys package`.
+Papan keluarga Haier/CVTE sama dengan
+[`examples/haier-android-tv-dvb2k/`](../../examples/haier-android-tv-dvb2k/debloat.txt) dan
+[`examples/haier-h32s80efx/`](../../examples/haier-h32s80efx/debloat.txt), tapi set paket
+berbeda: unit ini punya apl disclaimer mstar, panel input MediaTek, dan launcher konten sistem
+yang firmware restart setiap boot. Terapkan daftar itu di sini hanya setelah cek setiap
+nama dengan `dumpsys package`.
 
-## What the owner disabled
+## Yang dinonaktifkan pemilik
 
-Ten packages, `pm disable-user --user 0`, one day with no breakage reported.
+Sepuluh paket, `pm disable-user --user 0`, satu hari tanpa kerusakan dilaporkan.
 
 | Package | What it is |
 |---|---|
@@ -43,47 +43,46 @@ Ten packages, `pm disable-user --user 0`, one day with no breakage reported.
 | `com.android.printspooler` | Printing (no printer on a TV) |
 | `com.google.android.syncadapters.calendar` | Calendar sync for an account nobody signs in with |
 
-The owner also set the three animation scales to `0.5` and reports free RAM going from 495 MB to
-550-651 MB of 1.34 GB, plus no retail demo, store disclaimer or Haier/Okko promos at boot.
-Netflix, YouTube, Disney+, Max, Prime Video, Jellyfin, HDMI, CEC and casting still worked at the
-end of that session.
+Pemilik juga set tiga skala animasi ke `0.5` dan melaporkan RAM bebas dari 495 MB ke
+550-651 MB dari 1,34 GB, plus tidak ada demo retail, disclaimer toko atau promo Haier/Okko saat boot.
+Netflix, YouTube, Disney+, Max, Prime Video, Jellyfin, HDMI, CEC dan casting masih jalan di
+akhir sesi.
 
-## Left alone, and why
+## Dibiarkan, dan mengapa
 
-- `com.google.android.tvrecommendations` and `com.haier.launcher.haiermatrix` come back on every
-  boot: `com.at.factory.factorymanager` calls `enableApp` for both, and the second is a system app
+- `com.google.android.tvrecommendations` dan `com.haier.launcher.haiermatrix` come back on every
+  boot: `com.at.factory.factorymanager` memanggil `enableApp` untuk keduanya, dan yang kedua apl sistem
   re-enabled during the boot package scan. Disabling them looks like it worked until the next
   restart. ([PR #434](https://github.com/Gathin23/cleanyourtv/pull/434) is the tool that reports
   this kind of drift; until it is merged, check by hand with
   `tools/tv.py 'pm list packages -d | grep -E "tvrecommendations|haiermatrix"'` after a reboot.)
-- `com.haier.tv.hmagicboard` receives the remote's hot keys, and `com.cvte.tv.hkcfac` is the
-  factory app that also receives them - see the trap below before touching either.
-- `com.google.android.tungsten.setupwraith` owns a saved Wi-Fi network on this firmware. Forget and
-  rejoin that network before disabling it, or the TV goes offline for good:
-  see [the setupwraith Wi-Fi entry](../TROUBLESHOOTING.md).
-- `*partnercustomizer` and `com.android.location.fused` were kept.
+- `com.haier.tv.hmagicboard` menerima hot key remote, dan `com.cvte.tv.hkcfac` apl pabrik
+  yang juga menerimanya - lihat jebakan di bawah sebelum sentuh salah satu.
+- `com.google.android.tungsten.setupwraith` punya jaringan Wi-Fi tersimpan di firmware ini. Lupakan dan
+  gabung lagi sebelum nonaktifkan, atau TV offline permanen:
+  lihat [entri Wi-Fi setupwraith](../TROUBLESHOOTING.md).
+- `*partnercustomizer` dan `com.android.location.fused` dipertahankan.
 
-## The Input key belongs to the MediaTek TV app, not to `tvlauncher`
+## Tombol Input milik apl TV MediaTek, bukan `tvlauncher`
 
-The panel behind the remote's Input button is provided by `com.mediatek.wwtv.tvcenter`, not by
-`com.google.android.tvlauncher`. After a launcher swap the Input button therefore keeps working
-even with `tvlauncher` disabled, but the panel is the TV app's own overlay: the reference launcher's
-`InputKeyService` is not needed, and `INPUT_KEY_SERVICE=1` should not be set on this unit on the
-strength of another Haier list.
+Panel di belakang tombol Input remote dari `com.mediatek.wwtv.tvcenter`, bukan
+`com.google.android.tvlauncher`. Setelah swap launcher tombol Input tetap jalan
+meski `tvlauncher` nonaktif, tapi panel overlay apl TV sendiri: `InputKeyService` launcher referensi tidak perlu, dan `INPUT_KEY_SERVICE=1` jangan diset di unit ini berdasarkan
+daftar Haier lain.
 
-## The hidden production menu is the expensive trap
+## Menu produksi tersembunyi jebakan mahal
 
-Opening `com.cvte.tv.hkcfac` (a "production" app with a launcher icon nobody uses) sets
-`customer_factory_mode=true` in `/vendor/tvcertificate/fdata.ini` and
-`vendor.mtk.factory.disable.input=1`. Three things follow:
+Membuka `com.cvte.tv.hkcfac` (aplik "production" dengan ikon launcher yang tidak dipakai) set
+`customer_factory_mode=true` di `/vendor/tvcertificate/fdata.ini` dan
+`vendor.mtk.factory.disable.input=1`. Tiga hal mengikuti:
 
-- the Input key stops working and CEC switches off;
-- on the next boot `factorymanager` disables Play services, Netflix, `com.google.android.katniss`
-  and `com.google.android.apps.mediashell`, and the shell cannot re-enable those packages;
-- casting and the store stay dead until the factory mode is cleared.
+- tombol Input berhenti dan CEC mati;
+- boot berikutnya `factorymanager` menonaktifkan Play services, Netflix, `com.google.android.katniss`
+  dan `com.google.android.apps.mediashell`, dan shell tidak bisa aktifkan paket itu lagi;
+- casting dan store mati sampai factory mode dibersihkan.
 
-The way out without root, as reported: start the app, send factory-exit keycode 218 twice **while it
-is in front**, reboot, then turn CEC back on:
+Jalan keluar tanpa root, dilaporkan: start apl, kirim keycode exit factory 218 dua kali **saat
+di depan**, reboot, lalu nyalakan CEC lagi:
 
 ```sh
 tools/tv.py 'am start -n com.cvte.tv.hkcfac/.MainActivity'
@@ -92,16 +91,16 @@ tools/tv.py --reboot               # returns once ADB accepts it; wait for the T
 tools/tv.py 'settings put global hdmi_control_enabled 1'
 ```
 
-The exit keycode only works with the app in the foreground, so the two key events must not be sent
-before it has drawn. The same trap in prose, next to the other "commands that break things" entries,
-is in [TROUBLESHOOTING.md](../TROUBLESHOOTING.md).
+Keycode exit hanya jalan dengan apl di foreground, jadi dua key event jangan dikirim
+sebelum digambar. Jebakan sama dalam prosa, di entri "perintah yang merusak" lain,
+ada di [TROUBLESHOOTING.md](../TROUBLESHOOTING.md).
 
-## Validation scope
+## Ruang lingkup validasi
 
-- One day of use, one owner, no multi-day soak and no reboot campaign beyond the factory-mode exit.
-- No custom launcher was installed: Projectivy worked, the owner went back to the stock launcher by
-  preference. Home handover, the launcher's Input/Home helpers and `restore.sh` were not exercised
-  on this unit.
-- The package list is the owner's, reproduced here as reported; it was not re-read from the TV by
-  this note's author, and no screenshot of `dumpsys package` accompanied it.
-- The RAM figures are the owner's, measured before and after in one session.
+- Satu hari pemakaian, satu pemilik, tanpa soak multi-hari dan tanpa kampanye reboot di luar exit factory-mode.
+- Tidak ada launcher kustom terinstal: Projectivy jalan, pemilik kembali launcher bawaan
+  preferensi. Serah terima Home, helper Input/Home launcher dan `restore.sh` tidak dilatih
+  di unit ini.
+- Daftar paket milik pemilik, direproduksi di sini dilaporkan; tidak dibaca ulang dari TV oleh
+  penulis catatan, dan tidak ada screenshot `dumpsys package`.
+- Angka RAM milik pemilik, diukur sebelum dan sesudah satu sesi.

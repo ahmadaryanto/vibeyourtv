@@ -1,3 +1,9 @@
+# Haier Android TV DVB2K: catatan perangkat
+
+Ringkasan Bahasa Indonesia: catatan untuk TV Haier DVB2K (Android TV) — identitas firmware, launcher pengganti, dan paket yang aman dinonaktifkan vs yang harus tetap aktif. Bukan daftar `examples/` sampai beberapa hari pemakaian.
+
+---
+
 # Haier (HaierATVT32DVB, dupont): a Google TV 14 observed-state note
 
 Observed-state note from a Haier set that shares the Haier/CVTE `dupont` platform documented in

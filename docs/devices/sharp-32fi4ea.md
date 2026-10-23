@@ -1,46 +1,46 @@
 # Sharp 32FI4EA / AQUOS-TVE19G (Android TV 11)
 
-Initial device report for two owner-reported Sharp 32FI4EA televisions. Both report `AQUOS-TVE19G` and Android 11 over ADB.
+Laporan perangkat awal untuk dua TV Sharp 32FI4EA milik pemilik. Keduanya melaporkan `AQUOS-TVE19G` dan Android 11 lewat ADB.
 
 - Set A: build `RTOB.250806.001`, incremental `13890547`.
 - Set B: build `RTOB.240311.001`, incremental `11556578`.
-- Testing date: 2026-10-21. The owner confirms both sets were restarted and apps tested.
+- Tanggal uji: 2026-10-21. Pemilik mengonfirmasi kedua set sudah restart dan aplikasi diuji.
 
-Several days of normal use have not yet been documented. These are initial device notes, not a verified reusable debloat list.
+Beberapa hari pemakaian normal belum didokumentasikan. Ini catatan perangkat awal, bukan daftar debloat reusable yang terverifikasi.
 
-## Launcher and TV packages
+## Launcher dan paket TV
 
-- Stock HOME: `com.google.android.tvlauncher/.MainActivity`.
-- Replacement HOME: `com.gathin.tvhome/.MainActivity` (reference launcher v2.4, built targeting SDK 34).
+- HOME bawaan: `com.google.android.tvlauncher/.MainActivity`.
+- HOME pengganti: `com.gathin.tvhome/.MainActivity` (launcher referensi v2.4, dibangun menarget SDK 34).
 - Live TV: `com.mediatek.wwtv.tvcenter`.
-- TV input: `com.mediatek.tvinput`.
-- TV service: `com.mediatek.tv.service`.
+- Input TV: `com.mediatek.tvinput`.
+- Layanan TV: `com.mediatek.tv.service`.
 
-On set A, selecting the replacement HOME alone did not override the stock launcher. The replacement was installed and opened successfully before disabling the stock launcher. Keep the stock launcher installed with its data for recovery. `com.google.android.setupwraith` was retained; it was not reported as a HOME handler during inspection.
+Di set A, memilih HOME pengganti saja tidak menggantikan launcher bawaan. Launcher pengganti diinstal dan dibuka sukses sebelum launcher bawaan dinonaktifkan. Biarkan launcher bawaan terinstal beserta datanya untuk pemulihan. `com.google.android.setupwraith` dipertahankan; tidak dilaporkan sebagai handler HOME saat inspeksi.
 
-The dock was configured for YouTube, Netflix, Plex, Prime Video and TV 2 Play. HOME resolution, Settings access and the input menu were checked on both sets. The input menu listed HDMI 1-3, Component, Composite and Live TV; this does not establish HDMI signal or HDMI-CEC functionality. No accessibility helper was needed for HOME.
+Dock dikonfigurasi untuk YouTube, Netflix, Plex, Prime Video dan TV 2 Play. Resolusi HOME, akses Settings dan menu input dicek di kedua set. Menu input mencantumkan HDMI 1-3, Component, Composite dan Live TV; ini tidak membuktikan sinyal HDMI atau fungsi HDMI-CEC. Tidak perlu helper aksesibilitas untuk HOME.
 
-## Packages actually disabled during this setup
+## Paket yang benar-benar dinonaktifkan saat setup ini
 
-The following were disabled with `pm disable-user --user 0`, not uninstalled:
+Berikut dinonaktifkan dengan `pm disable-user --user 0`, bukan di-uninstall:
 
-- Both sets: `com.google.android.tvlauncher` - stock launcher, only after verifying the replacement.
-- Both sets: `fusion.android.tv.demo` - shop/demo app at `/system/app/UMCShopMode`.
-- Both sets: `com.google.android.feedback` - feedback component.
-- Set A only: `tv.anoki.acr.controller` - ACR controller; absent on set B.
+- Kedua set: `com.google.android.tvlauncher` - launcher bawaan, hanya setelah launcher pengganti terverifikasi.
+- Kedua set: `fusion.android.tv.demo` - aplikasi toko/demo di `/system/app/UMCShopMode`.
+- Kedua set: `com.google.android.feedback` - komponen feedback.
+- Hanya set A: `tv.anoki.acr.controller` - pengontrol ACR; tidak ada di set B.
 
-These package names record what was changed, not a recommendation to run a blanket disable command on other firmware. Freeview components were already disabled before these changes and are not attributed to this setup. `com.google.android.tvrecommendations` was retained, including its notification-related activities.
+Nama paket ini mencatat apa yang diubah, bukan rekomendasi menjalankan perintah disable blanket di firmware lain. Komponen Freeview sudah nonaktif sebelum perubahan ini dan tidak diatribusikan ke setup ini. `com.google.android.tvrecommendations` dipertahankan, termasuk aktivitas terkait notifikasi.
 
-## Preserved functionality and test limits
+## Fungsi yang dipertahankan dan batas uji
 
-Streaming apps, Google Play Store and services, Chromecast, Assistant, system-update components, TV/input services, keyboard and Bluetooth components were retained. Retention does not imply that casting, voice control or firmware installation was independently tested.
+Aplikasi streaming, Google Play Store dan layanan, Chromecast, Assistant, komponen update sistem, layanan TV/input, keyboard dan Bluetooth dipertahankan. Mempertahankan tidak berarti casting, kontrol suara, atau instalasi firmware diuji terpisah.
 
-The owner confirmed streaming playback and the physical Home, Input, Netflix and YouTube buttons on set A, and subsequently confirmed reboot and app testing on both sets. Physical shortcut buttons were not separately confirmed for set B. No faults requiring package re-enabling were reported during these initial checks. No measured performance improvement or long-term stability is claimed.
+Pemilik mengonfirmasi pemutaran streaming dan tombol fisik Home, Input, Netflix dan YouTube di set A, lalu mengonfirmasi reboot dan uji aplikasi di kedua set. Tombol pintasan fisik tidak dikonfirmasi terpisah untuk set B. Tidak ada kerusakan yang butuh paket diaktifkan lagi dilaporkan saat cek awal ini. Tidak ada klaim peningkatan performa terukur atau stabilitas jangka panjang.
 
-AdGuard Private DNS was also configured and validated by Android on both sets as an optional household preference. It is not part of the package changes or a requirement for this launcher.
+AdGuard Private DNS juga dikonfigurasi dan divalidasi Android di kedua set sebagai preferensi rumah tangga opsional. Bukan bagian perubahan paket atau syarat launcher ini.
 
-## Recovery
+## Pemulihan
 
-Save each set's original settings and enabled/disabled package state before making changes. Re-enable a changed package with `adb shell pm enable --user 0 PACKAGE`. To restore the stock home, re-enable `com.google.android.tvlauncher` and select `com.google.android.tvlauncher/.MainActivity` as HOME. Prefer the recorded original state over enabling every package indiscriminately.
+Simpan pengaturan asli dan status paket enabled/disabled setiap set sebelum mengubah. Aktifkan kembali paket yang diubah dengan `adb shell pm enable --user 0 PACKAGE`. Untuk home bawaan, aktifkan lagi `com.google.android.tvlauncher` dan pilih `com.google.android.tvlauncher/.MainActivity` sebagai HOME. Utamakan state asli tercatat alih-alih mengaktifkan semua paket sembarangan.
 
-A tested list under `examples/` can follow after several days of normal use and further confirmation of the retained TV features.
+Daftar teruji di `examples/` bisa menyusul setelah beberapa hari pemakaian normal dan konfirmasi lebih lanjut fitur TV yang dipertahankan.

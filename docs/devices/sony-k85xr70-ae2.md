@@ -1,3 +1,9 @@
+# Sony K-85XR70 (`BRAVIA 4K AE2`, China): UI 1080p, dan density yang kembali 640
+
+Ringkasan Bahasa Indonesia: UI Android 1080p normal di panel 4K; setelah reboot density bisa loncat ke 640. Workaround: `wm density 320` lalu `settings put secure display_density_forced 320`, reboot. Bukan entri `examples/` — catatan display.
+
+---
+
 # Sony K-85XR70 (`BRAVIA 4K AE2`, China): a 1080p UI, and a density that comes back as 640
 
 Two reports from the same owner of the same set: the launcher compatibility report in

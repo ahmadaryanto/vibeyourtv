@@ -1,3 +1,11 @@
+# Hi VHIX 43F169MSY: catatan perangkat
+
+Ringkasan Bahasa Indonesia: TV Hi VHIX — paket dinonaktifkan, Home, dan peringatan menonaktifkan paket yang menjalankan fitur TV.
+
+Disabling them loses the corresponding features.
+
+---
+
 # Hi VHIX-43F169MSY: Yandex TV on a 1 GB CVTE board
 
 Observed on one owner-operated set on 20–22 October 2026. This is a device report,

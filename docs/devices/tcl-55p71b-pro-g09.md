@@ -1,10 +1,10 @@
-# TCL 55P71B Pro: second G09 unit, key filtering kills remote key repeat
+# TCL 55P71B Pro: unit G09 kedua, filter tombol membunuh repeat remote
 
-Checked on a real TV in one session on 2026-10-22 (India, Shan7anu_5G Wi-Fi), after a factory reset,
-then re-verified the next day. Companion list: [`examples/tcl-g09-google-tv/`](../../examples/tcl-g09-google-tv),
-whose packages and remote-button table matched this unit.
+Dicek di TV sungguhan satu sesi 2026-10-22 (India, Wi-Fi Shan7anu_5G), setelah factory reset,
+lalu diverifikasi ulang hari berikutnya. Daftar pendamping: [`examples/tcl-g09-google-tv/`](../../examples/tcl-g09-google-tv),
+paket dan tabel tombol remote cocok unit ini.
 
-## Identify the firmware, not just the generic model name
+## Kenali firmware, bukan hanya nama model generik
 
 | Field | Observed value |
 |---|---|
@@ -21,35 +21,35 @@ whose packages and remote-button table matched this unit.
 | `ro.product.cpu.abilist` | `armeabi-v7a,armeabi` only (32-bit; no `arm64`, no `x86`) |
 | `ro.adb.secure` | `1` |
 
-The Brazil unit in `examples/tcl-g09-google-tv/` reports the same product name on firmware
-`STT2.230203.001 AS24`, so this is the same firmware family one build earlier. `Smart TV Pro` and
-`G09` alone do not pin the retail model — several TCL ranges share them.
+Unit Brazil di `examples/tcl-g09-google-tv/` melaporkan nama product sama di firmware
+`STT2.230203.001 AS24`, jadi keluarga firmware sama satu build lebih awal. `Smart TV Pro` dan
+`G09` saja tidak menjamin model ritel — beberapa lini TCL membaginya.
 
-## Held-down volume does not repeat while any key-filtering service is bound
+## Volume ditahan tidak repeat selama layanan filter tombol terikat
 
-The finding this note exists for, and the reason for `key_filter` in `launcher/` (issue #763):
+Temuan catatan ini ada, dan alasan `key_filter` di `launcher/` (issue #763):
 
-- `HomeKeyService` + `InputKeyService` enabled → holding volume up/down on the remote steps once per
-  press.
-- Either one alone → still broken.
-- All accessibility services off (`enabled_accessibility_services` empty, `accessibility_enabled 0`)
-  → repeat works again.
+- `HomeKeyService` + `InputKeyService` aktif → tahan volume naik/turun di remote langkah sekali per
+  tekan.
+- Salah satu saja → masih rusak.
+- Semua layanan aksesibilitas mati (`enabled_accessibility_services` kosong, `accessibility_enabled 0`)
+  → repeat jalan lagi.
 
-On this build the `AccessibilityInputFilter` path drops key auto-repeat for any service that requests
-`FLAG_REQUEST_FILTER_KEY_EVENTS`; it is all-or-nothing. `RemoteKeys.applyKeyFilter` lets the services
-stay bound with the flag stripped (`"key_filter": false` in a theme), which is the configuration this
-unit ended on — the tradeoff is the remote buttons below stay dead, the user's pick.
+Di build ini jalur `AccessibilityInputFilter` menjatuhkan auto-repeat tombol untuk layanan yang minta
+`FLAG_REQUEST_FILTER_KEY_EVENTS`; all-or-nothing. `RemoteKeys.applyKeyFilter` biarkan layanan
+tetap terikat dengan flag dicabut (`"key_filter": false` di tema), konfigurasi unit ini akhirnya —
+tradeoff tombol remote di bawah mati, pilihan pengguna.
 
-## The volume tick is gone with the stock launcher
+## Tick volume hilang dengan launcher bawaan
 
-The beep the TV played on each volume press disappeared once launcherx was disabled, and nothing got it
-back: every debloated package was re-enabled in batches (`pm enable`), the TV rebooted, and no logcat
-line even attempted a sound on a press (`com.tcl.systemui.shared` still draws the volume bar).
-`STREAM_SYSTEM` reports `streamVolume:1` on this build regardless of `volume_system`, but that is a
-diagnostic dead end rather than the mechanism — the tick appears to have been produced by the stock
-home, not any single package.
+Beep TV setiap tekan volume hilang setelah launcherx nonaktif, dan tidak kembali: setiap paket debloat
+diaktifkan lagi per batch (`pm enable`), TV reboot, tidak ada baris logcat
+coba suara saat tekan (`com.tcl.systemui.shared` masih gambar bar volume).
+`STREAM_SYSTEM` melaporkan `streamVolume:1` di build ini apapun `volume_system`, tapi itu
+ujung buntu diagnostik — tick tampaknya dari home bawaan,
+bukan satu paket.
 
-## Remote buttons
+## Tombol remote
 
 | Button | Keycode | Scancode | Note |
 |---|---|---|---|
@@ -58,31 +58,31 @@ home, not any single package.
 | Prime Video | 4099 | 473 | same path (from the G09 example's table) |
 | YouTube | 4065 | 569 | same path |
 
-Captured with `tools/tv.py 'logcat -d | grep handleKeyBeforeQueueing'` while pressing the real remote —
-injected keys never reach accessibility filtering. Volume keys arrive as `source=0x301, deviceId=6`,
+Ditangkap dengan `tools/tv.py 'logcat -d | grep handleKeyBeforeQueueing'` saat tekan remote sungguhan —
+tombol disuntik tidak pernah sampai filter aksesibilitas. Tombol volume datang `source=0x301, deviceId=6`,
 scanCode 115.
 
-## Home handover
+## Serah terima Home
 
-Same as the G09 example: `launcherx` owns Home (priority 2), `setupwraith/.RecoveryActivity` claims it
-the moment launcherx is disabled, and the saved Wi-Fi network belonged to setupwraith after the reset —
-`dumpsys wifi | grep -o 'cname=[^ ]*'` showed `cname=com.google.android.tungsten.setupwraith` until the
-network was forgotten and re-joined, after which it read `cname=com.android.tv.settings`. Only then was
-setupwraith disabled and `build-and-install.sh` re-run; its own recovery check caught the failed
-handover and put launcherx back the first time, exactly as designed.
+Sama contoh G09: `launcherx` punya Home (priority 2), `setupwraith/.RecoveryActivity` klaim
+saat launcherx nonaktif, dan jaringan Wi-Fi tersimpan milik setupwraith setelah reset —
+`dumpsys wifi | grep -o 'cname=[^ ]*'` menampilkan `cname=com.google.android.tungsten.setupwraith` sampai
+jaringan dilupakan dan gabung lagi, lalu `cname=com.android.tv.settings`. Baru then setupwraith
+nonaktif dan `build-and-install.sh` dijalankan ulang; cek recovery sendiri menangkap serah terima
+gagal dan mengembalikan launcherx pertama kali, seperti dirancang.
 
-## What was kept that the example disables
+## Yang dipertahankan yang contoh nonaktifkan
 
-Owner's choice, verified working: `com.google.android.apps.mediashell` (Chromecast), `com.tcl.miracast`
+Pilihan pemilik, diverifikasi jalan: `com.google.android.apps.mediashell` (Chromecast), `com.tcl.miracast`
 + `com.tcl.magiconnectfree` (mirroring), `com.tcl.airplay2` + `com.amlogic.airplay` (AirPlay),
-`com.google.android.katniss` (Assistant), `com.tcl.hearaid`, `com.tcl.ttvs` (firmware updates; also owns
+`com.google.android.katniss` (Assistant), `com.tcl.hearaid`, `com.tcl.ttvs` (update firmware; juga punya
 `KeyDownBehaviorReceiver`), `com.google.android.tv.remote.service`, `com.google.android.feedback`.
-The example's own disabled set applied cleanly here too.
+Set disabled contoh sendiri juga bersih di sini.
 
 ## Limits
 
-- One unit, two days; the keep-list above is preference, not a recommendation either way.
-- The tick was not recovered; the mechanism is unknown, so do not assume the same packages are
-  responsible on other G09 builds.
-- `key_filter` was verified on the launcher's own build from `main` plus the patch under #763;
-  it does not exist in older builds — the manual alternative is disabling both services.
+- Satu unit, dua hari; daftar keep di atas preferensi, bukan rekomendasi.
+- Tick tidak dipulihkan; mekanisme tidak diketahui, jangan anggap paket sama
+  bertanggung jawab di build G09 lain.
+- `key_filter` diverifikasi di build launcher sendiri dari `main` plus patch #763;
+  tidak ada di build lebih lama — alternatif manual nonaktifkan kedua layanan.

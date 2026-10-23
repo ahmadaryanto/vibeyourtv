@@ -1,3 +1,9 @@
+# Samsung Tizen: bukan Android
+
+Ringkasan Bahasa Indonesia: penjelasan bahwa Tizen bukan target VibeYourTV/Android; opsi alternatif untuk Samsung Smart TV.
+
+---
+
 # Samsung Tizen: AU8000 reconnaissance and DU7000 custom-app testing
 
 > **TL;DR: Don't spend time on this repo expecting to debloat a Samsung Tizen TV or replace

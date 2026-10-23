@@ -1,3 +1,11 @@
+# FPD CG50-C3: daftar satu hari, dan remote dengan dua tombol yang tidak pernah dipetakan Android
+
+Ringkasan (Bahasa Indonesia): TV 50 inci di Kanada; `ro.product.model` `EcoTV Pro A` (papan KTC). Pemilik menjalankan alur VibeYourTV (`PROMPT.md`, skrip PowerShell, `tools/tv.py`) pada hari yang sama dengan issue #475 — **bukan** entri `examples/` karena belum ada beberapa hari pemakaian. USB debugging saja membuka ADB jaringan di port 5555; `setupwraith` menyimpan jaringan yang bukan yang aktif (cek `dumpsys wifi` + `cmd wifi status`). Remote RC-36: tombol gear (scancode 240, `KEY_UNKNOWN`) dan notifications (362, `KEY_PROGRAM`) butuh `HOME_KEY_SERVICE=1` dan `settings_key_scancodes` di `config.xml`.
+
+Teks asli Inggris (diagnostik dan daftar paket) di bawah.
+
+---
+
 # FPD CG50-C3: a one-day list, and a remote with two buttons Android never maps
 
 The `FPD CG50-C3` is a 50-inch set sold in Canada. The brand is not the builder: `ro.product.model`

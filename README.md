@@ -1,6 +1,55 @@
 > **VibeYourTV** adalah fork dari [CleanYourTV](https://github.com/Gathin23/cleanyourtv) karya **Gathin** (lisensi MIT, hak cipta Gathin tetap utuh). Diterjemahkan dan dikembangkan oleh Ahmad Jeffry Aryanto ([@orpheuskaze](https://x.com/orpheuskaze)).
 
 <p align="center">
+  <img src="docs/images/vibeyourtv-home.jpg" alt="Beranda VibeYourTV: sapaan dengan nama, harga BTC di bawah tanggal, dock kaca buram lima aplikasi, wallpaper foto sendiri" width="800">
+</p>
+
+*Sapaan memakai namamu (`greeting_name`). Harga BTC hidup di bawah tanggal (`crypto_ticker`). Dock-nya kaca buram, berisi aplikasi yang kamu pilih. Wallpaper-nya fotomu sendiri.*
+
+## Tutorial: Pakai Grok Bot
+
+Grok Bot adalah asisten AI yang bisa menjalankan perintah di komputermu (Windows atau Mac) setelah komputer itu terhubung ke bot. Tidak perlu aplikasi di ponsel. Hasilnya seperti [tangkapan layar di atas](docs/images/vibeyourtv-home.jpg): sapaan dengan namamu, harga BTC di bawah tanggal, dock kaca buram, dan fotomu sebagai wallpaper.
+
+### 1. Di TV
+
+Buka **Settings → System** atau **Device Preferences → About**. Tekan **Build** atau **Android TV OS build** tujuh kali sampai opsi pengembang terbuka. Kembali, masuk **Developer options**, lalu nyalakan **USB debugging** dan, kalau ada, **Network debugging** atau debugging lewat Wi-Fi. Catat IP TV di **Settings → Network**. Biarkan TV menyala.
+
+### 2. Di komputer
+
+Pastikan komputer dan TV ada di Wi-Fi yang sama. Hubungkan komputer itu ke Grok Bot supaya bot bisa menjalankan perintah di sana.
+
+### 3. Tambahkan skill, atau tempel repo
+
+Pasang skill dari [`grok-bot-skill/`](grok-bot-skill/README.md) ke Grok Bot (langkahnya ada di README itu), atau tempel saja tautan repo ini ke obrolan: <https://github.com/ahmadaryanto/vibeyourtv>.
+
+### 4. Contoh yang bisa disalin
+
+Ganti `192.168.x.x` dengan IP TV-mu. Sesuaikan daftar aplikasi dan nama.
+
+```text
+Bersihkan TV gua pakai repo ini, IP TV 192.168.x.x, jangan pakai aplikasi HP
+Aplikasi yang mau gua simpan: YouTube, Netflix, ...
+Install launcher-nya dan jadikan Home
+Bebasin storage, hapus aplikasi yang nggak kepake
+Pakai foto ini jadi wallpaper, pastikan semua wajah kelihatan
+Bikin tombolnya minimalis kayak iPad
+Tambah sapaan Good morning/night + nama gua
+Tampilkan harga BTC live
+```
+
+### 5. Yang akan terjadi
+
+Grok Bot memasang adb (platform-tools) di komputer, lalu menyambung ke TV. Di TV muncul **Allow USB debugging?**: centang **Always allow**, lalu izinkan. Bot mencadangkan daftar aplikasi lebih dulu dan bertanya sebelum menghapus apa pun. Yang dimatikan dengan `pm disable-user` bisa dikembalikan. Yang benar-benar dihapus tidak.
+
+### 6. Kalau macet
+
+| Gejala | Yang dicoba |
+|---|---|
+| **device offline** | Nyalakan TV (bukan standby yang memutus ADB), pastikan satu Wi-Fi, lalu sambungkan lagi ke `IP:5555`. |
+| **Penyimpanan penuh** | Minta bot mengosongkan cache aplikasi yang besar. Hapus aplikasi hanya yang memang tidak terpakai, dan hanya setelah kamu setuju. |
+| **Mau kembali seperti semula** | Jalankan `tools/restore.sh` dengan daftar yang tadi diterapkan. Penjelasannya di [Mengembalikan TV kamu](#mengembalikan-tv-kamu). Dari TV, Settings → Apps juga bisa menyalakan lagi paket yang dimatikan. |
+
+<p align="center">
   <a href="https://cleanyour.tv"><img src="https://raw.githubusercontent.com/Gathin23/cleanyourtv/main/docs/banner.png" alt="CleanYourTV. TV-mu, tanpa iklan. Bersihkan bloatware dari Android TV atau Google TV lewat Wi-Fi dan ganti layar beranda yang penuh iklan dengan peluncur bersih yang mirip Apple TV. Tanpa root, tanpa kabel, tidak ada yang dicopot, dan restore satu baris." width="800"></a>
 </p>
 
@@ -41,13 +90,7 @@ ini ([#1004](https://github.com/Gathin23/cleanyourtv/issues/1004)).
 
 ## Sesuaikan sendiri
 
-Layar beranda ini bisa kamu ubah tanpa menyentuh kode. Ini tampilannya di Sharp AQUOS Google TV:
-
-<p align="center">
-  <img src="docs/images/vibeyourtv-home.jpg" alt="Beranda VibeYourTV: sapaan dengan nama, harga BTC di bawah tanggal, dock kaca buram lima aplikasi, wallpaper foto sendiri" width="800">
-</p>
-
-*Sapaan memakai namamu (`greeting_name`). Harga BTC hidup di bawah tanggal (`crypto_ticker`). Dock-nya kaca buram, berisi aplikasi yang kamu pilih. Wallpaper-nya fotomu sendiri.*
+Layar beranda ini bisa kamu ubah tanpa menyentuh kode. Contoh di Sharp AQUOS Google TV ada di [tangkapan layar di atas](docs/images/vibeyourtv-home.jpg).
 
 - **Ganti tema.** Pilih tampilan di `themes/` lalu pasang dengan `tools/theme.sh`. Warna, dock, dan jumlah kolom ikut tema. Contohnya di bawah.
 - **Pakai fotomu sebagai wallpaper.** Simpan gambar 16:9 (1920×1080 sudah pas) sebagai `wallpaper.jpg` di folder tema. Kalau ada wajah, taruh di sepertiga tengah dan sisakan ruang di tepi. TV memotong pinggir, jadi jangan tempel wajah di ujung kiri atau kanan.

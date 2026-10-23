@@ -1,33 +1,31 @@
 # Prayer Times
 
-Today's five prayer times and sunrise for one city, full screen on the TV, with the next prayer highlighted and a
-countdown to it, plus today's Gregorian and Hijri dates. Each prayer has its Arabic and English name. For the
-[Clean Your TV](../../README.md) launcher it declares a [module card](../../docs/modules.md), so once you answer
-**Show card** its tile reads "Prayer Times" with a green glow; on any other Android TV home it is an ordinary app.
+Lima waktu sholat hari ini dan sunrise untuk satu kota, full screen di TV, sholat berikutnya disorot dengan
+countdown, plus tanggal Gregorian dan Hijriah hari ini. Setiap sholat punya nama Arab dan Inggris. Untuk
+launcher [VibeYourTV](../../README.md) add-on mendeklarasikan [module card](../../docs/modules.md); setelah
+jawab **Show card**, tile-nya "Prayer Times" dengan glow hijau; di home Android TV lain app biasa.
 
-![The prayer times page](https://raw.githubusercontent.com/majnioui/cleanyourtv-contrib/pr-assets/addon-prayer-times/prayer-times.png)
+![The prayer times page](https://raw.githubusercontent.com/majnioui/VibeYourTV-contrib/pr-assets/addon-prayer-times/prayer-times.png)
 
-- **Data** comes from [Aladhan](https://aladhan.com/), which needs no account or key.
-- **The city and the calculation method** are set before you build, in `app/src/main/res/values/config.xml`:
-  `latitude`, `longitude`, `place` (the name shown) and `method`, Aladhan's
-  [method number](https://aladhan.com/calculation-methods) (2 ISNA, 3 Muslim World League, 4 Umm al-Qura,
-  5 Egyptian, 13 Turkey, 21 Morocco...). The default is Casablanca with the Morocco method.
-- It reads Aladhan when the page opens and again after midnight. The countdown updates every minute.
-  Offline, the last times stay on screen.
-- 24-hour times, English words.
+- **Data** dari [Aladhan](https://aladhan.com/), tanpa akun atau key.
+- **Kota dan metode perhitungan** di-set sebelum build, di `app/src/main/res/values/config.xml`:
+  `latitude`, `longitude`, `place` (nama yang ditampilkan) dan `method`, [nomor metode](https://aladhan.com/calculation-methods) Aladhan (2 ISNA, 3 Muslim World League, 4 Umm al-Qura, 5 Egyptian, 13 Turkey, 21 Morocco...). Default Casablanca metode Morocco.
+- Membaca Aladhan saat halaman dibuka dan lagi setelah tengah malam. Countdown update tiap menit.
+  Offline, waktu terakhir tetap di layar.
+- Format 24 jam, teks Inggris.
 
-## Permissions
+## Permissions (izin)
 
-| Permission | Why |
+| Permission | Alasan |
 |---|---|
-| `INTERNET` | Aladhan: today's times for the configured coordinates. |
+| `INTERNET` | Aladhan: waktu hari ini untuk koordinat di config. |
 
-That is all. What is sent: today's date, the latitude and longitude from `config.xml`, and the method number. No
-account, no telemetry, no ads, no background service, no location permission. Backups are off.
+Itu saja. Yang dikirim: tanggal hari ini, latitude/longitude dari `config.xml`, nomor metode. Tanpa
+akun, telemetri, iklan, layanan background, permission lokasi. Backup mati.
 
-## Build and install
+## Build dan pasang
 
-JDK 17 and Android SDK platform 34 with build-tools 34.0.0, as for the launcher:
+JDK 17 dan Android SDK platform 34 dengan build-tools 34.0.0, seperti launcher:
 
 ```bash
 cd addons/prayer-times && ./gradlew assembleRelease
@@ -35,21 +33,20 @@ TV_HOST=<tv ip> ../../tools/venv/bin/python -I ../../tools/tv.py --push app/buil
 TV_HOST=<tv ip> ../../tools/venv/bin/python -I ../../tools/tv.py 'pm install -r /data/local/tmp/addon.apk; rm -f /data/local/tmp/addon.apk'
 ```
 
-Press Home: the launcher asks once whether to show the card. Change the answer later by holding OK on
-Settings, then Module cards.
+Tekan Home: launcher tanya sekali apakah card ditampilkan. Ubah jawaban nanti dengan hold OK di
+Settings, lalu Module cards.
 
-The release build is signed with the debug key so it installs over ADB like the launcher. Sign your own builds
-with your own key if you hand them out; the launcher pins its Show answer to the signing key.
+Release build ditandatangani debug key agar pasang lewat ADB seperti launcher. Tanda tangani build sendiri
+dengan key sendiri jika dibagikan; launcher pin jawaban Show ke signing key.
 
 ## Credits
 
-Prayer icons: [Lucide](https://lucide.dev) (ISC) and [Feather](https://feathericons.com) (MIT). Font: Outfit
+Ikon sholat: [Lucide](https://lucide.dev) (ISC) dan [Feather](https://feathericons.com) (MIT). Font: Outfit
 (SIL Open Font License, `FONT-LICENSE-OFL.txt`).
 
-## Tested on
+## Diuji di
 
-Xiaomi TV (MiTV-MOOR2), Google TV 11, RTM5.220609.003: the page, the countdown, the card prompt and the card
-shown in the launcher's dock.
+Xiaomi TV (MiTV-MOOR2), Google TV 11, RTM5.220609.003: halaman, countdown, prompt card, card di dock launcher.
 
 ## Maintainer
 

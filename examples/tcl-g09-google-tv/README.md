@@ -1,18 +1,18 @@
 # TCL Smart TV Pro G09 (Google TV, Android 12)
 
 UK firmware `G09_4K_GB` (STT2.230203.001 AS24, Amlogic T5M, 2 GB RAM), set up in Brazil. Both halves
-work on this set: the debloat list and the Clean Your TV launcher as Home. Tested on 19 October 2026,
+work on this set: the debloat list and the VibeYourTV launcher as Home. Tested on 19 October 2026,
 including a reboot.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 35 packages that were disabled, grouped and commented |
+| `debloat.txt` | 35 packages that were disabled, grouped and commented |
 | `config.json` | Dock order, hidden apps, Live TV app, columns; push it with `tools/theme.sh` |
 
-All commands run from the repo root, with the TV's IP in `TV_HOST`. USB debugging must be on while you
+Semua perintah dari root repo, with the TV's IP in `TV_HOST`. USB debugging must be on while you
 run them (Settings → System → Developer options).
 
-## Install, from scratch or again
+## Instal, dari nol atau ulang
 
 The order matters: the setup wizard (setupwraith) is disabled while Google TV's home still owns Home,
 then `build-and-install.sh` starts the new launcher and only then disables launcherx.
@@ -26,7 +26,7 @@ TV_HOST=<tv-ip> tools/venv/bin/python -I tools/tv.py 'settings put secure screen
 
 The last line swaps the Ambient screensaver (`dreamx`, disabled by the list) for the launcher's Clock.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<tv-ip> tools/restore.sh examples/tcl-g09-google-tv/debloat.txt com.google.android.apps.tv.launcherx
@@ -37,7 +37,7 @@ The launcher stays installed but is no longer Home. Never re-enable just
 `com.google.android.tungsten.setupwraith` on its own while the new launcher is Home; `restore.sh` brings
 Google TV's home back first.
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 ```bash
 TV_HOST=<tv-ip> tools/venv/bin/python -I tools/tv.py 'pm enable com.tcl.ui_mediaCenter'
@@ -91,7 +91,7 @@ service stay bound with filtering off, which is the repeat-keeping half of that 
 [the unit's note](../../docs/devices/tcl-55p71b-pro-g09.md). The same unit also lost the volume beep for
 good when launcherx was disabled — re-enabling every debloated package did not bring it back.
 
-## Notes for this set
+## Catatan for this set
 
 - The remote's Input button keeps working without Google TV's home: TCL draws that panel itself.
   `INPUT_KEY_SERVICE` is only needed for the app buttons above.

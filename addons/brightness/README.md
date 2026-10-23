@@ -1,7 +1,7 @@
 # Brightness
 
 Dims the whole picture below what the TV's own settings allow, and warms it at night, over every app, Live
-TV and the home screen. For the [Clean Your TV](../../README.md) launcher it declares a
+TV and the home screen. For the [VibeYourTV](../../README.md) launcher it declares a
 [module card](../../docs/modules.md): once you answer **Show card** its tile reads "Brightness" with an amber
 glow. On any other Android TV home it is an ordinary app.
 
@@ -51,7 +51,7 @@ black at the missing brightness with the amber folded in for warmth. It never ta
 the remote keeps controlling whatever is on screen. A foreground service holds the window and switches night
 mode at the scheduled times, and it stops itself when there is nothing to draw and no schedule to follow.
 
-## Permissions
+## Permissions (izin)
 
 | Permission | Why |
 |---|---|
@@ -66,7 +66,7 @@ No internet permission: nothing leaves the TV. No accounts, telemetry, ads or li
 app's own storage (backups are off). The `OffReceiver` is open to any sender on purpose: it can only switch
 dimming off.
 
-## Build and install
+## Build dan pasang
 
 JDK 17 and Android SDK platform 34 with build-tools 34.0.0, as for the launcher. From the repo root, with ADB on:
 

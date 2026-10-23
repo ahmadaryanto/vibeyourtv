@@ -1,14 +1,14 @@
 # Freebox Player POP
 
 Free's Android TV 10 box (`fbx8am`, Amlogic, 2 GB RAM, build `QTT8.201201.002.v10.5.66`), debloated and
-running this repo's launcher in place of OQEE. Everything is disabled, nothing is uninstalled.
+running  repo VibeYourTV ini  launcher in place of OQEE. Everything is disabled, nothing is uninstalled.
 `debloat.txt` lists each package and why it went.
 
-All commands run from the repo root, with the Player's IP in `TV_HOST` (Paramètres > Réseau et
+Semua perintah dari root repo, with the Player's IP in `TV_HOST` (Paramètres > Réseau et
 Internet shows it). ADB has to be on for any of them: Developer options >
 USB debugging, then accept the prompt on the TV.
 
-## Install, from scratch or again
+## Instal, dari nol atau ulang
 
 ```bash
 TV_HOST=<player-ip> tools/disable.sh examples/freebox-player-pop/debloat.txt
@@ -21,7 +21,7 @@ Home screen. It needs JDK 17 and the Android SDK (`brew install openjdk@17` and
 Command Line Tools Python is blocked by Local Network privacy ("No route to host"). See the header of
 `debloat.txt`.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<player-ip> tools/restore.sh examples/freebox-player-pop/debloat.txt net.oqee.launcher
@@ -30,7 +30,7 @@ TV_HOST=<player-ip> tools/restore.sh examples/freebox-player-pop/debloat.txt net
 It re-enables the packages from the list and gives Home back to OQEE. It replays the state recorded before the first change (`~/.cleanyourtv/recovery-*.json`, so
 keep that file).
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 ```bash
 TV_HOST=<player-ip> tools/venv/bin/python -I tools/tv.py 'pm enable com.google.android.youtube.tv'
@@ -75,7 +75,7 @@ TV_HOST=<player-ip> tools/venv/bin/python -I tools/tv.py 'settings put global pr
 To undo: `settings put global private_dns_mode opportunistic`. It doesn't block YouTube ads. If Spotify
 then shows "Vérifiez votre connexion réseau", switch DNS back and log in to Spotify again.
 
-## When you're done: close ADB
+## Selesai: close ADB
 
 Port 5555 is plaintext. On the TV: Developer options > Revoke USB debugging authorisations, then
 turn USB debugging off. Check from the Mac that this fails:

@@ -5,7 +5,7 @@ tube warming up, then snow and hiss as if the set were off the air, and after a 
 whatever was on screen. Any key ends it at once and is not passed on. Separate from the launcher.
 
 Package `io.github.luyzfernando08.tvstatic`. You see it as **TV Static** (Portuguese: **Chiado**). On
-cleanyourtv's Home it is also a module card, **TV Static**, which opens its settings.
+VibeYourTV's Home it is also a module card, **TV Static**, which opens its settings.
 
 ## Settings
 
@@ -55,7 +55,7 @@ The snow is a 240x135 bitmap refilled each frame and stretched over the screen w
 dots stay hard blocks. The hiss is generated white noise in one static `AudioTrack` buffer (about 130 KB at
 10 seconds). The watcher service, which stays up, used about 8 MB on a Mi Box S.
 
-## Permissions
+## Permissions (izin)
 
 - **Foreground service** (`FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE`): `WatchService` keeps one
   receiver for `SCREEN_ON` registered, which Android delivers only to receivers registered at run time, never

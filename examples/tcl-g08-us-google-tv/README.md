@@ -4,9 +4,9 @@ TCL 75" T7 Series 4K 144Hz QLED (`75T7`), device `G08`, model "Smart TV Pro", pr
 `UTT2.250416.001 AU16`, MediaTek `tcl9618` / `mt5896`, about 2.4 GB RAM. The same G08 board as the C755, QM6K
 and 85RM7L lists, on the US build.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 37 packages that were disabled, grouped and commented |
+| `debloat.txt` | 37 packages that were disabled, grouped and commented |
 
 **How much testing is behind it:** one set, 20-21 October 2026. The first 35 packages were disabled and survived
 a reboot; the stock launcher and the setup wizard were disabled afterwards for a custom launcher and have not been
@@ -24,7 +24,7 @@ Undo lines in the list header are the repo's standard ones, not something run on
 - **Left alone:** `com.tcl.ttvs`, `com.tcl.partnercustomizer`, `com.tcl.interactive`, `com.tcl.smartlink.core`.
   The C755 list disables some of them; they were not tried on this set.
 
-## Notes for this set
+## Catatan for this set
 
 - The saved Wi-Fi network belongs to `com.google.android.tungsten.setupwraith` (`dumpsys wifi | grep cname`).
   Forget the network and join it again in Settings before disabling the wizard, or it disappears with it and ADB

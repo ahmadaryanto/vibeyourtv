@@ -4,18 +4,18 @@ CVTE board `TP.T962D4.PC756` (Amlogic T962D4, platform `t5w`, Mali-G31), 2 GB RA
 partition, panel `LE43VA_V430DJ1_Q01`, codename `at30a6`, `ro.cvte.customer=SBER`. Firmware StarOS
 1.101.84-B28350 on Android 13, build `TP1A.220905.004.A2` from 15 February 2026. No Google services.
 
-Both halves work: the debloat list and the Clean Your TV launcher as Home. Tested 19–23 October 2026: the
+Both halves work: the debloat list and the VibeYourTV launcher as Home. Tested 19–23 October 2026: the
 content apps and screen sharing since the 19th, the rest of the list since the 21st, with several restarts.
 The steps were done by hand over `adb`, with the same commands the scripts below run.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 26 packages to disable, grouped and commented; the two firmware-update packages the tested unit also disabled are left as comments |
+| `debloat.txt` | 26 packages to disable, grouped and commented; the two firmware-update packages the tested unit also disabled are left as comments |
 | `config.json` | Hidden apps, no Live TV entry, the app library on, Russian names for three Sber apps; push it with `tools/theme.sh` |
 
-All commands run from the repo root, with the TV's IP in `TV_HOST`.
+Semua perintah dari root repo, with the TV's IP in `TV_HOST`.
 
-## Turning ADB on
+## Menyalakan ADB
 
 Developer options are locked: pressing OK on the build number seven times does nothing.
 
@@ -111,7 +111,7 @@ is a Bluetooth LE HID device; its microphone appears to Android as `AUDIO_DEVICE
   Sber home ("Салют ТВ") or the app catalogue if you keep them enabled.
 - Home stays with the launcher across restarts. The remote's Home key goes to it too.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<tv-ip> tools/restore.sh examples/sber-salute-tv-at30a6/debloat.txt ru.sberdevices.starlauncher

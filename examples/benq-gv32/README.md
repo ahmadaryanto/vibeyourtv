@@ -1,20 +1,19 @@
-# BenQ GV32 (Google TV 14 portable projector)
+# BenQ GV32 (proyektor portabel Google TV 14)
 
-SDMC-built board (product `BenQ_GV01`, device `himalaya`, MediaTek m7332, 1.8 GB RAM), firmware
-UKNV.260626.001. Both halves work: the debloat list and the Clean Your TV launcher as Home. Tested on
-21 October 2026.
+Board buatan SDMC (product `BenQ_GV01`, device `himalaya`, MediaTek m7332, RAM 1,8 GB), firmware
+UKNV.260626.001. Kedua bagian jalan: daftar debloat dan launcher VibeYourTV sebagai Home. Diuji 21 Oktober 2026.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 8 packages that were disabled, grouped and commented, with what to keep and why (`build-and-install.sh` disables launcherx on top) |
-| `config.json` | Dock order, hidden tile, and the Settings and profile buttons; push it with `tools/theme.sh` |
+| `debloat.txt` | 8 packages yang dinonaktifkan, dikelompokkan dan diberi komentar, plus apa yang dipertahankan dan kenapa (`build-and-install.sh` juga menonaktifkan launcherx) |
+| `config.json` | Urutan dock, tile tersembunyi, tombol Settings dan profil; push dengan `tools/theme.sh` |
 
-All commands run from the repo root, with the projector's IP in `TV_HOST`.
+Semua perintah dijalankan dari root repo, dengan IP proyektor di `TV_HOST`.
 
-## Turning ADB on
+## Menyalakan ADB
 
-Settings → Device Preferences → About → press OK on **Build** 7 times, then Developer options →
-**Wireless debugging** → **Pair device with pairing code**. Then, with Google's `adb`:
+Settings → Device Preferences → About → tekan OK pada **Build** 7 kali, lalu Developer options →
+**Wireless debugging** → **Pair device with pairing code**. Lalu dengan `adb` Google:
 
 ```bash
 adb pair <ip>:<pairing port> <code>
@@ -22,17 +21,14 @@ adb connect <ip>:<port>        # the IP address & Port line on the Wireless debu
 adb tcpip 5555                 # so tools/tv.py works
 ```
 
-The connect port is random and is announced over mDNS, which does not cross WSL2's NAT; scanning the
-projector's ports 30000-50000 for the one that accepts `adb connect` finds it.
+Port connect acak dan diumumkan lewat mDNS, yang tidak menembus NAT WSL2; scan port proyektor 30000–50000
+yang menerima `adb connect` biasanya menemukannya.
 
-## Install, from scratch or again
+## Instal, dari nol atau ulang
 
-1. **Move the Wi-Fi network away from the setup wizard first.** The network saved during first setup
-   belongs to `com.google.android.tungsten.setupwraith`, and Android deletes it the moment setupwraith
-   is disabled. On the projector: Settings → Network & Internet → your network → Forget, then join it
-   again. Check with `tools/tv.py "dumpsys wifi | grep -o 'cname=[^ ]*'"` (it should say
-   `android.uid.system`).
-2. Run:
+1. **Pindahkan jaringan Wi-Fi dari setup wizard dulu.** Jaringan yang disimpan saat setup pertama milik
+   `com.google.android.tungsten.setupwraith`, dan Android menghapusnya begitu setupwraith dinonaktifkan. Di proyektor: Settings → Network & Internet → jaringan kamu → Forget, lalu sambung lagi. Cek dengan `tools/tv.py "dumpsys wifi | grep -o 'cname=[^ ]*'"` (harus `android.uid.system`).
+2. Jalankan:
 
 ```bash
 TV_HOST=<projector-ip> tools/disable.sh examples/benq-gv32/debloat.txt
@@ -40,66 +36,56 @@ TV_HOST=<projector-ip> HOME_KEY_SERVICE=1 launcher/build-and-install.sh
 TV_HOST=<projector-ip> tools/theme.sh examples/benq-gv32
 ```
 
-`disable.sh` skips setupwraith by itself while it still owns the Wi-Fi, so step 1 only matters for the
-launcher handover: with setupwraith enabled, its `RecoveryActivity` claims Home behind launcherx.
+`disable.sh` sendiri melewati setupwraith selama masih memegang Wi-Fi, jadi langkah 1 penting untuk
+serah terima launcher: dengan setupwraith aktif, `RecoveryActivity`-nya mengklaim Home di belakang launcherx.
 
-## Remote buttons ("RCI078/079", Bluetooth)
+## Tombol remote ("RCI078/079", Bluetooth)
 
-Without the stock launcher these keep working on their own: Home, Back, volume, the D-pad, the
-YouTube, Netflix and Prime Video buttons, Input (Google's input switcher), focus, auto-keystone, the
-BenQ help button (Support Center) and the mic.
+Tanpa stock launcher ini tetap jalan sendiri: Home, Back, volume, D-pad, tombol YouTube, Netflix, Prime Video, Input (switcher input Google), focus, auto-keystone, tombol bantuan BenQ (Support Center), dan mic.
 
-Two buttons were answered only by launcherx and go dead without it. `config.json` maps them by
-scancode, which needs the launcher's HomeKeyService (`HOME_KEY_SERVICE=1` above):
+Dua tombol hanya dijawab launcherx dan mati tanpanya. `config.json` memetakannya lewat scancode, butuh HomeKeyService launcher (`HOME_KEY_SERVICE=1` di atas):
 
-| Button | Scancode (Linux key) | Mapped to |
+| Tombol | Scancode (Linux key) | Dipetakan ke |
 |---|---|---|
 | Settings (gear) | 189 (`KEY_F19`) | Android Settings |
-| Profile (person) | 433 (`KEY_LOGOFF`) | Plex (Google TV's profile switcher lived in launcherx) |
+| Profile (person) | 433 (`KEY_LOGOFF`) | Plex (profile switcher Google TV ada di launcherx) |
 
-**The trade:** while any key-filtering accessibility service is bound, this firmware drops held-key
-repeats, so holding Volume Up moves one step instead of ramping, as on
-[the TCL G09](../../docs/devices/tcl-55p71b-g09-key-repeat.md). Checked both ways on this unit: the ramp
-comes back as soon as the helper is unbound. To choose the ramp instead, leave out
-`HOME_KEY_SERVICE=1`, or switch the helper off:
+**Trade-off:** selama accessibility service yang memfilter key terikat, firmware ini mematikan repeat tombol tahan, jadi tahan Volume Up hanya naik satu langkah, seperti di [TCL G09](../../docs/devices/tcl-55p71b-g09-key-repeat.md). Sudah dicek dua arah: ramp volume kembali begitu helper lepas. Kalau mau ramp, jangan pakai `HOME_KEY_SERVICE=1`, atau matikan helper:
 
 ```bash
 TV_HOST=<projector-ip> tools/tv.py "settings put secure enabled_accessibility_services ''; settings put secure accessibility_enabled 0"
 ```
 
-## Re-enable an app
+## Aktifkan lagi satu app
 
 ```bash
 TV_HOST=<projector-ip> tools/tv.py 'pm enable com.instagram.airwave'
 ```
 
-Use the package name from `debloat.txt`. To put everything back and give Home to launcherx again:
+Pakai nama paket dari `debloat.txt`. Untuk mengembalikan semua dan Home ke launcherx:
 
 ```bash
 TV_HOST=<projector-ip> tools/restore.sh examples/benq-gv32/debloat.txt com.google.android.apps.tv.launcherx
 TV_HOST=<projector-ip> tools/theme.sh --reset
 ```
 
-Switch the key helper off as shown under Remote buttons, and `tools/tv.py 'pm uninstall com.gathin.tvhome'`
-removes the launcher itself.
+Matikan key helper seperti di bagian Remote, dan `tools/tv.py 'pm uninstall com.gathin.tvhome'` menghapus launcher.
 
-## Change the dock or the wallpaper
+## Ubah dock atau wallpaper
 
-Edit `dock_apps` in `config.json` (package names, left to right; `columns` sets how many slots), then
-push it again:
+Edit `dock_apps` di `config.json` (nama paket, kiri ke kanan; `columns` jumlah slot), lalu push lagi:
 
 ```bash
 TV_HOST=<projector-ip> tools/theme.sh examples/benq-gv32
 ```
 
-For a wallpaper, put a `wallpaper.jpg` (1920x1080) next to `config.json` and push the same way;
-`themes/README.md` has the dim and rotation options. `tools/theme.sh --reset` goes back to the
-launcher's built-in config.
+Untuk wallpaper, taruh `wallpaper.jpg` (1920x1080) di samping `config.json` dan push dengan cara yang sama;
+`themes/README.md` punya opsi dim dan rotasi. `tools/theme.sh --reset` kembali ke config bawaan launcher.
 
-## When you are done
+## Selesai
 
-Switch **USB debugging** and **Wireless debugging** off in Developer options, revoke the debugging
-authorisations there, restart, and check that ADB is closed:
+Matikan **USB debugging** dan **Wireless debugging** di Developer options, cabut otorisasi debugging,
+restart, dan pastikan ADB tertutup:
 
 ```bash
 tools/venv/bin/python tools/adb-closed.py <projector-ip>

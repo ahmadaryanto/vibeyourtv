@@ -1,8 +1,6 @@
 # tools/flamechart.py
 
-Draw a before/after flame chart PNG from `tools/trace.py` traces: one lane per thread, both panels on one
-time scale, the work your change targets in magenta with its total. Use it to show *where* a difference
-from `tools/trace_report.py` comes from; attach the report's table next to it.
+Gambar PNG flame chart sebelum/sesudah dari trace `tools/trace.py`: satu jalur per thread, kedua panel pakai skala waktu yang sama, pekerjaan yang kamu ubah ditandai magenta plus totalnya. Pakai ini untuk menunjukkan *dari mana* perbedaan di `tools/trace_report.py` berasal; lampirkan tabel laporan di sampingnya.
 
 ```bash
 tools/venv/bin/pip install -r tools/requirements-perf.txt     # adds Pillow
@@ -13,23 +11,21 @@ tools/venv/bin/python tools/flamechart.py traces/before traces/after \
     --out chart.png
 ```
 
-| Option | Default | Notes |
+| Opsi | Default | Catatan |
 |---|---|---|
-| `TRACE ...` | | Before, then after (up to 4). A folder draws its median run, by the first of time to first frame, median frame time and median RenderThread draw that every run has; the panel names the run and the measure. A folder with none of them in every run is refused. |
-| `--highlight REGEX` | `^(activityResume\|RV OnBindView)$` | Slice names to draw magenta and total. Children of a match count once. |
-| `--window` | `first-frame` | `first-frame`: launcher start to first frame drawn. `start:MS`: a fixed span from the start. `all`: the whole recording (always for `nav`). |
-| `--threads` | `main,RenderThread` | Lanes, by thread name in the launcher's process. |
+| `TRACE ...` | | Sebelum, lalu sesudah (maks. 4). Folder = run median, menurut yang pertama dari waktu ke frame pertama, median frame time, dan median draw RenderThread yang ada di setiap run; panel menyebut run dan ukurannya. Folder tanpa ketiganya di setiap run ditolak. |
+| `--highlight REGEX` | `^(activityResume\|RV OnBindView)$` | Nama slice yang digambar magenta dan dijumlahkan. Anak dari yang cocok dihitung sekali. |
+| `--window` | `first-frame` | `first-frame`: dari launcher start sampai frame pertama digambar. `start:MS`: rentang tetap dari awal. `all`: seluruh rekaman (selalu untuk `nav`). |
+| `--threads` | `main,RenderThread` | Jalur, menurut nama thread di proses launcher. |
 
-A Home change usually needs two charts:
-- **The start:** the defaults, with `--highlight` set to the slices you removed.
-- **The frames after it:** `--window start:1500 --threads RenderThread --highlight '^DrawFrame'`.
+Perubahan Home biasanya butuh dua chart:
+- **Saat start:** default, dengan `--highlight` di slice yang kamu hilangkan.
+- **Frame setelahnya:** `--window start:1500 --threads RenderThread --highlight '^DrawFrame'`.
 
-## Rules
+## Aturan
 
-- **Choose `--highlight` before you look.** Name the slices your change should remove, then draw. A regex
-  fitted to whatever shrank proves nothing.
-- **Pass folders, not single runs.** The tool picks the median run. If you pass single traces, say why.
-- **Magenta is main and render thread time only.** Work moved to another thread or to the GPU isn't gone:
-  add that thread as a lane, or use the `nav` GPU numbers.
+- **Pilih `--highlight` sebelum melihat hasil.** Sebut slice yang harus hilang karena perubahanmu, baru gambar. Regex yang disesuaikan setelah melihat apa yang mengecil tidak membuktikan apa-apa.
+- **Kirim folder, bukan satu run.** Tool memilih run median. Kalau kirim trace tunggal, jelaskan kenapa.
+- **Magenta hanya waktu main dan render thread.** Pekerjaan pindah ke thread lain atau GPU belum tentu hilang: tambahkan thread itu sebagai jalur, atau pakai angka GPU dari `nav`.
 
-The whole before/after method for a pull request is in [`docs/workflows/perf-ab.md`](../docs/workflows/perf-ab.md).
+Metode before/after lengkap untuk PR ada di [`docs/workflows/perf-ab.md`](../docs/workflows/perf-ab.md).

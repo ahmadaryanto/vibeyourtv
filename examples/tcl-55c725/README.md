@@ -6,12 +6,12 @@ Google TV launcher (`launcherx`), build `RP1A.200622.001`, software `V8-R51MT05-
 Ethernet with Wi-Fi off. Two remotes: the Bluetooth **TCL RC902V** (reports as `TCL_RC902V_U1`) and the infrared
 **TCL RC802NU YUI1**.
 
-Debloated and running this repo's launcher as Home, set up and checked on a real unit on 2026-10-20/21,
+Debloated and running  repo VibeYourTV ini  launcher as Home, set up and checked on a real unit on 2026-10-20/21,
 including a reboot. Nothing is uninstalled; `debloat.txt` lists each disabled package and why. Closest lists:
 [`tcl-43c645/`](../tcl-43c645/) (same R51MT05 software, launcherx) and [`tcl-65c725/`](../tcl-65c725/) (same
 series and BeyondTV4 device, but with the older `tvlauncher`).
 
-All commands run from the repo root with the TV's IP in `TV_HOST`, and need ADB on: Settings > System >
+Semua perintah dari root repo with the TV's IP in `TV_HOST`, and need ADB on: Settings > System >
 About > press Android TV OS build 7 times, then Developer options > USB debugging, and accept the prompt. Port
 5555 was open with no wireless-debugging pairing; `ro.adb.secure=1`.
 

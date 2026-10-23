@@ -5,7 +5,7 @@ out. One minute before, a small countdown shows over whatever is playing with **
 **Turn off now**; if nobody answers, the TV goes to standby. Back leaves the warning but not the timer.
 
 Package `io.github.luyzfernando08.sleeptimer`. You see it as **Sleep Timer** (Portuguese: **Desligar**). On
-cleanyourtv's Home it is also a module card, **Sleep Timer**, which opens the picker; the picker shows when the
+VibeYourTV's Home it is also a module card, **Sleep Timer**, which opens the picker; the picker shows when the
 TV will turn off and can cancel the timer.
 
 ## How it turns the TV off
@@ -38,7 +38,7 @@ powershell -ExecutionPolicy Bypass -File addons\sleep-timer\build-and-install.ps
 Then press Home and answer **Show card** if you want the card; Keep hidden leaves an ordinary app tile. To try
 it without waiting, the first lines of `build-and-install.sh` have an adb command for a 70-second timer.
 
-## Permissions
+## Permissions (izin)
 
 - **Accessibility service** (`SleepService`), switched on by the install script: only for the lock-screen
   global action. It asks for no events (`typeAnnouncement` only, which it ignores), cannot retrieve window

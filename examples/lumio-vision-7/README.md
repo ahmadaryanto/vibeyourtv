@@ -1,6 +1,6 @@
 # Lumio Vision 7 (55" / 139 cm)
 
-First Lumio list in the repo. Contributed by **Subramanya GB**.
+Daftar Lumio pertama di repo. Kontribusi **Subramanya GB**.
 
 - **Model:** Lumio Vision 7, 55" / 139 cm, India
 - **Built by:** KTC (ODM), Realtek chipset
@@ -8,43 +8,37 @@ First Lumio list in the repo. Contributed by **Subramanya GB**.
 - **OS:** Google TV 14 (Android 14, SDK 34), build `UKRA.251202.032`
 - **RAM:** 2.7 GB
 
-## Getting in
+## Masuk (ADB)
 
-Google TV, so **Wireless debugging** (Developer options). On this unit classic `adb tcpip` port **5555**
-was already open, so after the pairing/`adb connect` handshake `tools/tv.py` worked straight on 5555.
+Google TV, jadi **Wireless debugging** (Developer options). Di unit ini port **5555** `adb tcpip` klasik
+sudah terbuka, jadi setelah pairing/`adb connect` handshake `tools/tv.py` langsung jalan di 5555.
 
-## The one thing to know: the launcher needs setupwraith disabled
+## Satu hal penting: launcher butuh setupwraith dimatikan
 
-The moment the stock launcher (`com.google.android.apps.tv.launcherx`) is disabled, Home falls to
-`com.google.android.tungsten.setupwraith/.RecoveryActivity`, which re-asserts launcherx — so the fork
-launcher will not hold Home until **setupwraith is disabled too**. You cannot disable just the Home
-component (`pm disable-user … /.RecoveryActivity` returns a `SecurityException` for the shell), so the
-whole package goes.
+Begitu stock launcher (`com.google.android.apps.tv.launcherx`) dinonaktifkan, Home jatuh ke
+`com.google.android.tungsten.setupwraith/.RecoveryActivity`, yang menegaskan lagi launcherx — jadi launcher
+fork tidak memegang Home sampai **setupwraith juga dimatikan**. Kamu tidak bisa menonaktifkan hanya komponen Home
+(`pm disable-user … /.RecoveryActivity` mengembalikan `SecurityException` untuk shell), jadi seluruh paket mati.
 
-setupwraith owned one saved Wi-Fi network here, but the **active** network was system-owned
-(`OwnerUid 1000`), so disabling setupwraith did **not** drop Wi-Fi or ADB. `tools/disable.sh`'s guard is
-deliberately conservative, so it needs `FORCE_SETUPWRAITH=1` (already in the Apply line). If your unit's
-active Wi-Fi is owned by setupwraith instead, forget and re-join the network in Settings first so it
-becomes system-owned.
+setupwraith memegang satu jaringan Wi-Fi tersimpan di sini, tapi jaringan **aktif** milik sistem
+(`OwnerUid 1000`), jadi menonaktifkan setupwraith **tidak** menjatuhkan Wi-Fi atau ADB. Guard `tools/disable.sh`
+sengaja konservatif, jadi butuh `FORCE_SETUPWRAITH=1` (sudah di baris Apply). Jika Wi-Fi aktif unit kamu
+milik setupwraith, forget dan sambung lagi di Settings dulu agar jadi milik sistem.
 
-**Trade-off:** disabling setupwraith can break Chromecast (the Cast receiver `mediashell` reads device
-info from it). Re-enable setupwraith (`pm enable com.google.android.tungsten.setupwraith`) to get casting
-back — but then Home-stealing returns, so you would fall back to a Home-redirect instead of disabling
-launcherx.
+**Trade-off:** menonaktifkan setupwraith bisa merusak Chromecast (receiver Cast `mediashell` baca info perangkat darinya). Enable lagi setupwraith (`pm enable com.google.android.tungsten.setupwraith`) untuk casting
+— tapi Home-stealing kembali, jadi fallback ke Home-redirect alih-alih menonaktifkan launcherx.
 
-## config.xml notes
+## Catatan config.xml
 
-- **Live TV / tuner app:** `com.realtek.tv` → set as `live_tv_package`, and add it to `hidden_apps` so it
-  is not also a grid tile (the Inputs menu already offers it).
-- **Remote app buttons** (`app_keys`): the KTC LUMIO VISION remote sends **YouTube 190, Netflix 191,
-  Prime Video 195, TL;DR 200**. These went to launcherx, so after the swap they need remapping, e.g.
-  `190:org.smarttube.stable`. Build with `INPUT_KEY_SERVICE=1` so InputKeyService catches them (and the
-  Source button opens the Inputs menu).
-- HDMI/AV passthrough and the ATSC/ATV/ISDB/DTMB tuner inputs are served by the `com.realtek.*` packages;
-  none are in the list.
+- **App Live TV / tuner:** `com.realtek.tv` → set sebagai `live_tv_package`, dan tambahkan ke `hidden_apps` agar
+  tidak juga jadi tile grid (menu Inputs sudah menawarkannya).
+- **Tombol app remote** (`app_keys`): remote KTC LUMIO VISION kirim **YouTube 190, Netflix 191,
+  Prime Video 195, TL;DR 200**. Setelah swap mereka perlu remap, mis. `190:org.smarttube.stable`. Build dengan `INPUT_KEY_SERVICE=1` agar InputKeyService menangkapnya (dan tombol Source buka menu Inputs).
+- Passthrough HDMI/AV dan input tuner ATSC/ATV/ISDB/DTMB dilayani paket `com.realtek.*`;
+  tidak ada di daftar.
 
-## Other notes
+## Catatan lain
 
-- Netflix (`com.netflix.ninja`) shipped **already disabled** on this unit.
-- Factory package `com.kgzn.tvfactory` is present — left alone, never opened.
-- Disabling `com.google.android.katniss` (voice assistant) freed ~100 MB of RAM; it is optional in the list.
+- Netflix (`com.netflix.ninja`) **sudah disabled** dari pabrik di unit ini.
+- Paket pabrik `com.kgzn.tvfactory` ada — dibiarkan, jangan dibuka.
+- Menonaktifkan `com.google.android.katniss` (asisten suara) bebaskan ~100 MB RAM; opsional di daftar.

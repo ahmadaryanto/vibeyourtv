@@ -35,7 +35,7 @@ TV_HOST=<tv ip> examples/tcl-43c645/restore.sh                     # undo
 The scripts use the stock `adb` from platform-tools (`$ANDROID_HOME/platform-tools/adb`). On WSL2 the adb
 daemon hung while forking; `adb -P 15037 nodaemon server` in another terminal plus `ADB_PORT=15037` worked.
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 Everything is disabled, nothing is uninstalled:
 
@@ -102,7 +102,7 @@ YouTube playback. After the handover: D-pad (one row per press, Up from the dock
 ends stay put), Inputs dropdown (HDMI 1, HDMI 2, AV, Live TV), Home on the real remote, a cold reboot.
 Not tested: casting, Miracast, firmware update, several-day stability.
 
-## When you are done
+## Selesai
 
 Network ADB on port 5555 is plaintext. On the TV: Developer options → USB debugging off, and
 "Revoke USB debugging authorisations"; reboot, then check `nc -vz <tv ip> 5555` fails.

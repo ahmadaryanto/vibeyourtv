@@ -6,13 +6,13 @@ on 21 October 2026 with `tools/tv.py` (adb-shell, no adb binary; port 5555 opens
 on, no pairing). The first TCL Fire TV Edition list here; same firmware line as `amazon-fire-tv-stick-4k-2023/`
 and `hisense-fire-tv-aftcibfbd1/`.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 45 packages that were disabled, grouped and commented, plus the 7 that Fire OS protects |
+| `debloat.txt` | 45 packages that were disabled, grouped and commented, plus the 7 that Fire OS protects |
 
-All commands run from the repo root with the TV's IP in `TV_HOST`.
+Semua perintah dari root repo with the TV's IP in `TV_HOST`.
 
-## What worked and what did not
+## Yang berhasil and what did not
 
 **Debloat: yes.** Telemetry, ACR, ad bidding and sponsored rows, Fire TV Channels, Shopping, demo content,
 popups, Amazon Photos, Kids, miniTV, Silk, tutorials, other-Amazon-device setup, the Matter controller, the
@@ -34,7 +34,7 @@ TV_HOST=<tv ip> tools/restore.sh examples/tcl-43s450f-ca/debloat.txt com.amazon.
 TV_HOST=<tv ip> tools/tv.py "pm enable --user 0 com.cbs.ca"      # one app back
 ```
 
-## Notes
+## Catatan
 
 - Alexa voice was kept on this set, so none of the Alexa helpers that return at every boot on other Fire OS 8
   sets (`vizzini` and friends) were in the list; nothing came back after the reboot.

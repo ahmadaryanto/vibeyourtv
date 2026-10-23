@@ -1,10 +1,10 @@
-# Themes
+# Tema
 
-A theme is a folder with a `config.json` and, optionally, a picture: a `wallpaper.jpg` or a `wallpapers/`
-collection. Pushing one changes the launcher's dock, layout and look on the TV without rebuilding the
-APK: the launcher reads `config.json` as an overlay over its built-in `config.xml` the next time it starts.
-Choices made in Launcher settings take priority until you choose Follow theme. Pushing a theme or
-using `tools/theme.sh --reset` also clears those on-TV column and motion choices.
+Tema adalah folder berisi `config.json` dan, kalau mau, gambar: `wallpaper.jpg` atau koleksi `wallpapers/`.
+Push tema mengubah dock, layout, dan tampilan launcher di TV tanpa build ulang APK: launcher membaca
+`config.json` sebagai overlay di atas `config.xml` bawaan saat startup berikutnya. Pilihan di Launcher
+settings menang sampai kamu pilih Follow theme. Push tema atau `tools/theme.sh --reset` juga menghapus
+pilihan kolom dan motion yang disimpan di TV.
 
 ```bash
 TV_HOST=192.168.1.50 tools/theme.sh themes/aurora          # push a theme and restart Home
@@ -12,156 +12,153 @@ TV_HOST=192.168.1.50 tools/theme.sh --reset                # back to the built-i
 powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 themes\aurora
 ```
 
-| Theme | What it does | Screenshot |
+| Theme | Fungsinya | Screenshot |
 |---|---|---|
-| `default/` | The built-in look written out as JSON, as a starting point for your own | <img src="default/screenshot.jpg" width="320" alt="default theme"> |
-| `aurora/` | A dark aurora wallpaper (teal and violet on navy, darker at the bottom) with a matching background colour | <img src="aurora/screenshot.jpg" width="320" alt="aurora theme"> |
-| `dussehra/` | Festive skin for Dussehra (ends 21 Oct 2026): a marigold toran, a faint gold rangoli, a diya for Wi-Fi, a bell for Inputs, a marigold for Settings and a petal shower | <img src="dussehra/screenshot.jpg" width="320" alt="dussehra theme"> |
-| `glass/` | Dark navy wallpaper with soft teal and violet light, the cinematic top shelf, a frosted-glass dock, icon-only buttons and the focus glow in the app's colour, gliding without overshoot | <img src="glass/screenshot.jpg" width="320" alt="glass theme"> |
-| `ruska/` | A Finnish autumn ("ruska") dusk over a lake: spruce shoreline, birches in autumn colour, a few falling leaves, drawn in code by `make_wallpaper.py`. The app-colour glow stays off the picture so the autumn colours keep their own light; the dock is 70% opaque so the lake shows through, and the focus glows in the app's colour without overshoot | <img src="ruska/screenshot.jpg" width="320" alt="ruska theme"> |
-| `scenes/` | 14 dark illustrated landscapes in `wallpapers/`, a new one every hour; drawn from code by `tools/scenes_wallpapers.py` | <img src="scenes/screenshot.jpg" width="320" alt="scenes theme"> |
-| `six-columns/` | Six smaller tiles per row and one grid row visible under the dock | <img src="six-columns/screenshot.jpg" width="320" alt="six-columns theme"> |
-| `sweden/` | Three photos of Sweden from Wikimedia Commons (the aurora over Abisko, Vasabron at dusk, Skeppsbron in the evening), a new one every hour with its place and photographer under the buttons; six small tiles in a frosted-glass dock, round icon-only buttons, no hero name. The photos are CC BY / CC BY-SA, not MIT: see `sweden/CREDITS.md` | <img src="sweden/screenshot.jpg" width="320" alt="sweden theme"> |
+| `default/` | Tampilan bawaan ditulis sebagai JSON, titik awal buat tema sendiri | <img src="default/screenshot.jpg" width="320" alt="default theme"> |
+| `aurora/` | Wallpaper aurora gelap (teal dan violet di navy, lebih gelap di bawah) dengan warna latar selaras | <img src="aurora/screenshot.jpg" width="320" alt="aurora theme"> |
+| `dussehra/` | Kulit festif Dussehra (berakhir 21 Okt 2026): toran marigold, rangoli emas samar, diya untuk Wi-Fi, lonceng Inputs, marigold Settings, hujan kelopak | <img src="dussehra/screenshot.jpg" width="320" alt="dussehra theme"> |
+| `glass/` | Wallpaper navy gelap cahaya teal/violet lembut, rak atas cinematic, dock kaca buram, tombol icon-only, glow fokus warna app, glide tanpa overshoot | <img src="glass/screenshot.jpg" width="320" alt="glass theme"> |
+| `ruska/` | Senja musim gugur Finlandia ("ruska") di danau: garis pantai spruce, birch warna gugur, daun jatuh, kode `make_wallpaper.py`. Glow warna app tidak menutupi foto; dock 70% opaque, danau terlihat; glow fokus warna app tanpa overshoot | <img src="ruska/screenshot.jpg" width="320" alt="ruska theme"> |
+| `scenes/` | 14 lanskap ilustrasi gelap di `wallpapers/`, berganti tiap jam; kode `tools/scenes_wallpapers.py` | <img src="scenes/screenshot.jpg" width="320" alt="scenes theme"> |
+| `six-columns/` | Enam tile kecil per baris, satu baris grid terlihat di bawah dock | <img src="six-columns/screenshot.jpg" width="320" alt="six-columns theme"> |
+| `sweden/` | Tiga foto Swedia dari Wikimedia Commons (aurora Abisko, Vasabron senja, Skeppsbron malam), berganti tiap jam dengan tempat dan fotografer di bawah tombol; enam tile kecil dock kaca buram, tombol bulat icon-only, tanpa hero name. Foto CC BY / CC BY-SA, bukan MIT: `sweden/CREDITS.md` | <img src="sweden/screenshot.jpg" width="320" alt="sweden theme"> |
 
-Every theme folder has a `screenshot.jpg` of Home with that theme on a real TV. `tools/theme.sh` never
-pushes it; it is only here so you can see a theme before you try it.
+Setiap folder tema punya `screenshot.jpg` Home dengan tema itu di TV asli. `tools/theme.sh` tidak pernah
+push file itu; hanya untuk preview sebelum kamu coba.
 
 ## Keys
 
-Every key is optional; a missing key keeps the value from `config.xml`, an unknown or wrongly typed key
-is ignored, and a file that doesn't parse is ignored as a whole, so a theme can never break Home.
+Semua key opsional; key yang hilang memakai nilai dari `config.xml`, key asing atau tipe salah diabaikan,
+dan file yang tidak bisa di-parse diabaikan seluruhnya, jadi tema tidak bisa merusak Home.
 
-Each key has (or is waiting for) a screenshot of it on a real TV in [`docs/switches.md`](../docs/switches.md).
-A new key needs one there in the same pull request.
+Setiap key punya (atau menunggu) screenshot di TV asli di [`docs/switches.md`](../docs/switches.md).
+Key baru butuh screenshot di sana dalam PR yang sama.
 
-| Key | Type | Meaning |
+| Key | Type | Arti |
 |---|---|---|
-| `dock_apps` | list of package names | The dock row, in order; missing apps are skipped |
-| `fill_dock` | bool | Fill the dock slots `dock_apps` leaves free with the first grid apps (true by default); false leaves them empty |
-| `hidden_apps` | list of package names | Never shown as tiles |
-| `live_tv_package`, `live_tv_action` | string | The Live TV app and, if it has no leanback entry, the action to start it with |
-| `live_tv_input_id` | string | Exact system tuner for the Inputs menu's Live TV row; opens its channel collection. Empty keeps automatic selection. Missing input or unsupported collection falls back to the app's normal launch. [HAAM satellite example](../docs/devices/haam-r4.md) |
-| `source_panel_service`, `source_panel_action` | string | The TV's own source panel, for sets with no TvInputManager: a service, or an activity (BYINTEK U4). Without a Live TV app, the Inputs pill opens it directly |
-| `source_panel_extra` | `"name=value"` | One int extra sent with the source panel (Coocaa OS: `control_center_command=100`) |
-| `coocaa_sources` | bool | Coocaa OS (Skyworth, China): list the sources from `com.skyworth.tv` in the Inputs menu, ahead of the source panel |
-| `launch_actions` | list of `"package=action"` | Tiles that open a screen of the app instead of its start screen; an action that no longer resolves opens the app normally (MagentaTV's guide: `com.telekom.onetv.tv.pl=com.telekom.onetv.tv.pl.action.PROGRAM_GUIDE`) |
-| `app_labels` | list of `"package=Name"` | A tile's name instead of the app's own (MagentaTV as `com.telekom.onetv.tv.pl=TV`) |
-| `app_banners` | list of `"package=banner_name"` | A tile's artwork from a `banner_*` drawable bundled with the launcher (`banner_tv`: magenta with the Live TV glyph) |
-| `input_action` | string | Action sent with an HDMI/AV row's channel URI when nothing handles the standard `VIEW` (XGIMI: `com.xgimi.action.hdmiPlayer`). Only a handler-less set gets here; any app that claims the channel MIME type takes the row instead, so check with `query-activities` ([#805](https://github.com/Gathin23/cleanyourtv/issues/805)) |
-| `input_uri_scheme` | string | Scheme an HDMI/AV row's passthrough URI is sent with instead of `content://`, with no MIME type (YaOS: `live-tv`, which its source player answers) |
-| `input_sources` | list, `config.xml` only | Vendor source numbers for the Inputs menu, `HW<n>=<number>` by the input id's last part; a mapped input opens by sending `input_action` with the number as the int extra `input`, and `HW<n>=-` leaves a port the set doesn't have out of the menu. Xiaomi/Redmi China firmware: [redmi-mitv-mftp0](../examples/redmi-mitv-mftp0/). Not read from a theme |
-| `columns` | 1 to 8 | Tiles per row; tiles shrink to fit from 5 up |
-| `rows_below_dock` | 0 to 3 | Grid rows left visible under the dock; tiles shrink if the dock, its title and that many rows would not fit the screen height |
-| `dock_title` | bool | The focused dock app's name in large type above the dock (`true`); `false` keeps only the glow |
-| `dock_row` | bool | The dock as its own row with a band (`true`); `false` makes the dock apps the first tiles of one plain grid |
-| `reorder_button` | bool | A reorder button in the top bar (`false` by default); reordering is always in the Settings button's long-press menu |
-| `show_network_pill` | bool | The Wi-Fi/Ethernet pill in the top bar (`true` by default); `false` hides it |
-| `show_inputs_pill` | bool | The Inputs pill in the top bar, shown when the TV has inputs (`true` by default); `false` hides it, and with `top_menu` it also leaves Inputs out of the gear's menu (streamers with no HDMI input, such as the Chromecast with Google TV); what the remote's Input button does is unchanged |
-| `icon_only_buttons` | bool | Wi-Fi and Settings as round icon buttons; Inputs keeps its label (`false` by default) |
-| `icon_only_inputs` | bool | The Inputs pill as a round icon button too, its label kept as the TalkBack description (`false` by default). Works with or without `icon_only_buttons` |
-| `top_menu` | bool | Inputs, Wi-Fi and Settings folded into one round gear, centred on the header: OK drops a menu with the three plus Reorder apps, hold OK keeps the launcher menu (`false` by default) |
-| `launcher_settings_button` | bool | Make the header Settings action open Launcher settings directly with a matching 22dp home icon; also changes the Settings row when `top_menu` is on. Hold OK keeps module-card and ordering tools. The settings page includes Reorder apps and TV settings (`false` by default) |
-| `wifi_status_color` | bool | The Wi-Fi pill's icon green while the TV is online, white while it is not (`false` by default) |
-| `wifi_label_width` | 0 to 300 | With `icon_only_buttons`, keep the network name on the Wi-Fi pill up to this width in dp, cut with an ellipsis; 0 leaves only the icon |
-| `library_button` | bool | The app library as a round button in the top bar, beside Settings; needs `app_library`. Closing the library returns to it |
-| `always_show_names` | bool | Names under every tile, dimmed until focused, the dock included (its band grows to hold them); `false` by default shows only the focused tile's name |
-| `wallpaper_true_color` | bool | Decode wallpapers in 32-bit colour (8 MB at 1080p) instead of RGB_565 (4 MB), which bands dark gradients such as a night sky; for TVs with 2 GB or more (`false` by default) |
-| `app_library` | bool | An App library pill after the last Home row: every installed app, add one to Home or take it off (`false` by default). The choices stay on the TV when a theme is pushed or reset; see [docs/app-library.md](../docs/app-library.md) |
-| `app_library_selection` | bool | OK toggles Home checkmarks in the library; checked apps first, both groups alphabetized. Hiding keeps focus on the adjacent next app (previous at the end). Requires `app_library`; `false` preserves the standard open/long-press behavior |
-| `library_apps` | list of package names | Packages pre-seeded into the App library's "added" set at startup (config.xml `library_apps`, or a theme's `config.json`). They show on Home as if the owner had added them in the App library UI, and stay removable there (a removed one stays hidden); empty (off) by default |
-| `shamsi_date` | bool | Show the Solar Hijri date above the Gregorian one |
-| `greeting_name` | string | A name after the greeting, e.g. `"Mr. Trịnh"` for GOOD MORNING, MR. TRỊNH; empty for the greeting alone |
-| `module_cards` | bool | Look for module cards and ask about them (`true`); `false` turns the feature off |
-| `reduced_motion` | bool | Calmer motion for weak GPUs: the highlight slides without bouncing and settles within 5 frames, every animation lasts 90 ms or less, names, the top shelf, the glow and the highlight appear instead of fading, and there is no tile entrance (`false` by default) |
-| `boot_to_live_tv` | bool | Open the Live TV app (`live_tv_package`) on the first Home after the TV starts, once per boot |
-| `focus_overshoot` | bool | The highlight and the focused tile swing past their target before settling (`true` by default); `false` glides straight there with smooth scrolling |
-| `vpn_app` | string | App the network pill opens when a VPN is configured; also shows a red "VPN off" badge while no VPN is up |
-| `animations` | bool | Basic focus, glass, title and tile entrance motion; true by default |
-| `advanced_effects` | bool | Optional lifted tile, icon zoom, smooth ambient colour and app opening effects; false by default |
-| `show_home_settings_shortcut` | bool | Keep the optional Default-home tile visible when the TV has a home picker; false by default |
-| `show_stats` | bool | One line under the clock with CPU, free memory and free storage. Off unless set |
-| `handle_view_inputs` | bool | Answer the system input switcher (`VIEW_INPUTS`, what the remote's Input button becomes) with the Inputs menu, for sets whose stock launcher was its only handler (Hisense huangshan); `false` by default so a TV with its own input picker never gets a chooser |
-| `background_color` | `#RRGGBB` | Colour behind everything; black by default |
-| `sky_intensity` | 0 to 100 | Time-of-day backdrop: a dark gradient that follows the clock, 0 hides it (default) |
-| `wallpaper` | bool | Show the theme's picture, `wallpaper.jpg` or its `wallpapers/` collection (`true`), or draw neither (`false`) |
-| `wallpaper_rotation_minutes` | 0 to 1440 | Rotate images in the theme's `wallpapers/` folder at this interval; 0 keeps the single-image behaviour. A negative or non-numeric value is ignored, and 0 means "no rotation", not "every minute" |
-| `wallpaper_order` | `shuffle` or `sequential` | How a collection advances. `shuffle` (the default, and what launchers did before this key existed) avoids repeating the current picture; `sequential` walks the folder in filename order and wraps at the end. An unknown value falls back to `shuffle` |
-| `wallpaper_dim` | 0 to 90 | Black overlay over wallpaper images, in percent; 0 by default and no shade view at all |
-| `dock_opacity` | 30 to 100 | Opacity of the dock's band, in percent, so a wallpaper shows through it; 100 by default (the cinematic shelf keeps its own translucent band). Launcher settings on the TV offers 100, 70, 50 or 30, which wins until the next theme push or Follow theme |
-| `wallpaper_captions` | bool | With a rotating collection, the shown picture's name under the top-right buttons, from `wallpapers/captions.txt` (`001.jpg<TAB>Dusk over the peaks`, one per line); a picture without a line shows no name (`false` by default) |
-| `wallpaper_moods` | object | A rotating collection grouped by time of day: `{"morning": [...], "evening": [...], "night": [...]}` with file names from `wallpapers/`. Morning runs from sunrise to noon, evening until half an hour after sunset, night the rest, with the sun at config.xml's `latitude` and `longitude` (07:00 and 18:30 without them); a missing group rotates through every picture. Unset by default |
-| `tile_menu` | bool | Hold OK or press the remote's Menu key on a tile to open a small menu: Move, Remove from Home (with `app_library`) and App info. `false` (the default) keeps holding OK as a shortcut to the app's App info page and leaves Menu unchanged |
-| `festival` | string | Turns on a festive skin: the network pill becomes a diya whose flame follows the connection, Inputs a temple bell, Settings a marigold, and the first Home of the day gets a petal shower. `dussehra` and `diwali` have built-in greetings |
-| `festival_until` | `YYYY-MM-DD` | Last day the festive skin shows; it switches itself off after that. A malformed date turns it off |
-| `greeting` | string | Replaces the time-of-day greeting while the festive skin is on |
-| `accent_color` | `#RRGGBB` | Colour of the focus glow while the festive skin is on; diya gold if not set |
-| `settings_key_keycodes` | list of keycodes | Remote buttons that open Settings, for `HomeKeyService` (TCL Google TV gear: `[83]`) |
-| `settings_key_panel` | bool | Those buttons open a small quick settings panel (TV settings, Display, Network, Apps, Launcher settings) instead of the TV's Settings |
-| `settings_fallback_components` | list, `config.xml` only | Vendor screens tried in order when nothing usable answers the standard Settings action (Xiaomi China, TCL/FFALCON, and Fire OS, where the real menu lives in its launcher), each as `package/activity`; the first one whose package is installed wins, and when none is, the standard intent is sent anyway and may open nothing. Fire OS answers that intent with a `CTSDummy` stub, which counts as missing so the fallback runs. A package named here also has to be listed in the launcher's `<queries>` (Android 11 package visibility), so a set whose settings app is neither of these needs a build, not a theme push. Not read from a theme |
-| `restore_key_services` | bool | After a force stop of the launcher, Home puts the remote's accessibility helpers (`HomeKeyService`, `InputKeyService`) back on the enabled list; needs `RESTORE_KEY_SERVICES=1` at install. Off by default |
-| `input_key_keycodes` | list of keycodes | More remote buttons that open the input switcher, for `InputKeyService` (`KEYCODE_TV` and `KEYCODE_TV_INPUT` always do) |
-| `app_keys` | list of strings | Remote buttons that open an app, as `"190:com.google.android.youtube.tv"` or `"KEYCODE_BUTTON_3:com.google.android.youtube.tv"`, or by scancode as `"scan:490:com.wbd.hbomax"` for remotes that share one keycode between app buttons (Sony BRAVIA), for `InputKeyService` or `HomeKeyService`. `"input:<input id>"` in place of the package switches to a TV input instead, e.g. `"scan:227:input:com.tcl.tvinput/.passthroughinput.TvPassThroughService/HW1413744640"` for an HDMI port (ids from `dumpsys tv_input`). Prefix an entry with `hold:` to make it the long-press action, e.g. `"hold:190:com.netflix.ninja"`, while the unprefixed entry still opens on a tap |
-| `key_filter` | bool | `false` makes the key helpers stop filtering keys while staying enabled. Use it on firmware where any key-filtering accessibility service breaks long-press repeat (TCL Google TV on Android 12): the remote buttons above stop working, and volume repeat comes back |
-| `gamepad_passthrough` | bool | `true` makes the key helpers stop filtering keys while a game controller is connected, so games see its buttons (Steam Link with an Xbox controller); the remote buttons above do nothing until it disconnects. Needs `key_filter` on. A voice remote that reports a joystick does not count. Off by default |
-| `stock_home_redirect` | string | Stock launcher package; if the firmware turns it back on (XGIMI), its home screen is sent straight back here (`HOME_KEY_SERVICE=1`) |
-| `race_calendar` | list of races | F1 race-weekend mode: from 12 hours before a weekend's first session until 4 hours after the race starts, a panel under the clock shows the next session with a countdown (or the live one) and the weekend's session times in the TV's time zone. Write it with `tools/race_calendar.py <theme folder>`, which fetches the season from the free Jolpica API; the launcher itself never goes online |
-| `home_idle_clock_minutes` | 0 to 1440 | Minutes Home may sit untouched before it shows the clock screensaver (a thin clock and date drifting over a slow glow, as the system "Clock" screensaver does). Any key returns to Home. It starts only from Home, never over Live TV or an app; 0 is off (default) |
-| `glow_style` | string | Shape of the glow behind the focused app, in its colour: `radial` (default) or `horizon`, the colour washing down from the top edge to black; the cinematic shelf keeps its own |
-| `cinematic_home` | bool | Cinematic top shelf: the focused dock app's artwork, softened, fills the top of the screen in its colour, with a larger name, "Last opened" (apps opened from Home), dock position dots, a focus glow in the app's colour and a translucent dock band; off by default |
-| `cinematic_dots` | bool | With `cinematic_home`, the dock position dots under the app's name (`true` by default); `false` leaves them out |
-| `cinematic_white_focus` | bool | With `cinematic_home`, the focus highlight stays white on the dock instead of taking the focused app's colour (`false` by default); `app_glow` still colours every tile |
-| `cinematic_scrim` | 0 to 100 | With `cinematic_home`, the strength of the dark scrim behind the shelf's name (`100` by default); lower lets a wallpaper show through |
-| `cinematic_art` | 0 to 100 | With `cinematic_home`, the opacity of the focused app's softened artwork (`50` by default); `0` leaves the wallpaper uncovered |
-| `dock_even_padding` | bool | The dock band's padding equals the gap between its tiles on all four sides, as far as the grid's edges leave room (`false` by default) |
-| `dock_glass` | bool | The dock band as light frosted glass like the top bar's pills (`false` by default); suits `sky_intensity` or a wallpaper, where the solid band reads as a dark slab |
-| `ambient_glow` | bool | The glow behind the dock in the focused app's colour (`true` by default); `false` keeps only `background_color` or the wallpaper, e.g. for a calm photo background |
-| `app_glow` | bool | The focus highlight glows in the focused app's colour on every tile, as `cinematic_home` does for the dock (`false` by default) |
-| `fade_rows` | bool | The rows fade out as they scroll up under the clock instead of being cut off at a hard line; the wallpaper or sky shows through. The grid then draws into a hardware layer (about 6 MB of graphics memory at 1080p) (`false` by default) |
+| `dock_apps` | list of package names | Baris dock, berurutan; app yang tidak ada dilewati |
+| `fill_dock` | bool | Isi slot dock kosong dari `dock_apps` dengan app grid pertama (default true); false biarkan kosong |
+| `hidden_apps` | list of package names | Tidak pernah ditampilkan sebagai tile |
+| `live_tv_package`, `live_tv_action` | string | App Live TV dan, jika tidak punya entry leanback, action untuk membukanya |
+| `live_tv_input_id` | string | Tuner sistem persis untuk baris Live TV menu Inputs; membuka koleksi salurannya. Kosong = pilihan otomatis. Input hilang atau koleksi tidak didukung kembali ke launch normal app. [contoh satelit HAAM](../docs/devices/haam-r4.md) |
+| `source_panel_service`, `source_panel_action` | string | Panel sumber TV sendiri, untuk set tanpa TvInputManager: service atau activity (BYINTEK U4). Tanpa app Live TV, pill Inputs membukanya langsung |
+| `source_panel_extra` | `"name=value"` | Satu int extra dikirim dengan panel sumber (Coocaa OS: `control_center_command=100`) |
+| `coocaa_sources` | bool | Coocaa OS (Skyworth, China): cantumkan sumber dari `com.skyworth.tv` di menu Inputs, sebelum panel sumber |
+| `launch_actions` | list of `"package=action"` | Tile membuka layar app, bukan start screen; action yang tidak resolve lagi membuka app normal (panduan MagentaTV: `com.telekom.onetv.tv.pl=com.telekom.onetv.tv.pl.action.PROGRAM_GUIDE`) |
+| `app_labels` | list of `"package=Name"` | Nama tile menggantikan nama app (MagentaTV sebagai `com.telekom.onetv.tv.pl=TV`) |
+| `app_banners` | list of `"package=banner_name"` | Artwork tile dari drawable `banner_*` di launcher (`banner_tv`: magenta dengan glyph Live TV) |
+| `input_action` | string | Action dikirim dengan URI saluran baris HDMI/AV jika tidak ada yang menangani `VIEW` standar (XGIMI: `com.xgimi.action.hdmiPlayer`). Hanya set tanpa handler; app yang klaim MIME saluran mengambil baris — cek `query-activities` ([#805](https://github.com/Gathin23/cleanyourtv/issues/805)) |
+| `input_uri_scheme` | string | Skema URI passthrough baris HDMI/AV selain `content://`, tanpa MIME (YaOS: `live-tv`, dijawab source player-nya) |
+| `input_sources` | list, `config.xml` only | Nomor sumber vendor untuk menu Inputs, `HW<n>=<number>` dari bagian akhir id input; input terpetakan dibuka dengan `input_action` dan int extra `input`; `HW<n>=-` mengecualikan port yang tidak ada. Firmware Xiaomi/Redmi China: [redmi-mitv-mftp0](../examples/redmi-mitv-mftp0/). Tidak dibaca dari tema |
+| `columns` | 1 to 8 | Tile per baris; tile mengecil mulai dari 5 ke atas |
+| `rows_below_dock` | 0 to 3 | Baris grid terlihat di bawah dock; tile mengecil jika dock, judul, dan baris itu tidak muat tinggi layar |
+| `dock_title` | bool | Nama app dock fokus huruf besar di atas dock (`true`); `false` hanya glow |
+| `dock_row` | bool | Dock sebagai baris sendiri dengan band (`true`); `false` = app dock jadi tile pertama grid biasa |
+| `reorder_button` | bool | Tombol reorder di bar atas (default `false`); reorder selalu di menu long-press Settings |
+| `show_network_pill` | bool | Pill Wi-Fi/Ethernet di bar atas (default `true`); `false` menyembunyikannya |
+| `show_inputs_pill` | bool | Pill Inputs di bar atas, tampil jika TV punya input (default `true`); `false` menyembunyikan; dengan `top_menu` Inputs tidak ada di menu gear (streamer tanpa HDMI, mis. Chromecast with Google TV); tombol Input remote tidak berubah |
+| `icon_only_buttons` | bool | Wi-Fi dan Settings tombol bulat icon-only; Inputs tetap berlabel (default `false`) |
+| `icon_only_inputs` | bool | Pill Inputs juga tombol bulat; label tetap sebagai deskripsi TalkBack (default `false`). Bisa dengan/tanpa `icon_only_buttons` |
+| `top_menu` | bool | Inputs, Wi-Fi, Settings digabung satu gear bulat di tengah header: OK buka menu tiga itu plus Reorder apps, hold OK menu launcher (default `false`) |
+| `launcher_settings_button` | bool | Aksi Settings header membuka Launcher settings langsung dengan ikon home 22dp; mengubah baris Settings saat `top_menu` on. Hold OK tetap module-card dan ordering. Halaman settings mencakup Reorder apps dan TV settings (default `false`) |
+| `wifi_status_color` | bool | Ikon pill Wi-Fi hijau saat online, putih saat offline (default `false`) |
+| `wifi_label_width` | 0 to 300 | Dengan `icon_only_buttons`, nama jaringan di pill Wi-Fi sampai lebar dp ini, dipotong ellipsis; 0 = hanya ikon |
+| `library_button` | bool | App library sebagai tombol bulat di bar atas, di samping Settings; butuh `app_library`. Tutup library kembali ke sana |
+| `always_show_names` | bool | Nama di bawah setiap tile, redup sampai fokus, termasuk dock (band membesar); default `false` hanya nama tile fokus |
+| `wallpaper_true_color` | bool | Decode wallpaper 32-bit (8 MB di 1080p) bukan RGB_565 (4 MB) yang banding gradasi gelap; untuk TV 2 GB+ (default `false`) |
+| `app_library` | bool | Pill App library setelah baris Home terakhir: semua app terpasang, tambah/hapus dari Home (default `false`). Pilihan tetap di TV saat push/reset tema; lihat [docs/app-library.md](../docs/app-library.md) |
+| `app_library_selection` | bool | OK toggle centang Home di library; app tercentang dulu, keduanya alfabet. Sembunyikan fokus ke app berikutnya (sebelumnya di akhir). Butuh `app_library`; `false` = perilaku open/long-press standar |
+| `library_apps` | list of package names | Paket pre-seed ke set "added" App library saat startup (`library_apps` di config.xml atau `config.json` tema). Tampil di Home seolah ditambah lewat UI library, tetap bisa dihapus (yang dihapus tetap hidden); kosong (off) default |
+| `shamsi_date` | bool | Tampilkan tanggal Hijriah di atas Gregorian |
+| `greeting_name` | string | Nama setelah salam, mis. `"Mr. Trịnh"` untuk GOOD MORNING, MR. TRỊNH; kosong = salam saja |
+| `module_cards` | bool | Cari module card dan tanya (`true`); `false` matikan fitur |
+| `reduced_motion` | bool | Gerak lebih tenang untuk GPU lemah: highlight slide tanpa bounce, settle ≤5 frame, animasi ≤90 ms, nama/rak/glow/highlight muncul bukan fade, tanpa entrance tile (default `false`) |
+| `boot_to_live_tv` | bool | Buka app Live TV (`live_tv_package`) di Home pertama setelah TV nyala, sekali per boot |
+| `focus_overshoot` | bool | Highlight dan tile fokus overshoot sebelum settle (default `true`); `false` glide lurus dengan scroll halus |
+| `vpn_app` | string | App yang dibuka pill jaringan jika VPN dikonfigurasi; badge merah "VPN off" saat VPN mati |
+| `animations` | bool | Gerak fokus, glass, judul, entrance tile dasar; default true |
+| `advanced_effects` | bool | Efek opsional tile terangkat, zoom ikon, warna ambient halus, buka app; default false |
+| `show_home_settings_shortcut` | bool | Pertahankan tile Default-home opsional jika TV punya home picker; default false |
+| `show_stats` | bool | Satu baris di bawah jam: CPU, memori bebas, storage bebas. Off kecuali di-set |
+| `crypto_ticker` | bool | Harga BTC live di bawah tanggal, dari CoinGecko, diperbarui setiap 5 menit selama Home di layar. Off kecuali di-set (default `false`). Launcher meminta `INTERNET` hanya agar baris ini bisa load |
+| `handle_view_inputs` | bool | Jawab input switcher sistem (`VIEW_INPUTS`, tombol Input remote) dengan menu Inputs, untuk set yang stock launcher satu-satunya handler (Hisense huangshan); default `false` agar TV dengan picker sendiri tidak dapat chooser |
+| `background_color` | `#RRGGBB` | Warna di belakang semua; default hitam |
+| `sky_intensity` | 0 to 100 | Backdrop waktu: gradasi gelap mengikuti jam, 0 menyembunyikan (default) |
+| `wallpaper` | bool | Tampilkan gambar tema, `wallpaper.jpg` atau koleksi `wallpapers/` (`true`), atau tidak ada (`false`) |
+| `wallpaper_rotation_minutes` | 0 to 1440 | Putar gambar di folder `wallpapers/` tema pada interval ini; 0 = satu gambar. Nilai negatif/non-numerik diabaikan; 0 = tidak rotasi, bukan setiap menit |
+| `wallpaper_order` | `shuffle` or `sequential` | Cara koleksi maju. `shuffle` (default) tidak mengulang gambar saat ini; `sequential` urut nama file dan wrap. Nilai asing kembali ke `shuffle` |
+| `wallpaper_dim` | 0 to 90 | Overlay hitam di atas wallpaper, persen; default 0 tanpa shade |
+| `dock_opacity` | 30 to 100 | Opacity band dock, persen, agar wallpaper tembus; default 100 (rak cinematic band sendiri). Launcher settings di TV: 100, 70, 50, 30, menang sampai push tema berikutnya atau Follow theme |
+| `wallpaper_captions` | bool | Dengan koleksi rotasi, nama gambar di bawah tombol kanan atas, dari `wallpapers/captions.txt` (`001.jpg<TAB>Dusk over the peaks`, satu per baris); tanpa baris = tanpa nama (default `false`) |
+| `wallpaper_moods` | object | Koleksi rotasi per waktu: `{"morning": [...], "evening": [...], "night": [...]}` dengan nama file dari `wallpapers/`. Pagi sunrise–noon, sore sampai +30 menit sunset, malam sisanya, matahari dari `latitude`/`longitude` config.xml (07:00 dan 18:30 tanpa itu); grup hilang = rotasi semua gambar. Default unset |
+| `tile_menu` | bool | Hold OK atau Menu remote pada tile: menu kecil Move, Remove from Home (dengan `app_library`), App info. Default `false` = hold OK shortcut ke App info, Menu tidak berubah |
+| `festival` | string | Aktifkan kulit festif: pill jaringan jadi diya, Inputs lonceng, Settings marigold, Home pertama hari itu hujan kelopak. `dussehra` dan `diwali` punya salam bawaan |
+| `festival_until` | `YYYY-MM-DD` | Hari terakhir kulit festif; mati sendiri setelahnya. Tanggal rusak = mati |
+| `greeting` | string | Ganti salam waktu saat kulit festif aktif |
+| `accent_color` | `#RRGGBB` | Warna glow fokus saat kulit festif; emas diya jika tidak di-set |
+| `settings_key_keycodes` | list of keycodes | Tombol remote buka Settings, untuk `HomeKeyService` (gear TCL Google TV: `[83]`) |
+| `settings_key_panel` | bool | Tombol itu buka panel quick settings (TV settings, Display, Network, Apps, Launcher settings) bukan Settings TV |
+| `settings_fallback_components` | list, `config.xml` only | Layar vendor dicoba berurutan jika tidak ada yang menjawab action Settings standar (Xiaomi China, TCL/FFALCON, Fire OS — menu asli di launcher), masing-masing `package/activity`; paket pertama terpasang menang; jika tidak ada, intent standar tetap dikirim (bisa tidak buka apa-apa). Fire OS menjawab dengan stub `CTSDummy`, dianggap hilang sehingga fallback jalan. Paket di sini juga harus di `<queries>` launcher (visibilitas paket Android 11); set dengan app settings di luar daftar butuh build, bukan push tema. Tidak dibaca dari tema |
+| `restore_key_services` | bool | Setelah force stop launcher, Home mengembalikan helper accessibility remote (`HomeKeyService`, `InputKeyService`) ke daftar enabled; butuh `RESTORE_KEY_SERVICES=1` saat install. Default off |
+| `input_key_keycodes` | list of keycodes | Tombol remote lain buka input switcher, untuk `InputKeyService` (`KEYCODE_TV` dan `KEYCODE_TV_INPUT` selalu) |
+| `app_keys` | list of strings | Tombol remote buka app, `"190:com.google.android.youtube.tv"` atau `"KEYCODE_BUTTON_3:..."`, atau scancode `"scan:490:..."` untuk remote satu keycode banyak tombol (Sony BRAVIA), untuk `InputKeyService`/`HomeKeyService`. `"input:<input id>"` ganti paket = switch input TV, mis. HDMI (`dumpsys tv_input`). Prefix `hold:` = long-press, mis. `"hold:190:com.netflix.ninja"`; tanpa prefix = tap |
+| `key_filter` | bool | `false` = helper tetap enabled tapi tidak filter key. Untuk firmware di mana service accessibility filter key merusak repeat long-press (TCL Google TV Android 12): tombol remote di atas mati, repeat volume kembali |
+| `gamepad_passthrough` | bool | `true` = helper tidak filter key saat gamepad terhubung, game lihat tombolnya (Steam Link + Xbox); tombol remote di atas mati sampai cabut. Butuh `key_filter` on. Remote suara dengan joystick tidak dihitung. Default off |
+| `stock_home_redirect` | string | Paket stock launcher; jika firmware hidupkan lagi (XGIMI), home screen-nya dialihkan ke sini (`HOME_KEY_SERVICE=1`) |
+| `race_calendar` | list of races | Mode race-weekend F1: dari 12 jam sebelum sesi pertama weekend sampai 4 jam setelah balapan, panel di bawah jam menampilkan sesi berikut + countdown (atau live) dan jadwal weekend zona waktu TV. Tulis dengan `tools/race_calendar.py <theme folder>` (musim dari API Jolpica gratis); launcher sendiri tidak online |
+| `home_idle_clock_minutes` | 0 to 1440 | Menit Home idle sebelum screensaver jam (jam/tanggal tipis di atas glow lambat, seperti screensaver "Clock" sistem). Tombol apa pun kembali ke Home. Hanya dari Home, tidak di atas Live TV/app; 0 = off (default) |
+| `glow_style` | string | Bentuk glow di belakang app fokus, warna app: `radial` (default) atau `horizon`, warna turun dari tepi atas ke hitam; rak cinematic punya sendiri |
+| `cinematic_home` | bool | Rak atas cinematic: artwork app dock fokus (soft) memenuhi atas layar warna app, nama besar, "Last opened", titik posisi dock, glow fokus, band dock translucen; default off |
+| `cinematic_dots` | bool | Dengan `cinematic_home`, titik posisi dock di bawah nama app (default `true`); `false` tanpa titik |
+| `cinematic_white_focus` | bool | Dengan `cinematic_home`, highlight fokus putih di dock, bukan warna app (default `false`); `app_glow` tetap warnai semua tile |
+| `cinematic_scrim` | 0 to 100 | Dengan `cinematic_home`, kekuatan scrim gelap di belakang nama rak (default `100`); lebih rendah = wallpaper tembus |
+| `cinematic_art` | 0 to 100 | Dengan `cinematic_home`, opacity artwork app fokus (default `50`); `0` = wallpaper tidak tertutup |
+| `dock_even_padding` | bool | Padding band dock = jarak antar tile di keempat sisi, sejauh grid mengizinkan (default `false`) |
+| `dock_glass` | bool | Band dock kaca buram terang seperti pill bar atas (default `false`); cocok dengan `sky_intensity` atau wallpaper |
+| `ambient_glow` | bool | Glow di belakang dock warna app fokus (default `true`); `false` hanya `background_color` atau wallpaper |
+| `app_glow` | bool | Highlight fokus glow warna app di setiap tile, seperti `cinematic_home` di dock (default `false`) |
+| `fade_rows` | bool | Baris fade saat scroll ke bawah jam, bukan potong keras; wallpaper/sky tembus. Grid draw ke hardware layer (~6 MB VRAM 1080p) (default `false`) |
 
 ## Wallpapers
 
-`wallpaper.jpg` is drawn full screen behind the launcher, centre-cropped. Keep it dark, 1920×1080 and
-under about 300 KB: the text, the hero name and the dock band are designed for black, and a 1 GB TV
-decodes the picture into memory on every Home start. Pictures larger than the screen are scaled down to
-it; a picture that is still over 4K (about 8.4 million pixels) after it is sampled down to the screen is not shown at all, and the plain colour stays.
+`wallpaper.jpg` digambar full screen di belakang launcher, centre-crop. Pakai gambar gelap, 1920×1080,
+di bawah ~300 KB: teks, hero name, dan band dock didesain untuk hitam, dan TV 1 GB decode gambar ke
+memori setiap Home start. Gambar lebih besar dari layar discale; gambar yang masih di atas 4K (~8,4 juta
+piksel) setelah sampling tidak ditampilkan, warna polos tetap.
 
-For a wallpaper collection, place JPEG, PNG or WebP files in the theme’s `wallpapers/` folder beside `config.json`, then set:
+Untuk koleksi wallpaper, taruh file JPEG, PNG, atau WebP di folder `wallpapers/` tema di samping `config.json`, lalu set:
 
 ```json
 { "wallpaper": true, "wallpaper_rotation_minutes": 30, "wallpaper_dim": 40, "wallpaper_order": "sequential" }
 ```
 
-The last displayed picture is remembered on the TV, so a restart or reboot resumes from it rather than
-starting over at the first image in `sequential` mode. Missing an interval while the TV is asleep or
-unplugged does not replay the missed pictures: Home moves on at most once when it wakes. Replacing the
-collection starts playback from the new collection's first picture. A collection with one picture is
-shown once and never blanked on a timer. Images are centre-cropped to fill the 16:9 screen; dimming is
-drawn as a black overlay above the picture and below the launcher's text.
+Gambar terakhir diingat di TV, jadi restart/reboot lanjut dari situ, bukan dari gambar pertama mode
+`sequential`. Interval terlewat saat TV tidur/cabut listrik tidak memutar ulang gambar yang terlewat:
+Home paling banyak maju sekali saat bangun. Ganti koleksi mulai dari gambar pertama koleksi baru.
+Koleksi satu gambar ditampilkan sekali dan tidak dikosongkan timer. Gambar centre-crop isi layar 16:9;
+dimming overlay hitam di atas gambar, di bawah teks launcher.
 
-When you apply a theme, its collection replaces the one already on the TV. Use filenames containing
-only letters, digits, underscores, dots and hyphens. Images can come from any source; check that you
-have permission to use them. The launcher considers
-up to 100 nonempty images, at most 10 MB each, skips unreadable files and keeps the last good background.
-An empty collection falls back to `wallpaper.jpg`, or the background colour if no image is available.
-`"wallpaper": false` disables both single-image and collection backgrounds.
+Saat tema diterapkan, koleksinya menggantikan yang sudah di TV. Nama file hanya huruf, angka, underscore,
+titik, dan strip. Gambar dari sumber apa pun; pastikan izin pakai. Launcher mempertimbangkan
+hingga 100 gambar non-kosong, maks. 10 MB each, lewati file tidak terbaca, pertahankan background terakhir yang bagus.
+Koleksi kosong fallback ke `wallpaper.jpg`, atau warna latar jika tidak ada gambar.
+`"wallpaper": false` mematikan background satu gambar dan koleksi.
 
-Selection is random without an immediate repeat when alternatives exist. The current image and its
-change time survive app/process restarts. Rotation runs only while Home is visible; on return from
-another app, an overdue background changes then. Images are decoded on a worker thread and bounded
-to the screen size. There is no download service, Internet permission or computer-side scheduler.
-The original system idle screensaver is left unchanged.
+Pilihan acak tanpa ulang langsung jika ada alternatif. Gambar saat ini dan waktu ganti survive restart
+app/proses. Rotasi hanya saat Home terlihat; kembali dari app lain, background terlambat ganti saat itu.
+Gambar didecode di worker thread, dibatasi ukuran layar. Tidak ada layanan unduh, permission Internet,
+atau scheduler di komputer. Screensaver idle sistem asli tidak diubah.
 
-On the TV, Launcher settings has a Wallpaper row: pick one picture from the collection (or the theme's
-`wallpaper.jpg`), or None. A pick shows that one picture and stops the rotation until you choose Theme
-default, press Follow theme, or push a theme again.
+Di TV, Launcher settings punya baris Wallpaper: pilih satu gambar dari koleksi (atau `wallpaper.jpg`
+tema), atau None. Pilihan menampilkan satu gambar dan menghentikan rotasi sampai Theme default, Follow
+theme, atau push tema lagi.
 
 ## Reduced motion
 
-`"reduced_motion": true` keeps the look but calms the movement and draws far fewer frames: the
-highlight slides without bouncing and settles within 5 frames, every animation (tile zoom, dropdowns,
-the app library) lasts 90 ms or less, names, the top shelf, the glow and the highlight appear instead of
-fading, and there is no tile entrance. Use it on TVs whose GPU cannot keep up; a MediaTek MT5895 on
-Android 10 is the known case. The default, `false`, keeps the normal motion.
+`"reduced_motion": true` menjaga tampilan tapi menenangkan gerak dan jauh lebih sedikit frame: highlight
+slide tanpa bounce, settle ≤5 frame, setiap animasi (zoom tile, dropdown, app library) ≤90 ms, nama/rak/glow/highlight
+muncul bukan fade, tanpa entrance tile. Pakai di TV yang GPU-nya tidak sanggup; MediaTek MT5895 Android 10
+kasus yang dikenal. Default `false` = gerak normal.
 
 ```json
 { "reduced_motion": true }
@@ -169,34 +166,32 @@ Android 10 is the known case. The default, `false`, keeps the normal motion.
 
 ## Time-of-day backdrop
 
-`"sky_intensity": 60` draws a dark gradient over the wallpaper and behind everything else, that follows the
-clock: night blues, a soft blue day, then a warm horizon that peaks at seven in the evening.
-The glow near the bottom edge travels from left to right with the sun. The colours stay dark so the
-white clock, the hero name and the dock band keep their contrast. It is drawn as one 480×270 bitmap
-and redrawn once a minute, never animated, so even a 1 GB TV has nothing to keep up with. `0` keeps
-the plain background; the default is off (the reference launcher looks exactly as before).
+`"sky_intensity": 60` menggambar gradasi gelap di atas wallpaper dan di belakang semuanya, mengikuti jam:
+biru malam, siang biru lembut, horizon hangat puncak jam tujuh malam. Glow dekat tepi bawah bergerak kiri–kanan
+mengikuti matahari. Warna tetap gelap agar jam putih, hero name, dan band dock kontras. Satu bitmap 480×270,
+digambar ulang tiap menit, tidak animasi, jadi TV 1 GB tidak perlu mengejar. `0` = latar polos; default off
+(launcher referensi tampil seperti sebelumnya).
 
 ```json
 { "sky_intensity": 60 }
 ```
 
-That evening peak is a fixed reference day, sunrise 07:30 and sunset 19:00 on the TV's clock. The
-launcher follows the real sun only when `latitude` and `longitude` are set in
-`launcher/app/src/main/res/values/config.xml`, which is a build setting a theme cannot carry: see
-[docs/sky.md](../docs/sky.md) for the two lines and what still falls back.
+Puncak malam itu hari referensi tetap, sunrise 07:30 dan sunset 19:00 menurut jam TV. Launcher mengikuti
+matahari nyata hanya jika `latitude` dan `longitude` di-set di
+`launcher/app/src/main/res/values/config.xml`, setting build yang tema tidak bisa bawa: lihat
+[docs/sky.md](../docs/sky.md) untuk dua baris itu dan fallback yang masih dipakai.
 
-## Adding a theme
+## Menambah tema
 
-Open a PR with a new folder here containing:
+Buka PR dengan folder baru di sini berisi:
 
-- `config.json`, the theme itself.
-- `screenshot.jpg`, **required**: Home on a real TV with the theme pushed, not a mock-up or an
-  emulator. Take it with `tools/tv.py 'screencap -p /sdcard/s.png'` and
-  `tools/tv.py --pull /sdcard/s.png s.png`, then save it as a JPEG at 1280×720 (16:9) under 300 KB,
-  for example `sips -z 720 1280 -s format jpeg s.png --out screenshot.jpg` on macOS. Leave the focus on
-  the dock so the glow and the hero name show. A PR without it fails CI (`tests/test_themes.py`).
-- `wallpaper.jpg` or `wallpapers/` if the theme uses them.
+- `config.json`, tema itu sendiri.
+- `screenshot.jpg`, **wajib**: Home di TV asli dengan tema di-push, bukan mock-up atau emulator. Ambil
+  dengan `tools/tv.py 'screencap -p /sdcard/s.png'` dan
+  `tools/tv.py --pull /sdcard/s.png s.png`, simpan JPEG 1280×720 (16:9) di bawah 300 KB,
+  misalnya `sips -z 720 1280 -s format jpeg s.png --out screenshot.jpg` di macOS. Fokus di dock agar glow
+  dan hero name terlihat. PR tanpa ini gagal CI (`tests/test_themes.py`).
+- `wallpaper.jpg` atau `wallpapers/` jika tema memakainya.
 
-Then add a row to the table above with the screenshot, the same way as the others. Keep the dock list
-generic (the big streaming apps) unless the theme is for a specific TV, and say which TV you tried it on
-in the PR description.
+Lalu tambahkan baris ke tabel di atas dengan screenshot, seperti yang lain. Dock generik (streaming
+besar) kecuali tema untuk TV tertentu, dan sebut TV uji di deskripsi PR.

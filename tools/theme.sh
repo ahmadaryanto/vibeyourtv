@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Push a theme (a folder with config.json, and optionally a wallpaper.jpg or a wallpapers/ collection) to the
-# launcher on the TV and restart Home so it picks it up. The launcher reads the files from its external files
-# directory and overlays config.json on its built-in config.xml; see themes/README.md for the keys.
+# Kirim tema (folder berisi config.json, plus wallpaper.jpg atau koleksi wallpapers/ kalau ada) ke
+# launcher di TV dan mulai ulang Home supaya temanya kebaca. Launcher membaca file dari folder
+# external files-nya dan menimpa config.json di atas config.xml bawaan; kunci-kuncinya ada di themes/README.md.
 #
 # Usage: TV_HOST=192.168.1.50 tools/theme.sh themes/aurora
-#        TV_HOST=192.168.1.50 tools/theme.sh --reset        # remove the overlay, back to config.xml
+#        TV_HOST=192.168.1.50 tools/theme.sh --reset        # hapus lapisan tema, kembali ke config.xml
 set -euo pipefail
 # Resolve the theme folder against the caller's directory before moving into tools/.
 # Git Bash's pwd says /c/Users/..., which the Windows Python cannot open; pwd -W gives C:/Users/... (as in disable.sh).
@@ -18,10 +18,10 @@ case "$THEME_ARG" in
   *) THEME_ARG="$(pwd -W 2>/dev/null || pwd)/$THEME_ARG" ;;
 esac
 cd "$(dirname "$0")"
-: "${TV_HOST:?set TV_HOST to the TV IP address, e.g. TV_HOST=192.168.1.50 $0 themes/aurora}"
+: "${TV_HOST:?set TV_HOST ke alamat IP TV, misalnya TV_HOST=192.168.1.50 $0 themes/aurora}"
 PY=venv/bin/python
 [ -x "$PY" ] || PY=venv/Scripts/python.exe
-[ -x "$PY" ] || { echo "run: python3 -m venv tools/venv && tools/venv/bin/pip install -r tools/requirements.txt" >&2; exit 1; }
+[ -x "$PY" ] || { echo "jalankan dulu: python3 -m venv tools/venv && tools/venv/bin/pip install -r tools/requirements.txt" >&2; exit 1; }
 export MSYS_NO_PATHCONV=1
 PKG=com.gathin.tvhome
 DIR=/sdcard/Android/data/$PKG/files
@@ -70,10 +70,10 @@ if [ "${1:-}" = --reset ]; then
   tv "mkdir -p $DIR 2>/dev/null; $(del config.json); $(del wallpaper.jpg); $(del wallpapers/captions.txt); $CLEAR_WALLPAPERS; printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision); $RESTART; echo reset" | tail -n 1
   exit 0
 fi
-THEME="${THEME_ARG:?usage: theme.sh <theme folder> | --reset}"
+THEME="${THEME_ARG:?cara pakai: theme.sh <theme folder> | --reset}"
 [ -f "$THEME/config.json" ] || { echo "no config.json in $THEME" >&2; exit 1; }
 "$PY" -I -c 'import json,sys; json.load(open(sys.argv[1], encoding="utf-8-sig"))' "$THEME/config.json" 2>/dev/null \
-  || { echo "$THEME/config.json is not valid JSON" >&2; exit 1; }
+  || { echo "$THEME/config.json is not valid JSON — JSON-nya tidak valid" >&2; exit 1; }
 
 tv "mkdir -p $DIR" >/dev/null 2>&1 || true
 tv --push "$THEME/config.json" "$TMP-config.json" >/dev/null
@@ -91,7 +91,7 @@ if [ -d "$THEME/wallpapers" ]; then
     case "$IMAGE" in
       *.jpg|*.jpeg|*.png|*.webp|*.JPG|*.JPEG|*.PNG|*.WEBP)
         NAME=$(basename "$IMAGE")
-        [[ "$NAME" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "unsupported wallpaper filename: $NAME" >&2; exit 1; }
+        [[ "$NAME" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "nama file wallpaper tidak didukung: $NAME" >&2; exit 1; }
         "$PY" -I b64push.py "$IMAGE" "$(stage "wallpapers/$NAME")"
         tv "$(put "wallpapers/$NAME")" >/dev/null ;;
     esac
@@ -106,4 +106,4 @@ else
 fi
 tv "printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision)" >/dev/null
 tv "$RESTART; echo applied" | tail -n 1
-echo "Theme $(basename "$THEME") is on the TV. Undo with: tools/theme.sh --reset"
+echo "Tema $(basename "$THEME") sudah ada di TV. Balikin dengan: tools/theme.sh --reset"

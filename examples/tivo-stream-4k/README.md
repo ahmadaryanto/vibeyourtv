@@ -1,9 +1,9 @@
 # TiVo Stream 4K
 
-SEI Robotics `IPA1104HDW` (SKU `RA2400`, device `SEI400TV`), Amlogic S905Y2, 2 GB RAM, Android TV 12, build `SC.1272`,
-security patch 2025-07-05, NES middleware. Tested on one real unit on 2026-10-22.
+SEI Robotics `IPA1104HDW` (SKU `RA2400`, device `SEI400TV`), Amlogic S905Y2, RAM 2 GB, Android TV 12, build `SC.1272`,
+patch keamanan 2025-07-05, middleware NES. Diuji satu unit asli 2026-10-22.
 
-## Why `tools/disable.sh` does not work here
+## Mengapa `tools/disable.sh` tidak jalan di sini
 
 The firmware answers every `pm disable-user`, `pm disable`, `pm disable <component>` and `pm hide` with a refusal
 ("This command is illegal!", or "Shell cannot change component state"), and refuses `pm uninstall --user 0` for its core

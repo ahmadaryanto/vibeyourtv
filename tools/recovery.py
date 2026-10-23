@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""The state a debloat list is about to change, so that undo means undo (#239).
+"""Keadaan yang akan diubah daftar debloat, supaya undo benar-benar undo (#239).
 
-    recovery.py --save <debloat list>                read the TV and write the record
-    recovery.py --commands <list> [stock launcher]   print a batch for tools/tv.py --batch that puts
-                                                     the recorded states back
+    recovery.py --save <debloat list>                baca TV dan tulis catatannya
+    recovery.py --commands <list> [stock launcher]   cetak batch untuk tools/tv.py --batch yang
+                                                     mengembalikan keadaan tercatat
 
-`tools/restore.sh` used to enable every package in the list, including ones the owner had already
-disabled, and reset Home and the animation scales to fixed values instead of to what was there
-before. Both scripts now go through this record: `disable.sh` writes it before the first command
-reaches the TV, and `restore.sh` replays it.
+`tools/restore.sh` dulu mengaktifkan setiap paket di daftar, termasuk yang memang sudah
+dinonaktifkan pemiliknya, dan mengembalikan Home serta skala animasi ke nilai tetap, bukan ke
+yang ada sebelumnya. Kedua skrip sekarang lewat catatan ini: `disable.sh` menulisnya sebelum
+perintah pertama sampai ke TV, dan `restore.sh` memutarnya ulang.
 
-Records live in ~/.cleanyourtv/, one per TV and list. The first one wins: a retry after a
-half-applied list must not record the broken state as the original. A later run only adds the names
-the list gained since then, with their state before this list disabled them.
+Catatan ada di ~/.cleanyourtv/, satu per TV dan daftar. Yang pertama yang menang: percobaan ulang
+setelah daftar setengah jalan tidak boleh mencatat keadaan rusak sebagai yang asli. Jalanan
+berikutnya hanya menambah nama yang baru masuk daftar, dengan keadaan sebelum daftar ini menonaktifkannya.
 """
 import hashlib
 import json
@@ -63,7 +63,7 @@ def read_list(path):
             raise SystemExit(f"{path}:{number}: not a package name: {name!r}")
         names.append(name)
     if not names:
-        raise SystemExit(f"{path}: no package names in this list")
+        raise SystemExit(f"{path}: no package names di daftar ini")
     return names
 
 
@@ -81,26 +81,26 @@ def load_record(path):
             record = json.load(f)
     except (OSError, ValueError) as e:
         raise SystemExit(f"{path}: not a usable recovery record ({e}).\n"
-                         "It is left where it is: move it aside deliberately, a retry must not "
-                         "replace the state recorded before the first change.")
+                         "File-nya dibiarkan di tempat: pindahkan sengaja, percobaan ulang tidak boleh "
+                         "mengganti keadaan yang dicatat sebelum perubahan pertama.")
     if record.get("version") != VERSION or not isinstance(record.get("packages"), dict):
-        raise SystemExit(f"{path}: unknown recovery record format; move it aside deliberately.")
+        raise SystemExit(f"{path}: format catatan pemulihan tidak dikenal; pindahkan sengaja.")
     # The record is replayed on the TV's shell, so it gets the same checks as the list and the TV's
     # answers did when it was written: a hand-edited or damaged file stops here, before any command.
     for name, state in record["packages"].items():
         if not PACKAGE_RE.fullmatch(name):
             raise SystemExit(f"{path}: not a usable recovery record (not a package name: {name!r}); "
-                             "move it aside deliberately.")
+                             "pindahkan sengaja.")
         if state not in ("absent", "disabled", "enabled"):
-            raise SystemExit(f"{path}: not a usable recovery record (unknown state for {name}: "
-                             f"{state!r}); move it aside deliberately.")
+            raise SystemExit(f"{path}: not a usable recovery record (keadaan {name} tidak dikenal: "
+                             f"{state!r}); pindahkan sengaja.")
     home = record.get("home")
     if home is not None and not (isinstance(home, str) and HOME_RE.fullmatch(home)):
-        raise SystemExit(f"{path}: not a usable recovery record (not a Home component: {home!r}); "
-                         "move it aside deliberately.")
+        raise SystemExit(f"{path}: not a usable recovery record (bukan komponen Home: {home!r}); "
+                         "pindahkan sengaja.")
     if not isinstance(record.get("settings", {}), dict):
-        raise SystemExit(f"{path}: not a usable recovery record (settings is not a mapping); "
-                         "move it aside deliberately.")
+        raise SystemExit(f"{path}: not a usable recovery record (settings bukan pemetaan); "
+                         "pindahkan sengaja.")
     return record
 
 
@@ -126,8 +126,8 @@ def query_packages(dev):
                  for line in shell(dev, "pm list packages").splitlines()
                  if line.startswith("package:")}
     if not installed:
-        raise SystemExit("the TV returned no packages, so nothing was recorded and nothing will be "
-                         "disabled. Check the connection (tools/tv.py --probe) and try again.")
+        raise SystemExit("TV returned no packages, jadi tidak ada yang dicatat dan tidak ada yang akan "
+                         "dinonaktifkan. Cek koneksinya (tools/tv.py --probe) lalu coba lagi.")
     disabled = {line.split(":", 1)[1].strip()
                 for line in shell(dev, "pm list packages -d").splitlines()
                 if line.startswith("package:")}
@@ -150,7 +150,7 @@ def connect():
     try:
         import tv
     except ImportError as e:
-        raise SystemExit(f"cannot load tools/tv.py ({e}).\nrun: python3 -m venv tools/venv && "
+        raise SystemExit(f"tidak bisa memuat tools/tv.py ({e}).\njalankan dulu: python3 -m venv tools/venv && "
                          "tools/venv/bin/pip install -r tools/requirements.txt")
     return tv.connect()
 
@@ -171,9 +171,9 @@ def save(list_path, host):
         # does not hold yet have not been touched by this list, so their state now is their state
         # before cleanup. Without them, restore would leave those packages disabled for good.
         added = [name for name in packages if name not in record["packages"]]
-        print(f"keeping the recovery record from {record.get('created')}: {path}")
+        print(f"keeping the recovery record dari {record.get('created')}: {path}")
         if not added:
-            print("nothing was recorded again: it holds the state from before the first run.")
+            print("tidak ada yang dicatat lagi: isinya keadaan sebelum jalanan pertama.")
             return 0
         dev = connect()
         try:
@@ -183,8 +183,8 @@ def save(list_path, host):
         for name in added:
             record["packages"][name] = package_state(name, installed, disabled)
         write_record(path, record)
-        print(f"added {len(added)} names the list gained since then, entries already recorded "
-              f"are unchanged: {', '.join(added)}")
+        print(f"menambah {len(added)} nama yang masuk daftar sejak itu, entri yang sudah tercatat "
+              f"tidak diubah: {', '.join(added)}")
         return 0
 
     packages = read_list(list_path)
@@ -211,10 +211,10 @@ def save(list_path, host):
     write_record(path, record)
 
     already = sum(1 for state in record["packages"].values() if state == "disabled")
-    print(f"recorded {len(record['packages'])} packages on {host} "
-          f"({already} already disabled, left alone by undo) -> {path}")
-    print(f"HOME before: {home or 'no component answered'}")
-    print("undo with tools/restore.sh <same list>; keep this file, it is the only copy.")
+    print(f"mencatat {len(record['packages'])} paket di {host} "
+          f"({already} sudah nonaktif, dibiarkan oleh undo) -> {path}")
+    print(f"HOME sebelumnya: {home or 'tidak ada komponen yang menjawab'}")
+    print("balikin dengan tools/restore.sh <daftar yang sama>; simpan file ini, ini satu-satunya salinan.")
     return 0
 
 
@@ -228,10 +228,10 @@ def restore_commands(list_path, stock, host):
 
     if not path.exists():
         sys.stderr.write(
-            f"no recovery record for this TV and list ({path}).\n"
-            "Enabling every listed package and resetting Home and the animation scales to their\n"
-            "defaults. Packages that were already disabled before cleanup will be enabled too:\n"
-            "check the list before running this.\n")
+            f"no recovery record untuk TV dan daftar ini ({path}).\n"
+            "Semua paket di daftar akan diaktifkan, dan Home serta skala animasi dikembalikan ke\n"
+            "nilai bawaan. Paket yang sudah nonaktif sebelum pembersihan ikut diaktifkan:\n"
+            "cek daftarnya sebelum menjalankan ini.\n")
         for name in packages:
             commands.append(f"pm enable {name}")
         if stock:
@@ -250,7 +250,7 @@ def restore_commands(list_path, stock, host):
         commands.append(f"pm enable {name}")
     untouched = [(name, state) for name, state in states.items() if state != "enabled"]
     for name, state in untouched:
-        sys.stderr.write(f"  leaving {name} alone ({state} when the record was taken)\n")
+        sys.stderr.write(f"  leaving {name} alone ({state} saat catatan diambil)\n")
 
     # The stock launcher comes back unless the owner had disabled it before cleanup: the list may
     # have disabled it even when it was not the recorded Home (e.g. the custom launcher owned Home).
@@ -275,7 +275,7 @@ def restore_commands(list_path, stock, host):
         elif SCALE_RE.fullmatch(value):
             commands.append(f"settings put global {key} {value}")
         else:
-            sys.stderr.write(f"  skipping {key}: the record holds {value!r}, not a number\n")
+            sys.stderr.write(f"  melewati {key}: catatan menyimpan {value!r}, bukan angka\n")
     # disable.sh adds names the list gained to the record before disabling them, so a name still
     # missing here was added after the last disable run and never disabled by it: leave it alone.
     edited = [name for name in packages if name not in states]
@@ -283,8 +283,8 @@ def restore_commands(list_path, stock, host):
         sys.stderr.write(f"not in the record, leaving alone: {', '.join(edited)}\n")
     commands.append("pm list packages -d")
 
-    sys.stderr.write(f"restoring the state recorded on {record.get('created')}: "
-                     f"re-enabling {len(re_enable)}, leaving {len(untouched)} as they were.\n")
+    sys.stderr.write(f"mengembalikan keadaan yang dicatat pada {record.get('created')}: "
+                     f"mengaktifkan lagi {len(re_enable)}, membiarkan {len(untouched)} seperti semula.\n")
     return commands
 
 
@@ -295,12 +295,12 @@ def main():
         return save(args[1], host)
     if len(args) in (2, 3) and args[0] == "--commands":
         if not host:
-            sys.stderr.write("Set TV_HOST to your TV's IP address, e.g. TV_HOST=192.168.1.50\n")
+            sys.stderr.write("Set TV_HOST to your TV's IP address, misalnya TV_HOST=192.168.1.50\n")
         stock = args[2] if len(args) == 3 else "com.google.android.tvlauncher"
         for command in restore_commands(args[1], stock, host):
             print(command)
         return 0
-    sys.stderr.write("usage: recovery.py --save <debloat list>\n"
+    sys.stderr.write("cara pakai: recovery.py --save <debloat list>\n"
                      "       recovery.py --commands <debloat list> [stock launcher package]\n")
     return 2
 

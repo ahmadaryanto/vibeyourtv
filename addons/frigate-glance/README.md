@@ -24,7 +24,7 @@ further by camera and object.
 
 ![The add-on's card in the launcher's grid](docs/card-in-grid.jpg)
 
-## Permissions
+## Permissions (izin)
 
 | Permission | Why |
 |---|---|

@@ -1,3 +1,9 @@
+# TCL 75QM751G (QM7, 2024): daftar QM6K di papan G08 yang sama
+
+Ringkasan Bahasa Indonesia: laporan [#453](https://github.com/Gathin23/cleanyourtv/issues/453) — jalankan daftar QM6K (`G08`, build `AU14`). setupwraith dilewati selama Wi-Fi tersimpan miliknya, meski pakai Ethernet. Cast receiver bisa tetap rusak meski `mediashell` dipertahankan.
+
+---
+
 # TCL 75QM751G (QM7, 2024): the QM6K list on the same G08 board
 
 One owner's report ([#453](https://github.com/Gathin23/cleanyourtv/issues/453)), applied and

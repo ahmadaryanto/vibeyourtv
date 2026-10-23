@@ -33,7 +33,7 @@ disabled. Once the stock launcher is disabled the custom launcher is the only HO
 immediately. `cmd package set-home-activity` is a no-op here too: it prints `Success` and changes nothing,
 so `pm disable-user` is the mechanism that actually works.
 
-## Notes
+## Catatan
 
 - **VidHub's package name gives nothing away: it is `com.oumi.utility.media.hub`.** Nothing in the package
   name, the APK path or `dumpsys` says "VidHub" — it was identified by launching the activity and looking

@@ -1,8 +1,6 @@
 # tools/trace.py and tools/trace_report.py
 
-Record Perfetto traces of the launcher on the TV, then report where its time goes. For headline numbers
-only (key latency, jank, cold start, PSS), use `tools/bench.py` instead: it needs no extra install. To draw the
-result for a pull request, use `tools/flamechart.py` ([guide](flamechart.md)).
+Rekam trace Perfetto launcher di TV, lalu laporkan ke mana waktunya pergi. Untuk angka headline saja (latensi tombol, jank, cold start, PSS), pakai `tools/bench.py`: tidak perlu instal extra. Untuk menggambar hasil di PR, pakai `tools/flamechart.py` ([panduan](flamechart.md)).
 
 ## Setup
 
@@ -10,72 +8,54 @@ result for a pull request, use `tools/flamechart.py` ([guide](flamechart.md)).
 tools/venv/bin/pip install -r tools/requirements-perf.txt
 ```
 
-Recording needs only `tools/requirements.txt` and a TV on Android 9 or later. The report's first run
-downloads Perfetto's query engine (about 13 MB, SHA-256 checked) to `~/.local/share/perfetto`. To avoid
-that, download `trace_processor_shell` yourself and pass `--engine PATH`.
+Rekaman cukup `tools/requirements.txt` dan TV Android 9 ke atas. Run pertama laporan mengunduh mesin query Perfetto (sekitar 13 MB, SHA-256 dicek) ke `~/.local/share/perfetto`. Untuk menghindari itu, unduh `trace_processor_shell` sendiri dan pass `--engine PATH`.
 
-On Android 9 and 10, the TV's tracing services must be enabled first; they are enabled by default only
-from Android 11. See Perfetto's [tracing-service setup](https://perfetto.dev/docs/quickstart/android-tracing#starting-the-tracing-services)
-for the `persist.traced.enable` prerequisite on non-Pixel devices. This tool does not change that setting.
-It sends a binary trace config, which Android 9 accepts without the `--txt` option added in Android 10.
+Di Android 9 dan 10, layanan tracing TV harus diaktifkan dulu; default aktif dari Android 11. Lihat [tracing-service setup](https://perfetto.dev/docs/quickstart/android-tracing#starting-the-tracing-services) Perfetto untuk prasyarat `persist.traced.enable` di perangkat non-Pixel. Tool ini tidak mengubah setting itu. Tool mengirim config trace biner, yang Android 9 terima tanpa opsi `--txt` di Android 10.
 
-## Record
+## Rekam
 
 ```bash
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/trace.py home --runs 5 --out traces/before
 ```
 
-| Scenario | Recorded | Use for |
+| Skenario | Yang direkam | Untuk |
 |---|---|---|
-| `home` | HOME pressed while another app is in front | Most Home changes |
-| `cold` | `am start -W` after a force-stop, another app in front | Start-up work (`onCreate`, config, fonts) |
-| `coldsys` | `am force-stop` with Home in front; Android restarts it | The restart after Home was killed for memory |
-| `nav` | 24 D-pad moves, 0.35 s apart | Focus, scrolling, drawing |
-| `custom` | `--step CMD` (repeatable) after `--setup CMD` | Anything else; `sleep N` steps set the length |
+| `home` | HOME ditekan saat app lain di depan | Kebanyakan perubahan Home |
+| `cold` | `am start -W` setelah force-stop, app lain di depan | Kerja start (`onCreate`, config, font) |
+| `coldsys` | `am force-stop` dengan Home di depan; Android restart | Restart setelah Home dibunuh karena memori |
+| `nav` | 24 gerakan D-pad, jarak 0,35 s | Fokus, scroll, draw |
+| `custom` | `--step CMD` (bisa diulang) setelah `--setup CMD` | Lainnya; step `sleep N` menentukan durasi |
 
-- **Output:** each run writes `<scenario>-<n>.pftrace` (10–20 MB) and a `.json` with the commands and the
-  TV's model and build. `traces/` is gitignored.
-- **The other app:** `--app package/activity`, or by default the TV's Settings.
+- **Output:** setiap run menulis `<scenario>-<n>.pftrace` (10–20 MB) dan `.json` dengan perintah serta model dan build TV. `traces/` di-gitignore.
+- **App lain:** `--app package/activity`, atau default Settings TV.
 
-## Report
+## Laporan
 
-Keep `nav` traces separate from start traces (`home`, `cold`, `coldsys`, `custom`), since their frame
-counts use different time windows. Each input set and both sides of `--vs` must use the same family.
-For a folder containing both, pass matching files such as `traces/nav-*.pftrace` instead of the folder.
+Pisahkan trace `nav` dari trace start (`home`, `cold`, `coldsys`, `custom`), karena hitungan frame memakai jendela waktu berbeda. Set input dan kedua sisi `--vs` harus keluarga yang sama. Untuk folder yang berisi keduanya, pass file yang cocok seperti `traces/nav-*.pftrace`, bukan foldernya.
 
 ```bash
 tools/venv/bin/python tools/trace_report.py traces/before --vs traces/after --markdown
 ```
 
-| Scenario | Numbers |
+| Skenario | Angka |
 |---|---|
-| Starts (`home`, `cold`, `coldsys`, `custom`) | Start to first frame drawn; the steps inside it (`bindApplication`, `onCreate`, `onStart`, `onResume`, first layout and draw); then the frames drawn and missed deadlines in the next 1.5 s |
-| `nav` | Frame time (median, 90th percentile); RenderThread draw; GPU wait; missed deadlines |
+| Start (`home`, `cold`, `coldsys`, `custom`) | Start sampai frame pertama digambar; langkah di dalamnya (`bindApplication`, `onCreate`, `onStart`, `onResume`, layout dan draw pertama); lalu frame yang digambar dan deadline terlewat di 1,5 s berikutnya |
+| `nav` | Waktu frame (median, persentil 90); draw RenderThread; tunggu GPU; deadline terlewat |
 
-With `--vs`, a third table shows the change in each median. A run over twice the median is starred.
+Dengan `--vs`, tabel ketiga menunjukkan perubahan tiap median. Run di atas 2× median ditandai bintang.
 
-Slices still open when the recording ends have no measured duration. The report leaves those durations
-out and counts only completed draws. If the first RenderThread draw is unfinished, the first-frame time
-is unavailable too; completed lifecycle steps are still reported.
+Slice yang masih terbuka saat rekaman berakhir tidak punya durasi terukur. Laporan mengabaikan durasi itu dan hanya menghitung draw selesai. Kalau draw RenderThread pertama belum selesai, waktu first-frame juga tidak tersedia; langkah lifecycle yang selesai tetap dilaporkan.
 
-Frame times and missed deadlines need [FrameTimeline](https://perfetto.dev/docs/data-sources/frametimeline),
-available on Android 12 and later. Without its data for the launcher process, these metrics are omitted
-(or shown as `–` beside measured runs). `nav` still counts RenderThread draws and reports their duration
-and GPU waits where available; a draw's duration is not the full frame time.
+Waktu frame dan deadline terlewat butuh [FrameTimeline](https://perfetto.dev/docs/data-sources/frametimeline), tersedia Android 12 ke atas. Tanpa datanya untuk proses launcher, metrik ini dihilangkan (atau `–` di samping run terukur). `nav` tetap menghitung draw RenderThread dan melaporkan durasi serta tunggu GPU jika ada; durasi draw bukan waktu frame penuh.
 
-## Rules
+## Aturan
 
-- **Repeat runs.** Record 5 runs per build, on the same TV with the same config, theme and wallpaper.
-  Compare medians.
-- **Keep starred runs.** They're usually memory pressure on a 1 GB TV. Report them; don't drop them.
-- **Don't run `am start` after a force-stop with Home in front.** Android has already restarted Home, so
-  `onResume` appears twice. Use `cold` or `coldsys`.
-- **Check the remote afterwards.** A force-stop switches off the accessibility helpers. `trace.py` puts the
-  list back after the last run, but on some TCL sets a helper still won't bind (`docs/TROUBLESHOOTING.md`).
-- **Look in the right place for GPU savings.** Less overdraw shows as GPU wait in `nav`, not as main-thread
-  time.
-- **Expect no latency gain from off-main-thread work.** It removes work, but doesn't shorten the time to
-  the first frame.
-- **Never commit the `.pftrace` files.** They hold the TV's process list.
+- **Ulangi run.** Rekam 5 run per build, di TV yang sama dengan config, tema, dan wallpaper sama. Bandingkan median.
+- **Simpan run bertanda bintang.** Biasanya tekanan memori di TV 1 GB. Laporkan; jangan buang.
+- **Jangan jalankan `am start` setelah force-stop dengan Home di depan.** Android sudah restart Home, jadi `onResume` muncul dua kali. Pakai `cold` atau `coldsys`.
+- **Cek remote setelahnya.** Force-stop mematikan helper accessibility. `trace.py` mengembalikan daftar setelah run terakhir, tapi di beberapa TCL helper tetap tidak bind (`docs/TROUBLESHOOTING.md`).
+- **Cari penghematan GPU di tempat yang benar.** Overdraw lebih sedikit terlihat sebagai tunggu GPU di `nav`, bukan waktu main thread.
+- **Jangan harap gain latensi dari kerja off-main-thread.** Kerja hilang, tapi waktu ke frame pertama tidak memendek.
+- **Jangan commit file `.pftrace`.** Berisi daftar proses TV.
 
-The whole before/after method for a pull request is in [`docs/workflows/perf-ab.md`](../docs/workflows/perf-ab.md).
+Metode before/after lengkap untuk PR ada di [`docs/workflows/perf-ab.md`](../docs/workflows/perf-ab.md).

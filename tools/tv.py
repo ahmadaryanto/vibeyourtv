@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Minimal ADB-over-TCP client for an Android TV using adb_shell (no adb binary needed).
+"""Klien ADB-over-TCP ringkas untuk Android TV, pakai adb_shell (tidak perlu biner adb).
 
-Set TV_HOST to the TV's IP (or IP:port). Usage:
-    tv.py --probe                      connect and print model / Android version
-    tv.py <shell command...>           run one shell command
+Set TV_HOST ke IP TV (atau IP:port). Usage:
+    tv.py --probe                      sambung lalu cetak model / versi Android
+    tv.py <shell command...>           jalankan satu perintah shell
     tv.py --screenshot <local.png> [KEY ...] [--wait SECONDS]
-                                       capture the screen on the TV, then pull it; press remote keys first
-    tv.py --batch < commands.txt       one command per line, same connection
-    tv.py --push <local> <remote>      small files only (see b64push.py for larger ones)
+                                       potret layar di TV, lalu tarik filenya; tekan tombol remote dulu
+    tv.py --batch < commands.txt       satu perintah per baris, koneksi yang sama
+    tv.py --push <local> <remote>      file kecil saja (lihat b64push.py untuk yang lebih besar)
     tv.py --pull <remote> <local>
-    tv.py --reboot                     return once the reboot request is accepted; the TV may still be restarting
+    tv.py --reboot                     return once the reboot request is accepted; TV mungkin masih menyala ulang
 """
 import os
 import re
@@ -47,8 +47,8 @@ def split_host_port(endpoint):
 
 _raw_host = os.environ.get("TV_HOST")
 if not _raw_host:
-    sys.exit("Set TV_HOST to your TV's IP address, e.g.  TV_HOST=192.168.1.50 tools/tv.py --probe\n"
-             "(find it under Settings → Network, or look for the TV in `arp -a`)")
+    sys.exit("Set TV_HOST to your TV's IP address, misalnya  TV_HOST=192.168.1.50 tools/tv.py --probe\n"
+             "(cari di Settings → Network, atau lihat TV di `arp -a`)")
 HOST, _endpoint_port = split_host_port(_raw_host)
 _port_str = _endpoint_port or os.environ.get("TV_PORT") or "5555"
 try:
@@ -56,7 +56,7 @@ try:
     if not (1 <= PORT <= 65535):
         raise ValueError
 except ValueError:
-    sys.exit(f"not a port number: {_port_str!r}")
+    sys.exit(f"not a port number: {_port_str!r} (bukan nomor port)")
 KEYDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "adbkey")
 KEY = os.path.join(KEYDIR, "adbkey")
 # Reuse the stock adb key when the TV already trusts it (platform-tools / Android Studio users), so the
@@ -72,7 +72,7 @@ def restrict(path):
     try:
         os.chmod(path, 0o600)
     except OSError as e:
-        print(f"warning: could not restrict permissions on {path}: {e}", file=sys.stderr)
+        print(f"peringatan: tidak bisa membatasi izin di {path}: {e}", file=sys.stderr)
 
 
 def get_signer():
@@ -150,7 +150,7 @@ def screenshot_args(rest):
             except ValueError:
                 wait = -1
             if wait < 0:
-                usage_error(f"--wait needs a number of seconds, not {rest[i + 1]!r}")
+                usage_error(f"--wait butuh angka detik, bukan {rest[i + 1]!r}")
             i += 2
             continue
         if local is None and not arg.startswith("--"):
@@ -158,11 +158,11 @@ def screenshot_args(rest):
         elif KEY_NAME.match(arg):
             keys.append(arg)
         else:
-            usage_error(f"not a key name: {arg!r} (use names such as HOME or DPAD_RIGHT, in capitals, "
-                        "or a numeric keycode)")
+            usage_error(f"bukan nama tombol: {arg!r} (pakai nama seperti HOME atau DPAD_RIGHT, huruf besar, "
+                        "atau keycode angka)")
         i += 1
     if local is None:
-        usage_error("--screenshot needs the file to save to")
+        usage_error("--screenshot butuh file tempat menyimpan")
     return local, keys, wait
 
 
@@ -203,13 +203,13 @@ def screenshot(dev, local, keys=(), wait=1.0):
     if size == 0:
         # 0 bytes means the input, not the connection: Live TV and HDMI captures come back empty on
         # most sets, and PROMPT.md tells the agent to look at the screen rather than the ADB link.
-        print(f"captured 0 bytes into {local}: Live TV and HDMI inputs come back empty on most TVs, as do "
-              "some streaming apps (Netflix), so check what is on screen before the ADB connection "
-              "(see docs/TROUBLESHOOTING.md)", file=sys.stderr)
+        print(f"hasilnya 0 bytes di {local}: Live TV and HDMI sering kembali kosong di kebanyakan TV, begitu juga "
+              "beberapa aplikasi streaming (Netflix), jadi lihat dulu apa yang ada di layar sebelum menyalahkan koneksi ADB "
+              "(lihat docs/TROUBLESHOOTING.md)", file=sys.stderr)
         return 1
     with open(local, "rb") as f:
         if f.read(len(PNG)) != PNG:
-            print(f"{local} is not a PNG: the pull from the TV came back damaged; try again", file=sys.stderr)
+            print(f"{local} is not a PNG: tarikan dari TV rusak; coba lagi", file=sys.stderr)
             return 1
     print(f"screenshot {local} ({size} bytes)")
     return 0
@@ -225,7 +225,7 @@ def main():
             dev.reboot()
         finally:
             dev.close()
-        print("Reboot request accepted; wait for the TV to restart before reconnecting.")
+        print("Reboot request accepted; tunggu TV menyala ulang (wait for the TV to restart) before connecting again.")
         return 0
     status = 0
     if not args or args == ["--probe"]:
@@ -238,10 +238,10 @@ def main():
         status = screenshot(dev, local, keys, wait)
     elif args[0] == "--push" and len(args) == 3:
         dev.push(args[1], args[2], transport_timeout_s=300.0, read_timeout_s=300.0)
-        print(f"pushed {args[1]} -> {args[2]}")
+        print(f"terkirim {args[1]} -> {args[2]}")
     elif args[0] == "--pull" and len(args) == 3:
         dev.pull(args[1], args[2], transport_timeout_s=300.0, read_timeout_s=300.0)
-        print(f"pulled {args[1]} -> {args[2]}")
+        print(f"tertarik {args[1]} -> {args[2]}")
     elif args[0] == "--batch":
         # one shell command per stdin line, each run separately on the same connection.
         # utf-8-sig drops the BOM Windows PowerShell may prepend to piped stdin.

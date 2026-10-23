@@ -62,7 +62,7 @@ The commands run from the repo folder. Each `tools/*.sh` script has a PowerShell
    TV_HOST=192.168.1.50 tools/venv/bin/python -I tools/tv.py 'settings put secure screensaver_components com.gathin.tvhome/.ClockDream'
    ```
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 On the TV: **Settings > Apps > See all apps > Show system apps**, pick the app and choose **Enable**.
 
@@ -127,7 +127,7 @@ TV_HOST=192.168.1.50 tools/venv/bin/python -I tools/check.py examples/tcl-65c7l-
 
 Add `--fix` after `check.py` to re-disable whatever came back and put the launcher back on Home.
 
-## Undo everything
+## Kembalikan semua
 
 ```sh
 TV_HOST=192.168.1.50 tools/restore.sh examples/tcl-65c7l-google-tv/debloat.txt com.google.android.apps.tv.launcherx
@@ -138,7 +138,7 @@ The first line turns every disabled app back on and makes the Google TV home Hom
 puts Google's screensaver back. To remove the new launcher as well, run
 `tools/tv.py 'pm uninstall com.gathin.tvhome'` the same way.
 
-## When you're done
+## Selesai
 
 Network debugging lets anyone on your network who is accepted at the prompt control the TV. Port 5555
 is unencrypted. Close it when you're done:

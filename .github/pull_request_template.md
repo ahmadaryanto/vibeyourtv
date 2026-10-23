@@ -1,26 +1,26 @@
-<!-- Thanks. One or two sentences on what this changes and the TV it was tried on is plenty. -->
+<!-- Terima kasih. Satu atau dua kalimat tentang apa yang berubah dan TV tempat ini dicoba sudah cukup. -->
 
-**Tested on:** <!-- model, Android version -->
+**Dicoba di:** <!-- model, versi Android -->
 
-### If this adds or changes a TV list
-- [ ] `examples/<brand>-<model>/debloat.txt`, header with model, Android version and firmware build
-- [ ] Only packages I actually disabled and lived with; anything I had to re-enable is noted
-- [ ] A row in `examples/README.md` and one in the README's TV table
-- [ ] Nothing in the list uninstalls
+### Kalau ini menambah atau mengubah daftar TV
+- [ ] `examples/<brand>-<model>/debloat.txt`, header dengan model, versi Android, dan build firmware
+- [ ] Hanya paket yang benar-benar saya nonaktifkan dan pakai sehari-hari; apa pun yang harus saya aktifkan lagi dicatat
+- [ ] Satu baris di `examples/README.md` dan satu di tabel TV README
+- [ ] Tidak ada yang di daftar ini yang meng-uninstall
 
-### If this touches the launcher
-- [ ] Verified on a real TV, screenshot attached
-- [ ] D-pad checked from every edge (Up, Down, Left, Right)
-- [ ] No network, no background service, no new permission
-- [ ] New strings in `values/strings.xml` and the other `values-*` folders
-- [ ] Anything TV-specific is in `config.xml` or a theme, not in code
+### Kalau ini menyentuh launcher
+- [ ] Dicek di TV sungguhan, screenshot dilampirkan
+- [ ] D-pad dicek dari setiap tepi (Up, Down, Left, Right)
+- [ ] Tanpa jaringan, tanpa layanan latar, tanpa izin baru
+- [ ] String baru di `values/strings.xml` dan folder `values-*` yang lain
+- [ ] Apa pun yang khusus satu TV ada di `config.xml` atau tema, bukan di kode
 
-### If this adds or changes a theme
-- [ ] `themes/<name>/config.json` and `themes/<name>/screenshot.jpg`: Home on a real TV with the theme, 1280×720 JPEG under 300 KB
-- [ ] A row in `themes/README.md` showing the screenshot
+### Kalau ini menambah atau mengubah tema
+- [ ] `themes/<name>/config.json` dan `themes/<name>/screenshot.jpg`: Home di TV sungguhan dengan tema itu, JPEG 1280×720 di bawah 300 KB
+- [ ] Satu baris di `themes/README.md` yang menampilkan screenshotnya
 
-### If this adds a theme key (a switch)
-- [ ] A screenshot of the key on a real TV and its row in `docs/switches.md`
+### Kalau ini menambah kunci tema (sebuah sakelar)
+- [ ] Screenshot kunci itu di TV sungguhan dan barisnya di `docs/switches.md`
 
-### If this adds an add-on
-- [ ] `addons/<name>/screenshot.jpg`: the add-on on a real TV, 16:9 JPEG under 300 KB, shown in its row in `addons/README.md`
+### Kalau ini menambah add-on
+- [ ] `addons/<name>/screenshot.jpg`: add-on di TV sungguhan, JPEG 16:9 di bawah 300 KB, tampil di barisnya di `addons/README.md`

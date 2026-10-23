@@ -1,26 +1,23 @@
 # Photo Prints
 
-Your own photos as a screensaver: three prints on a time-of-day sky, each the whole photo (never cropped) with
-rounded corners and the month and year it was taken. Every 15 seconds they slide off to the left one after
-another and three new ones are dealt in from the right, each at a slight tilt. A line along the bottom shows the
-time and the date, and moves a little at each sweep so it does not burn in.
+Foto sendiri sebagai screensaver: tiga print di langit waktu, tiap foto utuh (tidak pernah crop) dengan
+sudut membulat dan bulan/tahun diambil. Tiap 15 detik geser ke kiri satu per satu, tiga baru dari kanan,
+sedikit miring. Garis di bawah menampilkan jam dan tanggal, bergeser sedikit tiap sweep agar tidak burn-in.
 
-On cleanyourtv's Home it is also a module card, **Photo Prints**: press OK on it to start the same slideshow at
-once, and Back to leave.
+Di Home VibeYourTV juga module card **Photo Prints**: OK memulai slideshow yang sama, Back keluar.
 
 - Package: `io.github.shivamsingh262.photoprints`
-- Author: [@shivamsingh262](https://github.com/shivamsingh262)
-- Tested on: Sony BRAVIA KD-65X82L (Google TV 12)
+- Penulis: [@shivamsingh262](https://github.com/shivamsingh262)
+- Diuji di: Sony BRAVIA KD-65X82L (Google TV 12)
 
-## Permissions
+## Permissions (izin)
 
-None. The app reads photos from its own folder on the TV, which needs no permission, and has no network access
-(no `INTERNET` permission): nothing leaves the TV. No background service: it runs only while the screensaver or
-the slideshow is on screen.
+None. App membaca foto dari folder sendiri di TV, tanpa permission, tanpa jaringan
+(tanpa `INTERNET`): nothing leaves the TV. Tanpa layanan background: jalan hanya saat screensaver atau slideshow di layar.
 
-## Build and install
+## Build dan pasang
 
-JDK 17 and Android SDK 34, as for the launcher. From the repo root:
+JDK 17 dan Android SDK 34, seperti launcher. Dari root repo:
 
 ```bash
 cd addons/photo-prints && ./gradlew assembleRelease && cd ../..
@@ -28,40 +25,37 @@ TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py --push addons/photo-prints/
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py 'pm install -r /data/local/tmp/addon.apk; rm -f /data/local/tmp/addon.apk'
 ```
 
-Press Home: the launcher asks once whether to show the card.
+Tekan Home: launcher tanya sekali apakah card ditampilkan.
 
-## Add your photos
+## Tambah foto
 
-The photos live in the app's own folder on the TV:
-`/sdcard/Android/data/io.github.shivamsingh262.photoprints/files/photos`. On a Mac, `photos.sh` fills it from a
-folder, resizing each photo to 1280 px first (HEIC included) and writing the date it was taken into the name:
+Foto ada di folder app di TV:
+`/sdcard/Android/data/io.github.shivamsingh262.photoprints/files/photos`. Di Mac, `photos.sh` mengisi dari
+folder, resize tiap foto ke 1280 px dulu (HEIC included) dan menulis tanggal ambil ke nama:
 
 ```bash
 TV_HOST=<tv ip> addons/photo-prints/photos.sh ~/Pictures/TV
 TV_HOST=<tv ip> addons/photo-prints/photos.sh --clear     # remove them all
 ```
 
-Any `jpg`, `jpeg`, `png` or `webp` copied into that folder by other means works too. A name ending in the date,
-`something-20231202.jpg`, gives the print its date; otherwise the camera's own date is used when the photo has
-one, and the print shows no date when it has neither. Photos added while the TV is on show up at the next sweep.
-With no photos, the screen shows the folder to copy them into.
+`jpg`, `jpeg`, `png`, atau `webp` yang disalin ke folder itu juga jalan. Nama berakhiran tanggal,
+`something-20231202.jpg`, jadi tanggal print; else EXIF kamera jika ada, else tanpa tanggal. Foto ditambah saat TV nyala muncul sweep berikutnya.
+Tanpa foto, layar menunjukkan folder untuk copy.
 
-`photos.sh` and `adb push` were tested on the Sony above, where the app reads files the shell copies into its
-folder. Some firmware does not allow that (#921 found files copied this way unreadable on a TCL G10); there, the
-prints stay empty and the screen keeps showing the folder.
+`photos.sh` dan `adb push` diuji di Sony di atas, app membaca file yang shell copy. Beberapa firmware tidak (#921 TCL G10); print kosong, layar tetap folder.
 
-## Use it as the screensaver
+## Pakai sebagai screensaver
 
-Settings > System > Ambient mode or Screen saver > **Photo Prints** (the menu's name depends on the TV), or:
+Settings > System > Ambient mode or Screen saver > **Photo Prints** (nama menu tergantung TV), atau:
 
 ```bash
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py 'settings put secure screensaver_components io.github.shivamsingh262.photoprints/.PrintsDream'
 ```
 
-## Remove
+## Hapus
 
 ```bash
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py 'pm uninstall io.github.shivamsingh262.photoprints'
 ```
 
-This removes the photos folder with it. If it was the screensaver, pick another one in Settings.
+Folder foto ikut terhapus. Jika dipakai sebagai screensaver, pilih yang lain di Settings.

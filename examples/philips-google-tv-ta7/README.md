@@ -1,9 +1,9 @@
 # Philips Google TV TA7 (Brazil)
 
 Philips Google TV TA7 (TPV, PH3M_AL_T32, MediaTek), Google TV 14, build UTT1.250308.001, about 1.9 GB RAM.
-Debloated and given the Clean Your TV launcher on 2026-10-20.
+Debloated and given the VibeYourTV launcher on 2026-10-20.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
 | `debloat.txt` | The packages that were disabled, in the batches they were applied, with what each one is and what was kept on purpose |
 | `theme/config.json` | Dock order, greeting, hidden apps |
@@ -69,7 +69,7 @@ Put a dark 1920×1080 JPEG under about 300 KB at `theme/wallpaper.jpg`, set `"wa
 `"background_color"` changes the plain black. To go back to plain black, set `"wallpaper": false` and push
 again. All keys are in [themes/README.md](../../themes/README.md).
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=192.168.0.10 tools/restore.sh examples/philips-google-tv-ta7/debloat.txt com.google.android.apps.tv.launcherx

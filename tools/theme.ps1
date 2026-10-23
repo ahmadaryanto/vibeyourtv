@@ -1,5 +1,5 @@
-# Windows version of theme.sh: push a theme folder (config.json, and optionally a wallpaper.jpg or a
-# wallpapers/ collection) to the launcher on the TV and restart Home. See themes/README.md for the keys.
+# Versi Windows dari theme.sh: kirim folder tema (config.json, plus wallpaper.jpg atau koleksi
+# wallpapers/ kalau ada) ke launcher di TV dan mulai ulang Home. Kunci-kuncinya ada di themes/README.md.
 #
 # Usage: tools\theme.ps1 -TvHost 192.168.1.50 themes\aurora
 #        tools\theme.ps1 -TvHost 192.168.1.50 -Reset
@@ -10,13 +10,13 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $OutputEncoding = New-Object System.Text.UTF8Encoding $false
-if (-not $TvHost) { throw 'pass -TvHost <tv ip> or set $env:TV_HOST' }
+if (-not $TvHost) { throw 'kasih -TvHost <tv ip> atau set $env:TV_HOST' }
 $env:TV_HOST = $TvHost
 # Resolve the theme folder against the caller's directory before moving into tools\.
 if ($Theme) { $Theme = (Resolve-Path $Theme).Path }
 Set-Location $PSScriptRoot
 $py = 'venv\Scripts\python.exe'
-if (-not (Test-Path $py)) { throw 'run: python -m venv tools\venv; tools\venv\Scripts\python.exe -m pip install -r tools\requirements.txt' }
+if (-not (Test-Path $py)) { throw 'jalankan dulu: python -m venv tools\venv; tools\venv\Scripts\python.exe -m pip install -r tools\requirements.txt' }
 $pkg = 'com.gathin.tvhome'
 $dir = "/sdcard/Android/data/$pkg/files"
 $revision = [guid]::NewGuid().ToString('N')
@@ -59,10 +59,10 @@ if ($Reset) {
     & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision'); $restart; echo reset"
     exit 0
 }
-if (-not $Theme) { throw 'usage: theme.ps1 <theme folder> | -Reset' }
+if (-not $Theme) { throw 'cara pakai: theme.ps1 <theme folder> | -Reset' }
 $config = Join-Path $Theme 'config.json'
 if (-not (Test-Path $config)) { throw "no config.json in $Theme" }
-try { Get-Content $config -Raw | ConvertFrom-Json | Out-Null } catch { throw "$config is not valid JSON" }
+try { Get-Content $config -Raw | ConvertFrom-Json | Out-Null } catch { throw "$config is not valid JSON — JSON-nya tidak valid" }
 
 & $py -I tv.py "mkdir -p $dir 2>/dev/null" | Out-Null
 & $py -I tv.py --push $config "$tmp-config.json" | Out-Null
@@ -73,7 +73,7 @@ if (Test-Path $wall) { & $py -I b64push.py $wall "$tmp-wallpaper.jpg"; & $py -I 
 $wallpapers = Join-Path $Theme 'wallpapers'
 if (Test-Path $wallpapers -PathType Container) {
     Get-ChildItem $wallpapers -File | Where-Object { $_.Extension -match '^\.(jpg|jpeg|png|webp)$' } | ForEach-Object {
-        if ($_.Name -notmatch '^[A-Za-z0-9_.-]+$') { throw "unsupported wallpaper filename: $($_.Name)" }
+        if ($_.Name -notmatch '^[A-Za-z0-9_.-]+$') { throw "nama file wallpaper tidak didukung: $($_.Name)" }
         & $py -I b64push.py $_.FullName (Stage "wallpapers/$($_.Name)")
         & $py -I tv.py (Put "wallpapers/$($_.Name)") | Out-Null
     }
@@ -88,4 +88,4 @@ if (Test-Path $captions -PathType Leaf) {
 }
 & $py -I tv.py "printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision')" | Out-Null
 & $py -I tv.py "$restart; echo applied"
-Write-Host "Theme $(Split-Path $Theme -Leaf) is on the TV. Undo with: tools\theme.ps1 -TvHost $TvHost -Reset"
+Write-Host "Tema $(Split-Path $Theme -Leaf) sudah ada di TV. Balikin dengan: tools\theme.ps1 -TvHost $TvHost -Reset"

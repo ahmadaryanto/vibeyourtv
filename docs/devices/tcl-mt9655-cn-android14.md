@@ -1,3 +1,9 @@
+# TCL MT9655 (China, Android 14): catatan launcher
+
+Ringkasan Bahasa Indonesia: TV TCL China Android 14 — build launcher 2.4 dari sumber, Home, debloat.
+
+---
+
 # TCL / FFalcon MT9655 China (Android 14): debloat works, launcher and sideloading do not
 
 Checked on a real TV in one session on 2026-10-21, using upstream

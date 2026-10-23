@@ -1,20 +1,19 @@
-# TCL 55P71B Pro (G09, Google TV 12): a bound key helper costs remote key auto-repeat
+# TCL 55P71B Pro (G09, Google TV 12): helper tombol terikat merugikan auto-repeat remote
 
-Owner report: [#763](https://github.com/Gathin23/cleanyourtv/issues/763). One unit, one session: TCL
-55P71B Pro "Smart TV Pro", device `G09`, Android 12 (Google TV), firmware `STT2.230203.001.AS23`,
+Laporan pemilik: [#763](https://github.com/Gathin23/cleanyourtv/issues/763). Satu unit, satu sesi: TCL
+55P71B Pro "Smart TV Pro", perangkat `G09`, Android 12 (Google TV), firmware `STT2.230203.001.AS23`,
 Amlogic.
 
-## The symptom
+## Gejala
 
-Hold volume up or down and the volume moves one step, on the home screen and inside an app. Pressing
-the button that many times gives that many steps. The remote is not necessarily the problem and neither
-is the debloat: the same remote ramps normally again as soon as no key-filtering accessibility service is
-bound, and where the repeats go is one `getevent -lt` away - if the kernel still prints them while the
-button is held, they are being dropped above the driver.
+Tahan volume naik atau turun dan volume bergerak satu langkah, di layar home dan di dalam aplikasi. Menekan
+tombol sebanyak itu memberi langkah sebanyak itu. Remote belum tentu masalah dan debloat juga bukan:
+remote yang sama naik normal lagi begitu tidak ada layanan aksesibilitas filter tombol terikat, dan ke mana repeat
+pergi satu `getevent -lt` saja — jika kernel masih mencetaknya saat tombol ditekan, repeat dibuang di atas driver.
 
-## The bisect
+## Bisect
 
-The owner enabled the launcher's two optional helpers one at a time and then together:
+Pemilik mengaktifkan dua helper opsional launcher satu per satu lalu bersama:
 
 | `enabled_accessibility_services` | holding volume up/down |
 | --- | --- |
@@ -28,7 +27,7 @@ All or nothing. This is not one helper mishandling `VOLUME_UP`: the dump while b
 8 is `CAPABILITY_CAN_FILTER_KEY_EVENTS`. Any bound service that asks to filter key events puts this
 firmware's input path in a mode where the first press arrives and the repeats that follow are dropped.
 
-Read the state without changing anything:
+Baca state tanpa mengubah apa pun:
 
 ```sh
 tools/tv.py 'settings get secure enabled_accessibility_services'
@@ -36,7 +35,7 @@ tools/tv.py 'settings get secure accessibility_enabled'
 tools/tv.py 'dumpsys accessibility'
 ```
 
-To get the repeat back for a test, and to put the helpers back afterwards:
+Untuk mengembalikan repeat untuk uji, dan helper kembali setelahnya:
 
 ```sh
 # keep the string the first read printed; the empty list also unbinds TalkBack and any other service
@@ -44,14 +43,13 @@ tools/tv.py "settings put secure enabled_accessibility_services ''; settings put
 tools/tv.py "settings put secure enabled_accessibility_services com.gathin.tvhome/com.gathin.tvhome.HomeKeyService:com.gathin.tvhome/com.gathin.tvhome.InputKeyService; settings put secure accessibility_enabled 1"
 ```
 
-That second line is the launcher's two helpers, not "the value": write back what the read printed.
-`theme.sh` already re-puts the list after a theme push, `am force-stop com.gathin.tvhome` drops it on
-its own (see [TROUBLESHOOTING](../TROUBLESHOOTING.md)), and re-running `launcher/build-and-install.sh`
-without `INPUT_KEY_SERVICE=1`/`HOME_KEY_SERVICE=1` leaves the helpers off.
+Baris kedua dua helper launcher, bukan "nilainya": write back what the read printed. `theme.sh` sudah menaruh ulang daftar setelah push tema, `am force-stop com.gathin.tvhome` menjatuhkannya sendiri
+(lihat [TROUBLESHOOTING](../TROUBLESHOOTING.md)), dan menjalankan ulang `launcher/build-and-install.sh`
+tanpa `INPUT_KEY_SERVICE=1`/`HOME_KEY_SERVICE=1` membiarkan helper mati.
 
 ## The launcher is not the one eating the repeats
 
-Both helpers return `false` for keys they do not map, so a volume key never reaches launcher code and
+Kedua helper return `false` for keys they do not map, so a volume key never reaches launcher code and
 is not consumed there: `InputKeyService.onKeyEvent` passes anything that is not in `app_keys`,
 `input_key_keycodes`, `KEYCODE_TV` or `KEYCODE_TV_INPUT`, and `HomeKeyService` passes everything except
 `KEYCODE_ALL_APPS` and the settings keycodes/scancodes. The repeat is lost before the app sees the
@@ -60,9 +58,9 @@ platform's filter drops the repeat" is the reporter's reading of the bisect, not
 future report that logs the repeat event arriving at a helper and being passed through would move the
 blame back into the launcher.
 
-## What the helpers buy, and what this costs
+## Apa yang helper beli, dan biayanya
 
-The buttons a helper exists for on this remote:
+Tombol yang helper ada untuk di remote ini:
 
 | Button | What arrives | Helper |
 | --- | --- | --- |
@@ -80,27 +78,25 @@ the buttons and the volume ramp cannot both be had, because both need the same f
 
 ## The same trade on a Xiaomi MediaTek set
 
-A second owner reported it on [#944](https://github.com/Gathin23/cleanyourtv/issues/944): Xiaomi
+Pemilik kedua melaporkan [#944](https://github.com/Gathin23/cleanyourtv/issues/944): Xiaomi
 MiTV-MOSR4 (`irobot`, MediaTek), Google TV / Android 11 (SDK 30), firmware `RTM5.220609.003.1265`.
 Holding volume up with `InputKeyService` and `HomeKeyService` bound moves it one step, and
 `InputKeyService` alone is still one step; `dumpsys accessibility` lists the bound service with
 `capabilities=8`. Same symptom, same capability, second vendor and second Android version.
 
-Two things differ from the bisect above, and both are worth keeping. The empty-list control was not run:
-on this set clearing the list unhooks the buttons the helpers were installed for - with launcherx
-disabled, its Input, Settings, YouTube and Netflix buttons reach only
-`com.xiaomi.android.tvsetup.partnercustomizer/.GlobalKeyReceiver`, which starts launcherx activities and
-crashes (the [MOSR4 note](xiaomi-mitv-mosr4.md) has that part, and its install line passes both helpers).
+Dua hal beda dari bisect di atas, keduanya perlu dipertahankan. The empty-list control was not run:
+di set ini mengosongkan daftar melepas tombol yang helper dipasang — dengan launcherx
+nonaktif, tombol Input, Settings, YouTube dan Netflix hanya sampai
+`com.xiaomi.android.tvsetup.partnercustomizer/.GlobalKeyReceiver`, yang memulai aktivitas launcherx dan
+crash (catatan [MOSR4](xiaomi-mitv-mosr4.md) punya bagian itu, dan baris instalnya pass kedua helper).
 So "the ramp returns with no service bound" is still measured on the G09 alone. And the build string in
 the issue is not the one that note carries (`RTM5.220609.003/1585`, written on another unit of the same
 model), so treat the two as separate units until both fingerprints are read: the model, the firmware
 family and the behaviour are what they agree on.
 
-That is still enough to unhook the mechanism from "this firmware": the volume keys take the early
-question from the window policy on Android 11 and 12, on two vendors, whenever a bound service holds
-`CAPABILITY_CAN_FILTER_KEY_EVENTS`. The trade and the choices below are the same on both sets. The
-reporter's own suggestion - a helper that synthesizes the repeat with `adjustSuggestedStreamVolume` while
-a volume key is held - is launcher code, and an off-by-default switch at best; it is not in this note.
+Itu cukup melepas mekanisme dari "firmware ini": tombol volume dapat pertanyaan awal dari window policy di Android 11 dan 12, di dua vendor, saat layanan terikat memegang
+`CAPABILITY_CAN_FILTER_KEY_EVENTS`. Trade dan pilihan di bawah sama di kedua set. Saran reporter sendiri — helper yang mensintesis repeat dengan `adjustSuggestedStreamVolume` saat
+tombol volume ditekan — kode launcher, dan switch off-by-default paling banget; is not in this note.
 
 ## Choices
 

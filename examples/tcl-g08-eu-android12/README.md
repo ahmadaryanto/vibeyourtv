@@ -5,9 +5,9 @@ The same G08 board family as the C755, QM6K, 85RM7L and US lists, on the older E
 US list matches only partially: this build has no Samba-ACR ttvs payload, no `AirplayAPK`, no
 hotelmenu/channelplus/e-sticker/TV+/usercenter preloads, and no Android 14 ad services.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 24 packages disabled on this set, grouped and commented |
+| `debloat.txt` | 24 packages disabled on this set, grouped and commented |
 
 **How much testing is behind it:** one set, 21 October 2026. All 24 packages are disabled on the live set
 (`pm list packages -d` verified) and the TV boots, plays Live TV/HDMI, and the remote's Source key opens

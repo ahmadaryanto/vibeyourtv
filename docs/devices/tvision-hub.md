@@ -1,11 +1,11 @@
-# TVision Hub (SEI Robotics, S905X2): a one-session report with a working list
+# TVision Hub (SEI Robotics, S905X2): laporan satu sesi dengan daftar yang jalan
 
-Report from [#577](https://github.com/Gathin23/cleanyourtv/issues/577): one session, same-day
-results only. That is why the seven packages are recorded here instead of `examples/` -
-CONTRIBUTING asks for a few days of living with a list, and nobody has rebooted, stood by or
-restored this one yet.
+Laporan dari [#577](https://github.com/Gathin23/cleanyourtv/issues/577): satu sesi, hasil
+hari yang sama saja. Itu sebab tujuh paket dicatat di sini alih-alih `examples/` -
+CONTRIBUTING minta beberapa hari memakai daftar, dan belum ada yang reboot, standby atau
+restore yang ini.
 
-## Identify the device
+## Kenali perangkat
 
 | Field | Reported value |
 |---|---|
@@ -15,14 +15,14 @@ restored this one yet.
 | Android | Google TV, with a T-Mobile operator layer |
 | Build fingerprint | not recorded in the report |
 
-The identity line is thin on purpose: the report does not carry `ro.build.fingerprint`,
-`ro.product.device` or the Android patch level, so match the packages below against
-`dumpsys package` output before applying anything here to another TVision unit, and do not assume
-an OTA left them in the same place.
+Baris identitas sengaja tipis: laporan tidak membawa `ro.build.fingerprint`,
+`ro.product.device` atau level patch Android, jadi cocokkan paket di bawah dengan output
+`dumpsys package` sebelum menerapkan apa pun di sini ke unit TVision lain, dan jangan anggap
+OTA meninggalkannya di tempat sama.
 
-## What the owner disabled
+## Yang dinonaktifkan pemilik
 
-Seven packages, `pm disable-user --user 0`, in the same session:
+Tujuh paket, `pm disable-user --user 0`, sesi yang sama:
 
 | Package | What it is |
 |---|---|
@@ -34,9 +34,9 @@ Seven packages, `pm disable-user --user 0`, in the same session:
 | `com.android.camera2` | camera app (the dongle has none) |
 | `com.google.android.play.games` | Play Games |
 
-Nothing is uninstalled, so `tools/restore.sh` can put all seven back. The report does not name the
-stock Home package: read it before undoing a handover, because `restore.sh` needs it as its
-launcher argument on a set whose stock launcher is not `com.google.android.tvlauncher`:
+Tidak ada uninstall, jadi `tools/restore.sh` bisa mengembalikan ketujuh. Laporan does not name the stock Home package:
+baca sebelum membatalkan serah terima, karena `restore.sh` butuh sebagai
+argumen launcher di set yang launcher bawaannya bukan `com.google.android.tvlauncher`:
 
 ```sh
 TV_HOST=<hub ip> tools/venv/bin/python -I tools/tv.py \
@@ -45,22 +45,23 @@ TV_HOST=<hub ip> tools/venv/bin/python -I tools/tv.py \
 
 ## Home
 
-The launcher was built, installed and confirmed as Home on this hub, with a clean home screen
-afterwards - so the operator layer on this dongle does not block a third-party Home the way some
-carrier builds do. The report does not say whether `com.google.android.tungsten.setupwraith` had to
-go first (on the onn 4K Pro in the same report it did, and the installer rolled the handover back
-until it was disabled), so check the Home owner with `dumpsys activity activities | grep
-mFocusedApp` after the takeover instead of trusting the installer's success line.
+Launcher dibangun, diinstal, dan confirmed as Home di hub ini, dengan layar home bersih
+setelahnya - jadi lapisan operator di dongle ini tidak memblokir Home pihak ketiga seperti beberapa
+build operator. Laporan tidak bilang apakah `com.google.android.tungsten.setupwraith` harus
+pergi dulu (di onn 4K Pro laporan yang sama iya, dan installer mengembalikan serah terima
+sampai dinonaktifkan), jadi cek pemilik Home dengan `dumpsys activity activities | grep
+mFocusedApp` setelah takeover alih-alih percaya baris sukses installer.
 
 ## Two connection quirks
 
-- **ADB did not connect until the hub was restarted.** Nothing on the host side changed; the same
-  `adb connect` worked after the reboot.
-- **The first build run hung at the TV-connect step of `launcher/build-and-install.sh`.** An
-  `adb disconnect` followed by a re-run finished normally. If the build script stalls on an Amlogic
-  dongle, disconnect and reconnect before reading it as a build failure.
+Dua keanehan koneksi:
+
+- **ADB tidak connect until the hub was restarted.** Tidak ada yang berubah di sisi host; `adb connect` yang sama
+  jalan setelah reboot.
+- **Run build pertama hang di langkah TV-connect `launcher/build-and-install.sh`.**
+  `adb disconnect` lalu run ulang selesai normal. Jika skrip build macet di dongle Amlogic, disconnect dan reconnect sebelum anggap kegagalan build.
 
 ## Limits
 
-One session, no reboot or standby cycle, no restore run, no screenshots. Treat the list as a
-starting point that has been seen to work once.
+Satu sesi (one session), tanpa siklus reboot atau standby, tanpa run restore, tanpa screenshot. Anggap daftar sebagai
+titik awal yang pernah terlihat jalan sekali.

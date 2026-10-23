@@ -9,7 +9,7 @@
 | ADB | USB debugging alone opens port 5555, with no pairing. `ro.adb.secure=1` |
 | Home | `com.google.android.tvlauncher` (classic Android TV, not launcherx). Only `com.android.tv.settings/.system.FallbackHome` and user-installed apps also claim HOME |
 
-## What worked
+## Yang berhasil
 
 - **`pm disable-user` works** for every package in [`debloat.txt`](debloat.txt). After a reboot, `pm list packages -d`
   is identical, so this firmware re-enables nothing at boot.
@@ -24,7 +24,7 @@
   held about 160 MB resident.
 - **Private DNS** works on this set.
 
-## Keep
+## Pertahankan
 
 Each of these was checked with `dumpsys package` without starting it:
 
@@ -40,7 +40,7 @@ Each of these was checked with `dumpsys package` without starting it:
 `com.google.android.tungsten.setupwraith` claims no HOME on this build, so it stays enabled. It owned one of the
 two saved Wi-Fi networks. The network in use belonged to `android.uid.system`.
 
-## Notes
+## Catatan
 
 - `com.arcelik.arserviceapp` lives in `/system_ext/priv-app/HotelService`: it is hotel/B2B mode.
 - `com.grundig.tv.channel` carries `com.hoppr.tiles` (Hoppr FAST/ad tiles) and the home-screen program rows.

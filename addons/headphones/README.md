@@ -3,7 +3,7 @@
 Bluetooth headphones on the TV, made easy to keep quiet: one screen that shows where the sound goes now, your
 paired headphones with their battery, a shortcut to pairing, and a **quiet guard** that pauses and mutes the
 speakers when headphones drop, so a flat battery doesn't send a film's sound into a room where someone is
-asleep. For the [Clean Your TV](../../README.md) launcher it declares a [module card](../../docs/modules.md):
+asleep. For the [VibeYourTV](../../README.md) launcher it declares a [module card](../../docs/modules.md):
 once you answer **Show card** its tile reads "Headphones" with a blue glow. On any other Android TV home it is an
 ordinary app.
 
@@ -30,7 +30,7 @@ screen says what the TV in front of you supports:
 - Otherwise, a **dual-link Bluetooth transmitter** on the TV's headphone or optical output feeds two pairs, and
   some headphones can share their sound with a second pair of the same brand.
 
-## Permissions
+## Permissions (izin)
 
 | Permission | Why |
 |---|---|
@@ -41,7 +41,7 @@ No scanning and no location: it reads only devices already paired in the TV's se
 nothing leaves the TV. No accounts, telemetry, ads or libraries. No background service: Android starts the
 quiet guard only for a connect or disconnect broadcast. Muting and the pause key need no permission.
 
-## Build and install
+## Build dan pasang
 
 JDK 17 and Android SDK platform 34 with build-tools 34.0.0, as for the launcher. From the repo root, with ADB on:
 

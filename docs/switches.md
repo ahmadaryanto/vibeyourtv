@@ -1,22 +1,22 @@
 # Switches on a TV
 
-Every key a theme can set (the Keys table in [`themes/README.md`](../themes/README.md)) gets a
-screenshot of what it does on a real TV. This table is where they are listed: the repo and
-[cleanyour.tv/addons#switches](https://cleanyour.tv/addons#switches) both show them from here.
+Setiap key yang bisa diatur theme (tabel Keys di [`themes/README.md`](../themes/README.md)) dapat
+screenshot yang menunjukkan efeknya di TV sungguhan. Tabel ini tempat daftarnya: repo VibeYourTV dan
+[cleanyour.tv/addons#switches](https://cleanyour.tv/addons#switches) sama-sama menampilkannya dari sini.
 
 ## Adding a key
 
-A new key needs a screenshot. Put it in `docs/switches/<key>.jpg` (an existing screenshot in the
-repo that shows the key at work also counts) and add a row below:
+Key baru butuh screenshot. Taruh di `docs/switches/<key>.jpg` (screenshot yang sudah ada di
+repo dan memang menunjukkan key itu juga dihitung) lalu tambah satu baris di bawah:
 
-- From a real TV, with the key set, as a JPEG or PNG, 16:9 (1280×720 is plenty), under 300 KB.
-- Show where the key changes something you can see. For a key that maps a remote button, show the
-  screen the button opens; for one that changes behaviour only, show the setting's effect, such as
-  the panel, the menu or the app that comes up.
-- Blur anything personal: Wi-Fi names, people, addresses.
+- Dari TV sungguhan, dengan key-nya nyala, sebagai JPEG atau PNG, 16:9 (1280×720 sudah cukup), di bawah 300 KB.
+- Tunjukkan bagian yang berubah dan kelihatan. Kalau key memetakan tombol remote, tunjukkan
+  layar yang dibuka tombol itu; kalau yang berubah cuma perilakunya, tunjukkan efek setelannya, misalnya
+  panel, menu, atau aplikasi yang muncul.
+- Blur yang pribadi: nama Wi-Fi, orang, alamat.
 
-`tests/test_switches.py` checks that every key has a row here with an image that exists and fits
-the rules. Keys from before this rule are on its wanted list; a screenshot for one of them is welcome.
+`tests/test_switches.py` memeriksa setiap key punya baris di sini, gambarnya ada, dan ukurannya
+sesuai aturan. Key dari sebelum aturan ini ada di daftar yang masih ditunggu; screenshot untuk salah satunya selalu diterima.
 
 ## Screenshots
 

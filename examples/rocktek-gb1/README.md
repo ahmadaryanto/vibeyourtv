@@ -1,12 +1,12 @@
 # RockTek GB1
 
-Tested on RockTek GB1, Google TV 14, firmware `UTT1.241206.001.142008`.
+Diuji di RockTek GB1, Google TV 14, firmware `UTT1.241206.001.142008`.
 
-## What is in this folder
+## Isi folder
 
 | File | Purpose |
 |---|---|
-| `debloat.txt` | The reversible disabled-package list: seven unused/privacy packages plus the setup wizard required for the Home handover. |
+| `debloat.txt` | Daftar package dinonaktifkan yang reversibel: tujuh package privasi/tidak terpakai plus setup wizard untuk serah terima Home. |
 | `config.json` | A launcher overlay that restores the two remote controls documented below. Push it with `tools/theme.sh examples/rocktek-gb1` (or `tools/theme.ps1 -TvHost <tv ip> examples/rocktek-gb1`). |
 
 `config.json` is deliberately device-specific. It leaves the built-in launcher defaults unchanged for every

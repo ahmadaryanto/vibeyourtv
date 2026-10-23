@@ -27,7 +27,7 @@ $env:TV_HOST = '<tv ip>'
 tools\venv\Scripts\python.exe -I tools\tv.py --probe
 ```
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 ```powershell
 tools\venv\Scripts\python.exe -I tools\tv.py 'pm enable --user 0 com.google.android.videos'
@@ -39,7 +39,7 @@ in `debloat.txt`.
 `katniss` is voice search; the mic button also needs the remote paired over Bluetooth (the pairing screen
 the mic button opens).
 
-## Undo everything
+## Kembalikan semua
 
 ```sh
 TV_HOST=<tv ip> tools/restore.sh examples/motorola-mt4310/debloat.txt com.google.android.tvlauncher
@@ -80,7 +80,7 @@ The first builds the APK (JDK 17 and the Android SDK), installs it as Home and d
 launcher; the second pushes the dock theme. On Windows: `launcher\build-and-install.ps1` and
 `tools\theme.ps1`.
 
-## Notes from this TV
+## Catatan from this TV
 
 - At every boot `com.at.factory.factorymanager` re-enables `katniss` and `tvrecommendations` (and TalkBack
   comes back too, but never runs). Disabling them, clearing the voice and notification-listener settings

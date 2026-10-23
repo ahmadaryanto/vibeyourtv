@@ -1,38 +1,37 @@
-# Add-ons
+# Add-on
 
-Small, optional Android TV apps that plug into the launcher as a **module card**, kept in this repo
-so they are easy to find, build and review. The launcher in [`launcher/`](../launcher/) never
-depends on them: it is built, tested and size-checked without this folder, so an add-on can't make
-the core bigger or change how it behaves. You install an add-on only if you want it.
+App Android TV kecil opsional yang terhubung ke launcher sebagai **module card**, ada di repo ini
+supaya mudah dicari, di-build, dan direview. Launcher di [`launcher/`](../launcher/) tidak
+bergantung padanya: launcher di-build, diuji, dan dicek ukurannya tanpa folder ini, jadi add-on tidak
+bisa membesarkan core atau mengubah perilakunya. Kamu pasang add-on hanya kalau mau.
 
-## Add-ons
+## Add-on
 
-| Add-on | What it does | Author | Tested on | Permissions | Screenshot |
+| Add-on | Fungsinya | Penulis | Diuji di | Permissions | Screenshot |
 |---|---|---|---|---|---|
-| [Frigate Glance](frigate-glance/) | Frigate camera pop-ups over whatever is playing | [NickLD](https://github.com/NickLD) | TCL 65Q650G | overlay, accessibility (card keys), network, foreground service | wanted |
-| [Capacity Stats](capacity-stats/) | Available/total and used/total RAM; available/total storage | [lionlev21](https://github.com/lionlev21) | Android TV 12 (model private) | None | wanted |
-| [Weather](weather/) | The weather for one city: now, US air quality and the next three days, from Open-Meteo (no key) | [@Sumyabazar1](https://github.com/Sumyabazar1) | Hisense SmartTV 4K FFM (lushan), Google TV 12 | `INTERNET` | <img src="weather/screenshot.jpg" width="240" alt="Weather on a TV"> |
-| [Photo Prints](photo-prints/) | Your own photos as a screensaver: dated prints dealt in on a time-of-day sky, and a card that starts the slideshow | [@shivamsingh262](https://github.com/shivamsingh262) | Sony BRAVIA KD-65X82L (Google TV 12) | None | wanted |
-| [Photo screensaver](photo-screensaver/) | Your own pictures and MP4 clips as the TV's screensaver and as a card, slowly zooming and crossfading (20 s each by default); optional time, photo dates, prints on a sky and weather | [JorickGU](https://github.com/JorickGU) | TCL 43P69K (Google TV 12) | `INTERNET` and coarse location, only with the weather option on | wanted |
-| [Prayer Times](prayer-times/) | Today's prayer times for one city from Aladhan (no key), the next prayer with a countdown, Gregorian and Hijri dates | [@majnioui](https://github.com/majnioui) | Xiaomi TV (MiTV-MOOR2), Google TV 11 | `INTERNET` | <img src="prayer-times/screenshot.jpg" width="240" alt="Prayer Times on a TV"> |
-| [TV Hub](tv-hub/) | One live-TV guide for M3U/XMLTV playlists, Dispatcharr and HDHomeRun tuners, with a Media3 player and shortcuts to installed live-TV apps | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android TV 14) | `INTERNET` | <img src="tv-hub/screenshot.jpg" width="240" alt="TV Hub on a TV"> |
-| [Headphones](headphones/) | Bluetooth headphones made easy: where the sound goes, paired pairs with battery, a pairing shortcut, and a quiet guard that pauses and mutes the speakers when headphones drop | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android 14) | Bluetooth (paired devices only) | <img src="headphones/screenshot.jpg" width="240" alt="Headphones on a TV"> |
-| [TV Static](tv-static/) | An off-the-air moment each time the screen turns on: the picture opens from a bright line, snow and hiss, colour bars or an old "no signal" screen for 3 to 10 s, then fades into what was on screen; the card sets style, sound and length | [@luyzfernando08](https://github.com/luyzfernando08) | Xiaomi Mi Box S (Android TV 9), Philco by Skyworth (Android TV 14) | foreground service (screen-on watcher), start at boot, display over other apps | <img src="tv-static/screenshot.jpg" width="240" alt="TV Static on a TV"> |
-| [Brightness](brightness/) | Dims the picture below the TV's own minimum over every app (and the picture settings on Realtek TVs), with a warm night mode on a schedule and a one-press normal screen | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android 14) | overlay, foreground service, start at boot | <img src="brightness/screenshot.jpg" width="240" alt="Brightness on a TV"> |
-| [Sleep Timer](sleep-timer/) | A sleep timer: 15 to 120 minutes, a one-minute countdown over what is playing with "15 more minutes", then standby; over HDMI-CEC the TV turns off with the box | [@luyzfernando08](https://github.com/luyzfernando08) | Xiaomi Mi Box S (Android TV 9) | accessibility (lock-screen action only), display over other apps, exact alarms | <img src="sleep-timer/screenshot.jpg" width="240" alt="Sleep Timer on a TV"> |
+| [Frigate Glance](frigate-glance/) | Pop-up kamera Frigate di atas apa pun yang sedang diputar | [NickLD](https://github.com/NickLD) | TCL 65Q650G | overlay, accessibility (tombol card), network, foreground service | wanted |
+| [Capacity Stats](capacity-stats/) | RAM tersedia/total dan used/total; storage tersedia/total | [lionlev21](https://github.com/lionlev21) | Android TV 12 (model private) | None | wanted |
+| [Weather](weather/) | Cuaca satu kota: sekarang, kualitas udara AS, tiga hari ke depan, dari Open-Meteo (tanpa key) | [@Sumyabazar1](https://github.com/Sumyabazar1) | Hisense SmartTV 4K FFM (lushan), Google TV 12 | `INTERNET` | <img src="weather/screenshot.jpg" width="240" alt="Weather on a TV"> |
+| [Photo Prints](photo-prints/) | Foto sendiri sebagai screensaver: print bertanggal di langit waktu, card memulai slideshow | [@shivamsingh262](https://github.com/shivamsingh262) | Sony BRAVIA KD-65X82L (Google TV 12) | None | wanted |
+| [Photo screensaver](photo-screensaver/) | Foto dan klip MP4 sendiri sebagai screensaver TV dan sebagai card, zoom lambat dan crossfade (default 20 d); opsional jam, tanggal foto, print di langit, cuaca | [JorickGU](https://github.com/JorickGU) | TCL 43P69K (Google TV 12) | `INTERNET` dan coarse location, hanya jika opsi cuaca nyala | wanted |
+| [Prayer Times](prayer-times/) | Waktu sholat hari ini satu kota dari Aladhan (tanpa key), sholat berikutnya + countdown, tanggal Gregorian dan Hijriah | [@majnioui](https://github.com/majnioui) | Xiaomi TV (MiTV-MOOR2), Google TV 11 | `INTERNET` | <img src="prayer-times/screenshot.jpg" width="240" alt="Prayer Times on a TV"> |
+| [TV Hub](tv-hub/) | Panduan live TV untuk playlist M3U/XMLTV, Dispatcharr, tuner HDHomeRun, player Media3, pintasan ke app live TV terpasang | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android TV 14) | `INTERNET` | <img src="tv-hub/screenshot.jpg" width="240" alt="TV Hub on a TV"> |
+| [Headphones](headphones/) | Headphone Bluetooth lebih mudah: arah suara, pasangan + baterai, pintasan pairing, guard diam yang pause/mute speaker saat headphone putus | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android 14) | Bluetooth (hanya perangkat paired) | <img src="headphones/screenshot.jpg" width="240" alt="Headphones on a TV"> |
+| [TV Static](tv-static/) | Momen off-air setiap layar nyala: gambar dari garis terang, salju/hiss, color bar, atau layar "no signal" lama 3–10 d, lalu fade ke yang sedang tampil; card atur gaya, suara, durasi | [@luyzfernando08](https://github.com/luyzfernando08) | Xiaomi Mi Box S (Android TV 9), Philco by Skyworth (Android TV 14) | foreground service (screen-on watcher), start at boot, display over other apps | <img src="tv-static/screenshot.jpg" width="240" alt="TV Static on a TV"> |
+| [Brightness](brightness/) | Redup gambar di bawah minimum TV di semua app (dan picture settings di Realtek), mode malam hangat terjadwal, satu tekan layar normal | [@maxhayim](https://github.com/maxhayim) | MOKA R8G (Android 14) | overlay, foreground service, start at boot | <img src="brightness/screenshot.jpg" width="240" alt="Brightness on a TV"> |
+| [Sleep Timer](sleep-timer/) | Timer tidur: 15–120 menit, countdown satu menit di atas playback dengan "15 more minutes", lalu standby; lewat HDMI-CEC TV ikut mati dengan box | [@luyzfernando08](https://github.com/luyzfernando08) | Xiaomi Mi Box S (Android TV 9) | accessibility (lock-screen action only), display over other apps, exact alarms | <img src="sleep-timer/screenshot.jpg" width="240" alt="Sleep Timer on a TV"> |
 
-A widget, an info tile, a storage or smart-home card: if it can live as its own small app, it can live
-here. See the rules below.
+Widget, tile info, card storage atau smart home: kalau bisa jadi app kecil sendiri, bisa di sini.
+Lihat aturan di bawah.
 
-## How an add-on works
+## Cara add-on bekerja
 
-An add-on is a normal Android TV app with its own Gradle project in `addons/<name>/`. It declares a
-card with the existing module-card contract: the how-to is [`docs/modules.md`](../docs/modules.md)
-and the spec is [`docs/specs/card.md`](../docs/specs/card.md). The launcher finds the card, asks the
-TV owner once, and shows it as a tile with the add-on's label, caption and glow colour. Nothing else
-connects the two.
+Add-on adalah app Android TV biasa dengan proyek Gradle sendiri di `addons/<name>/`. App mendeklarasikan
+card dengan kontrak module-card yang ada: panduan [`docs/modules.md`](../docs/modules.md),
+spesifikasi [`docs/specs/card.md`](../docs/specs/card.md). Launcher menemukan card, tanya pemilik TV sekali,
+dan menampilkan tile dengan label, caption, dan warna glow add-on. Tidak ada hubungan lain.
 
-Build one (JDK 17, Android SDK 34, as for the launcher), from the repo root:
+Build satu (JDK 17, Android SDK 34, seperti launcher), dari root repo:
 
 ```bash
 cd addons/<name> && ./gradlew assembleRelease && cd ../..
@@ -40,32 +39,33 @@ TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py --push addons/<name>/app/bu
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py 'pm install -r /data/local/tmp/addon.apk; rm -f /data/local/tmp/addon.apk'
 ```
 
-## Rules
+## Aturan
 
-- **Its own app.** One folder per add-on, `addons/<name>/`, with its own Gradle project
-  (`settings.gradle`, `app/`), its own package name and its own README.
-- **Only through the module-card spec.** An add-on never edits anything under `launcher/`, and
-  `launcher/` never references `addons/`. If your idea needs a change inside the launcher, it isn't
-  an add-on. Open an issue first instead.
-- **No prebuilt APKs** in the repo. People build from source, as with the launcher.
-- **Permissions up front.** The add-on's README lists every permission it asks for and why, plus
-  any network access or background service. The rules in [`docs/modules.md`](../docs/modules.md)
-  apply: no telemetry without an opt-in, no ads, your own art.
-- **Tested on a real TV.** Say which one in the README and in the table above.
-- **A screenshot.** `addons/<name>/screenshot.jpg`: the add-on on a real TV, its card in the grid or
-  its own screen, as a JPEG, 16:9 (1280×720 is plenty) and under 300 KB, shown in the table's
-  Screenshot column. It is what people see first here and on [cleanyour.tv/addons](https://cleanyour.tv/addons).
-  Take it with `tools/tv.py --screenshot shot.png` (or `adb exec-out screencap -p > shot.png`), then
-  `sips -s format jpeg -s formatOptions 85 -z 720 1280 shot.png --out screenshot.jpg` on a Mac.
-  Blur anything personal: Wi-Fi names, people, addresses. Add-ons marked "wanted" in the table came
-  before this rule; a screenshot for one of them is welcome.
-- **The author maintains it.** Issues about an add-on are assigned to its author. An add-on that
-  breaks on current Android TV versions, or goes unmaintained, may be removed. Its history stays in
-  git, and you can keep it going in a fork listed in [`SHOWCASE.md`](../SHOWCASE.md).
+- **App sendiri.** Satu folder per add-on, `addons/<name>/`, proyek Gradle sendiri
+  (`settings.gradle`, `app/`), package name sendiri, README sendiri.
+- **Hanya lewat spesifikasi module-card.** Add-on tidak mengedit apa pun di `launcher/`, dan
+  `launcher/` tidak mereferensikan `addons/`. Kalau ide butuh perubahan di launcher, itu bukan add-on.
+  Buka issue dulu.
+- **Tanpa APK prebuilt** di repo. Orang build dari sumber, seperti launcher.
+- **Permissions di depan.** README add-on mencantumkan setiap permission dan alasannya, plus
+  akses jaringan atau layanan background. Aturan [`docs/modules.md`](../docs/modules.md)
+  berlaku: tanpa telemetri tanpa opt-in, tanpa iklan, art sendiri.
+- **Diuji di TV asli.** Sebut model di README dan tabel di atas.
+- **Screenshot.** `addons/<name>/screenshot.jpg`: add-on di TV asli, card di grid atau layarnya sendiri,
+  JPEG 16:9 (1280×720 cukup) di bawah 300 KB, di kolom Screenshot tabel. Itu yang orang lihat pertama di sini
+  dan di [cleanyour.tv/addons](https://cleanyour.tv/addons). Ambil dengan `tools/tv.py --screenshot shot.png`
+  (atau `adb exec-out screencap -p > shot.png`), lalu
+  `sips -s format jpeg -s formatOptions 85 -z 720 1280 shot.png --out screenshot.jpg` di Mac.
+  Blur yang pribadi: nama Wi-Fi, orang, alamat. Add-on bertanda "wanted" di tabel ada sebelum aturan ini;
+  screenshot untuk salah satunya disambut.
+- **Penulis maintain.** Issue tentang add-on di-assign ke penulisnya. Add-on yang rusak di Android TV
+  terkini, atau tidak di-maintain, bisa dihapus. Histori tetap di git, dan kamu bisa lanjutkan di fork
+  yang dicantumkan [`SHOWCASE.md`](../SHOWCASE.md).
 
-## Adding one
+## Menambah add-on
 
-Open a pull request that adds `addons/<name>/` and one row to the table above. The core CI is not
-blocked by add-ons: a separate workflow builds whatever changed under `addons/`, and
-`tests/test_addons.py` checks the folder rules (own Gradle project, a README with a Permissions
-section, a screenshot, no APKs, a row in this table showing the screenshot) and that the launcher never includes or references this folder.
+Buka pull request yang menambah `addons/<name>/` dan satu baris ke tabel di atas. CI core tidak
+terblokir add-on: workflow terpisah build apa pun yang berubah di `addons/`, dan
+`tests/test_addons.py` cek aturan folder (proyek Gradle sendiri, README dengan bagian Permissions,
+screenshot, tanpa APK, baris di tabel ini menampilkan screenshot) dan bahwa launcher tidak pernah
+menyertakan atau mereferensikan folder ini.

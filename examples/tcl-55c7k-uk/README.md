@@ -2,15 +2,15 @@
 
 TCL C7K QD-Mini LED, device `G08`, model "Smart TV Pro", firmware `UTT2.250416.001 AU02`, MediaTek, about
 2.4 GB RAM. Two units have run this list: a 55C7K-UK on Wi-Fi (the first, see the header of `debloat.txt`) and a
-50C7K on Ethernet in Poland (below). Both halves work on this set: the debloat list and the Clean Your TV
+50C7K on Ethernet in Poland (below). Both halves work on this set: the debloat list and the VibeYourTV
 launcher as Home.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
 | `debloat.txt` | The packages that were disabled, grouped and commented |
 | `config.json` | Hidden TCL tiles, the Live TV app, and the Settings, Netflix and YouTube buttons; push it with `tools/theme.sh` |
 
-All commands run from the repo root with the TV's IP in `TV_HOST`, and USB debugging on.
+Semua perintah dari root repo with the TV's IP in `TV_HOST`, and USB debugging on.
 
 ## Install
 

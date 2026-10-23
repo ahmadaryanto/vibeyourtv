@@ -1,3 +1,9 @@
+# Xiaomi MiTV-ASTR0: iklan screensaver HyperOS 3, dan Home lewat trampoline allowlist
+
+Ringkasan Bahasa Indonesia: Redmi Smart TV A Pro 55" 2025 (HyperOS TV 3, Android 14). Nonaktifkan `com.xiaomi.mitv.hyper.screensaver` untuk iklan standby. Home pihak ketiga butuh identitas paket allowlist `com.ts.launcher` (trampoline), bukan `set-home-activity` biasa. Jangan nonaktifkan `com.xiaomi.mitv.smartpanel` (tombol Menu).
+
+---
+
 # Xiaomi MiTV-ASTR0: HyperOS 3 screensaver ads, and Home via the allowlist trampoline
 
 Tested on a Redmi Smart TV A Pro 55" 2025 Energy-saving Edition (MiTV-ASTR0, codename

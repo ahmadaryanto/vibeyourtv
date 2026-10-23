@@ -1,31 +1,31 @@
-# Security
+# Keamanan
 
-CleanYourTV talks to TVs over ADB and installs a launcher on them, so a security bug here can
-reach people's living rooms. Please report anything you find privately, not in a public issue.
+VibeYourTV bicara ke TV lewat ADB dan memasang launcher di situ, jadi bug keamanan di sini bisa
+sampai ke ruang tamu orang. Laporkan apa pun yang kamu temukan secara privat, bukan lewat issue publik.
 
-## How to report
+## Cara melapor
 
-Use GitHub's private vulnerability reporting: open the
-[Security tab](https://github.com/Gathin23/cleanyourtv/security) and choose **Report a vulnerability**.
-Only the maintainer sees the report. If that doesn't work for you, email
-[hello@itsgathin.com](mailto:hello@itsgathin.com) with "Security" in the subject.
+Pakai pelaporan kerentanan privat GitHub: buka
+[tab Security](https://github.com/Gathin23/cleanyourtv/security) lalu pilih **Report a vulnerability**.
+Hanya maintainer yang melihat laporan itu. Kalau jalur itu tidak bisa kamu pakai, email
+[hello@itsgathin.com](mailto:hello@itsgathin.com) dengan "Security" di subjek.
 
-Please include what is affected (the prompt, a tool in `tools/`, the launcher, a debloat list),
-the steps to reproduce it, and what an attacker could do with it.
+Sertakan apa yang kena (prompt, alat di `tools/`, launcher, atau daftar debloat),
+langkah untuk mengulanginya, dan apa yang bisa penyerang lakukan dengannya.
 
-## What counts
+## Yang masuk hitungan
 
-- The launcher (`com.gathin.tvhome`) doing something it shouldn't: reaching the network, exposing
-  data to other apps, or being made to open something it shouldn't.
-- The tools (`tools/tv.py`, `disable.sh`, `restore.sh`, `theme.sh`, `recovery.py`) running commands
-  on a device or computer they weren't pointed at, or mishandling paths and input.
-- A debloat list or the prompt leading to a TV that can't be restored with `tools/restore.sh`.
-- Anything in a pull request that runs code on a contributor's or maintainer's machine.
+- Launcher (`com.gathin.tvhome`) melakukan sesuatu yang tidak seharusnya: menjangkau jaringan, membuka
+  data ke aplikasi lain, atau dipaksa membuka sesuatu yang tidak seharusnya.
+- Alat (`tools/tv.py`, `disable.sh`, `restore.sh`, `theme.sh`, `recovery.py`) menjalankan perintah
+  di perangkat atau komputer yang bukan sasarannya, atau salah menangani path dan input.
+- Daftar debloat atau prompt yang membuat TV tidak bisa dipulihkan dengan `tools/restore.sh`.
+- Apa pun di pull request yang menjalankan kode di mesin kontributor atau maintainer.
 
-ADB itself is powerful by design. Turning on USB or network debugging lets any computer on your
-network ask to connect, and the TV asks you to allow it. Turn debugging off when you're done.
+ADB memang kuat dari desainnya. Menghidupkan USB debugging atau network debugging membuat komputer mana pun di
+jaringanmu bisa minta koneksi, dan TV menanyakan izinmu. Matikan debugging kalau sudah selesai.
 
-## What happens next
+## Selanjutnya
 
-You'll get a reply within a few days. Fixes go into `main` with credit to you, unless you'd rather
-stay anonymous. Please give a fix a reasonable chance to ship before you publish details.
+Kamu dapat balasan dalam beberapa hari. Perbaikan masuk ke `main` dengan kredit untukmu, kecuali kamu lebih
+suka anonim. Beri perbaikan itu kesempatan yang wajar untuk rilis sebelum kamu memublikasikan detailnya.

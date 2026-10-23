@@ -1,96 +1,96 @@
-# Helping someone in another home
+# Membantu seseorang di rumah lain
 
-Everything in this repo assumes your computer and the TV are on the same Wi-Fi. When the TV is at a
-parent's or a friend's house, put a private [Tailscale](https://tailscale.com) link between your
-computer and their home. The TV then behaves exactly as if it were on your network: the prompt,
-`tools/tv.py`, screenshots and the launcher install all work unchanged, with a `100.x.y.z` address
-instead of the local one. Tailscale's personal plan is free.
+Semua yang ada di repo ini menganggap komputermu dan TV ada di Wi-Fi yang sama. Kalau TV-nya di
+rumah orang tua atau teman, pasang tautan [Tailscale](https://tailscale.com) pribadi antara
+komputermu dan rumah mereka. TV lalu berperilaku persis seperti di jaringanmu: prompt,
+`tools/tv.py`, screenshot, dan pemasangan launcher VibeYourTV semuanya jalan tanpa perubahan, dengan alamat `100.x.y.z`
+alih-alih alamat lokal. Paket personal Tailscale gratis.
 
-**Never forward port 5555 on their router to the internet.** ADB is full control of the TV, and
-bots actively scan the internet for open ADB ports.
+**Jangan pernah meneruskan port 5555 di router mereka ke internet.** ADB adalah kendali penuh atas TV, dan
+bot memang memindai internet untuk port ADB yang terbuka.
 
-## What you need
+## Yang kamu butuhkan
 
-- Tailscale on your computer, signed in. The Mac and Windows apps pick up subnet routes on their own;
-  on Linux also run `sudo tailscale set --accept-routes`. Your computer must not be a
-  [tagged](https://tailscale.com/kb/1068/tags) device, since tagged machines can't reach shared ones.
-- Someone at the TV with the remote, on the phone with you for about twenty minutes.
-- One of the two setups below.
+- Tailscale di komputermu, sudah masuk. Aplikasi Mac dan Windows mengambil rute subnet sendiri;
+  di Linux jalankan juga `sudo tailscale set --accept-routes`. Komputermu tidak boleh menjadi perangkat
+  [tagged](https://tailscale.com/kb/1068/tags), karena mesin yang di-tag tidak bisa menjangkau yang dibagikan.
+- Seseorang di dekat TV dengan remote, di telepon bersamamu sekitar dua puluh menit.
+- Salah satu dari dua penyiapan di bawah.
 
-## Option A: Tailscale on the TV
+## Opsi A: Tailscale di TV
 
-The simplest setup when the TV can run it:
+Penyiapan paling sederhana kalau TV bisa menjalankannya:
 
-- **Android TV and Google TV:** Tailscale from the Play Store.
-- **Fire TV:** Tailscale from the Amazon Appstore, on most devices from 2018 on. Not on the Fire TV
-  Stick 4K Select, which runs Vega OS (and that one can't be debloated over ADB anyway).
+- **Android TV dan Google TV:** Tailscale dari Play Store.
+- **Fire TV:** Tailscale dari Amazon Appstore, di sebagian besar perangkat dari 2018 ke atas. Tidak di Fire TV
+  Stick 4K Select, yang menjalankan Vega OS (dan yang itu memang tidak bisa di-debloat lewat ADB).
 
-Opening the app shows a QR code. Then either:
+Membuka aplikasinya menampilkan kode QR. Lalu salah satu:
 
-1. **They keep it in their own tailnet and share the TV with you** (recommended for family). They
-   scan the code with their phone and sign in with their own free account. Then, in the admin
-   console (Machines → the TV → **Share**), they send you an invite and you accept it. You see that
-   one TV and nothing else in their home, and they can revoke it any time.
-2. **It joins your tailnet.** They scan the code and you sign in on their phone with your account.
-   Quicker, but the TV is now one of your devices until you remove it.
+1. **Mereka menyimpannya di tailnet mereka sendiri dan membagikan TV-nya kepadamu** (disarankan untuk keluarga). Mereka
+   memindai kode dengan ponsel dan masuk dengan akun gratis mereka sendiri. Lalu, di konsol
+   admin (Machines → TV itu → **Share**), mereka mengirim undangan dan kamu menerimanya. Kamu melihat
+   satu TV itu saja dan tidak ada yang lain di rumah mereka, dan mereka bisa mencabutnya kapan saja.
+2. **TV itu bergabung ke tailnetmu.** Mereka memindai kode dan kamu masuk di ponsel mereka dengan akunmu.
+   Lebih cepat, tetapi TV itu jadi salah satu perangkatmu sampai kamu menghapusnya.
 
-The TV's `100.x.y.z` address is shown in the Tailscale app on the TV and in your machine list.
+Alamat `100.x.y.z` TV tampil di aplikasi Tailscale di TV dan di daftar mesinmu.
 
-## Option B: a helper device as a subnet router
+## Opsi B: perangkat pembantu sebagai subnet router
 
-Use this when Tailscale won't install on the TV, or they'd rather not have it there. Another device
-in their home forwards your connection to the TV's normal local address:
+Pakai ini kalau Tailscale tidak mau terpasang di TV, atau mereka lebih suka tidak memasangnya di sana. Perangkat lain
+di rumah mereka meneruskan koneksimu ke alamat lokal biasa TV:
 
-- a Mac, Windows PC or Linux machine that stays on during the session, or a Raspberry Pi for a
-  permanent setup;
-- an Apple TV, through the Subnet Router option in its Tailscale app;
-- a Synology NAS, with Tailscale from Package Center. Its Tailscale page (DSM, or port 5252) has a
-  Subnet router section, but it's read-only when you open it from a tagged device. Without SSH, a
-  one-off Task Scheduler task (Control Panel → Task Scheduler → Create → Triggered Task →
-  User-defined script, user root, then Run and delete it) runs
-  `/var/packages/Tailscale/target/bin/tailscale set --advertise-routes=192.168.1.0/24`; the
-  setting persists;
-- not a phone: the Android and iOS apps can't route their home network.
+- Mac, PC Windows, atau mesin Linux yang tetap nyala selama sesi, atau Raspberry Pi untuk
+  penyiapan tetap;
+- Apple TV, lewat opsi Subnet Router di aplikasi Tailscale-nya;
+- NAS Synology, dengan Tailscale dari Package Center. Halaman Tailscale-nya (DSM, atau port 5252) punya
+  bagian Subnet router, tetapi hanya-baca kalau dibuka dari perangkat yang di-tag. Tanpa SSH, tugas
+  Task Scheduler sekali pakai (Control Panel → Task Scheduler → Create → Triggered Task →
+  User-defined script, user root, lalu Run dan hapus) menjalankan
+  `/var/packages/Tailscale/target/bin/tailscale set --advertise-routes=192.168.1.0/24`;
+  setelannya tetap tersimpan;
+- bukan ponsel: aplikasi Android dan iOS tidak bisa merutekan jaringan rumah mereka.
 
-The helper has to be in **your** tailnet, because shared machines don't carry their subnet routes
-into other tailnets. (If they already run a tailnet, at an office say, the reverse works too: they
-add you as a user, you add their tailnet as a second account in your Tailscale app and switch to
-it for the session.) Install Tailscale on it and send yourself the login link it shows; open it
-signed in to your account. Then advertise their home network (the first three numbers of the TV's
-address, from the TV's network settings):
+Pembantu itu harus ada di tailnet **kamu**, karena mesin yang dibagikan tidak membawa rute subnetnya
+ke tailnet lain. (Kalau mereka sudah menjalankan tailnet, misalnya di kantor, kebalikannya juga jalan: mereka
+menambahkanmu sebagai pengguna, kamu menambahkan tailnet mereka sebagai akun kedua di aplikasi Tailscale dan beralih
+ke situ untuk sesi itu.) Pasang Tailscale di situ dan kirim tautan masuk yang ditampilkannya ke dirimu sendiri; buka
+dalam keadaan masuk ke akunmu. Lalu umumkan jaringan rumah mereka (tiga angka pertama alamat
+TV, dari setelan jaringan TV):
 
 ```bash
-# Mac (standalone app without the CLI: /Applications/Tailscale.app/Contents/MacOS/Tailscale set ...)
+# Mac (aplikasi mandiri tanpa CLI: /Applications/Tailscale.app/Contents/MacOS/Tailscale set ...)
 sudo tailscale set --advertise-routes=192.168.1.0/24
-# Windows, PowerShell as administrator, after enabling IP forwarding
+# Windows, PowerShell sebagai administrator, setelah IP forwarding dinyalakan
 tailscale set --advertise-routes=192.168.1.0/24
-# Linux, after enabling IP forwarding (https://tailscale.com/kb/1019/subnets)
+# Linux, setelah IP forwarding dinyalakan (https://tailscale.com/kb/1019/subnets)
 sudo tailscale set --advertise-routes=192.168.1.0/24
 ```
 
-Approve the route in your admin console: Machines → the helper → Subnets → Edit. You then reach the
-TV at its local address, e.g. `TV_HOST=192.168.1.40`.
+Setujui rute di konsol adminmu: Machines → pembantu itu → Subnets → Edit. Kamu lalu menjangkau
+TV di alamat lokalnya, misalnya `TV_HOST=192.168.1.40`.
 
-**The two networks must not overlap.** If their home uses the same range as yours (both
-`192.168.1.x`, say), your computer can't tell their TV from a device at home. Use option A, or
-connect from another network.
+**Kedua jaringan tidak boleh tumpang tindih.** Kalau rumah mereka memakai rentang yang sama dengan rumahmu (keduanya
+`192.168.1.x`, misalnya), komputermu tidak bisa membedakan TV mereka dari perangkat di rumah. Pakai opsi A, atau
+sambung dari jaringan lain.
 
-## Connecting
+## Menyambungkan
 
-Ask them to turn on debugging exactly as in the [Quick start](../README.md#quick-start), then:
+Minta mereka menyalakan debugging persis seperti di [Quick start](../README.md#quick-start), lalu:
 
 ```bash
 TV_HOST=100.x.y.z tools/tv.py --probe
 ```
 
-They accept "Allow USB debugging?" on the TV while you're on the phone. The rest of the prompt
-runs as normal; tell your assistant the TV is remote and give it this address, so it doesn't
-scan your own network for it.
+Mereka menerima "Allow USB debugging?" di TV selagi kamu di telepon. Sisa prompt
+jalan seperti biasa; beri tahu asistenmu bahwa TV-nya jauh dan berikan alamat ini, supaya tidak
+memindai jaringanmu sendiri.
 
-**TVs that only offer Wireless debugging** (some Google TV sets): mDNS discovery doesn't cross the
-tunnel, so they read you three things from Developer options > Wireless debugging: the IP address
-and port on that screen, and, under Pair device with pairing code, the pairing port and the code.
-With the stock `adb`:
+**TV yang hanya menawarkan Wireless debugging** (sebagian set Google TV): penemuan mDNS tidak menyeberangi
+terowongan, jadi mereka membacakan tiga hal dari Opsi pengembang > Wireless debugging: alamat IP
+dan port di layar itu, dan, di bawah Pair device with pairing code, port pairing dan kodenya.
+Dengan `adb` bawaan:
 
 ```bash
 adb pair 100.x.y.z:<pairing port> <code>
@@ -99,25 +99,25 @@ adb -s 100.x.y.z:<connect port> tcpip 5555
 TV_HOST=100.x.y.z tools/tv.py --probe
 ```
 
-With option B, use the TV's local address instead of `100.x.y.z`.
+Dengan opsi B, pakai alamat lokal TV, bukan `100.x.y.z`.
 
-## Things that matter more when you aren't there
+## Hal yang lebih penting kalau kamu tidak di sana
 
-- **Wi-Fi is your only way in.** Anything that drops the TV off Wi-Fi drops you too, and only
-  someone at the TV can fix it. On Google TV, check who owns the saved network before disabling the
-  setup wizard (`dumpsys wifi | grep -o 'cname=[^ ]*'`, see
-  [TROUBLESHOOTING.md](TROUBLESHOOTING.md)). If it says setupwraith, have them forget and re-join
-  the network in Settings first.
-- **Ask, don't guess.** The prompt's checklist questions (which apps, the dock, casting, voice,
-  updates) are theirs to answer, and so is what's plugged into the USB ports.
-- **Leave the restore script with them**, or at least keep it where you can run it the next time
-  you're connected.
+- **Wi-Fi adalah satu-satunya jalan masukmu.** Apa pun yang menjatuhkan TV dari Wi-Fi menjatuhkanmu juga, dan hanya
+  orang di dekat TV yang bisa memperbaikinya. Di Google TV, cek siapa pemilik jaringan tersimpan sebelum menonaktifkan
+  setup wizard (`dumpsys wifi | grep -o 'cname=[^ ]*'`, lihat
+  [TROUBLESHOOTING.md](TROUBLESHOOTING.md)). Kalau yang tertulis setupwraith, minta mereka lupa dan gabung lagi
+  ke jaringan di Settings dulu.
+- **Tanya, jangan menebak.** Pertanyaan daftar centang di prompt (aplikasi mana, dock, casting, suara,
+  pembaruan) untuk mereka jawab, begitu juga apa yang tertancap di port USB.
+- **Tinggalkan skrip pulihkan bersama mereka**, atau setidaknya simpan di tempat kamu bisa menjalankannya lain kali
+  kamu tersambung.
 
-## Afterwards
+## Sesudahnya
 
-1. They switch off USB debugging and Wireless debugging in Developer options. The launcher keeps
-   working.
-2. Remove the access: they revoke the share, or you remove the TV or the helper from your tailnet
-   (or turn off its routes) in the admin console. Uninstall Tailscale from the TV unless they use it.
+1. Mereka mematikan USB debugging dan Wireless debugging di Opsi pengembang. Launcher tetap
+   jalan.
+2. Cabut aksesnya: mereka mencabut share, atau kamu menghapus TV atau pembantu dari tailnetmu
+   (atau mematikan rutenya) di konsol admin. Copot Tailscale dari TV kecuali mereka memakainya.
 
-Did this on a TV where something worked differently? Add a line here in a pull request.
+Pernah melakukan ini di TV yang sesuatu berjalan berbeda? Tambah satu baris di sini lewat pull request.

@@ -1,15 +1,15 @@
-# Workflow: Docs and troubleshooting notes
+# Alur: Catatan docs dan pemecahan masalah
 
-**When to use this:** a troubleshooting entry, a fix to `PROMPT.md`, or any other docs change.
+**Kapan dipakai:** entri pemecahan masalah, perbaikan `PROMPT.md`, atau perubahan docs lain.
 
-- `docs/TROUBLESHOOTING.md` is grouped under headings (Connecting, Working on the TV, then one per larger
-  problem). An entry is a bullet that opens with the symptom in bold, then the cause and the fix, naming the
-  TV model and firmware it was seen on.
-- A fix for something your agent got stuck on usually belongs in `PROMPT.md` as one extra sentence, kept
-  brand-neutral. Brand-specific knowledge goes in `examples/` or `docs/devices/`. Changes to the safety rules
-  themselves go to the maintainer.
-- Several tests pin facts in `docs/devices/` notes, `PROMPT.md` and `docs/TROUBLESHOOTING.md` (the
-  `tests/test_*_note.py` files). If you reword one of those passages, run the suite and keep the fact.
-- Docs and the README stay in step: a new list, theme, add-on or tool gets its row where the others are.
+- `docs/TROUBLESHOOTING.md` dikelompokkan di bawah heading (Connecting, Working on the TV, lalu satu heading
+  per masalah yang lebih besar). Entri adalah bullet yang dibuka dengan gejala dalam huruf tebal, lalu penyebab dan perbaikannya, dengan
+  model TV dan firmware tempat itu terlihat.
+- Perbaikan untuk hal yang bikin agenmu macet biasanya masuk ke `PROMPT.md` sebagai satu kalimat tambahan, tetap
+  netral merek. Pengetahuan khusus merek masuk ke `examples/` atau `docs/devices/`. Perubahan pada aturan keamanan
+  itu sendiri diserahkan ke maintainer.
+- Beberapa tes mengunci fakta di catatan `docs/devices/`, `PROMPT.md`, dan `docs/TROUBLESHOOTING.md` (berkas
+  `tests/test_*_note.py`). Kalau kamu mengubah salah satu bagian itu, jalankan suite dan pertahankan faktanya.
+- Docs dan README tetap sejalan: daftar, theme, add-on, atau alat baru mendapat barisnya di tempat yang lain juga punya baris.
 
-Then run the tests: `python3 -m unittest discover -s tests -v`.
+Lalu jalankan tes: `python3 -m unittest discover -s tests -v`.

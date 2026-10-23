@@ -10,7 +10,7 @@ leftovers [`sony-kd-55xe8596/`](../sony-kd-55xe8596/debloat.txt) disables, with 
 
 ## What was tested
 
-- The 38 packages in [`debloat.txt`](debloat.txt), applied with `tools/disable.sh` in six blocks (Samba TV
+- 38 packages in [`debloat.txt`](debloat.txt), applied with `tools/disable.sh` in six blocks (Samba TV
   and promos, demo, telemetry, help, optional features, hotel mode and leftovers). After each block: Home
   screenshot, Netflix, HDMI 1 and the DVB-T input, and the crash log. No crashes.
 - Rebooted afterwards: all 38 still disabled, nothing re-enabled by the firmware. Free RAM after boot
@@ -27,7 +27,7 @@ Chromecast, screen mirroring, DLNA, the phone remote, Sony IP control (`webapi.c
 untested: YouView (`com.sony.dtv.youview`, `com.youview.tv.servicehost`), `interactivetvutil`,
 `b2b.noderuntime.*`, Vewd/HbbTV, `dialservice`.
 
-## Notes from this firmware
+## Catatan from this firmware
 
 - Android 9 has no `topResumedActivity`. Check what is on screen with
   `dumpsys activity activities | grep mResumedActivity`; `mFocusedApp` is in `dumpsys window`.

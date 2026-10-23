@@ -1,17 +1,17 @@
-# Module card, spec 1
+# Kartu modul, spec 1
 
-An installed Android TV app can declare a card for the launcher. A card is the app's tile with a
-label of its choice, an optional caption and an optional glow colour, placed ahead of the
-alphabetical grid. The launcher shows a card only after the TV owner has answered Show on a prompt, and it
-remembers that answer for the app's signing key.
+Aplikasi Android TV yang terpasang bisa mendeklarasikan kartu untuk launcher VibeYourTV. Kartu adalah ubin aplikasi dengan
+label pilihannya, keterangan opsional, dan warna cahaya opsional, diletakkan di depan
+kisi alfabet. Launcher menampilkan kartu hanya setelah pemilik TV menjawab Show pada prompt, dan
+mengingat jawaban itu untuk kunci penandatangan aplikasi.
 
-This document is the contract between a module (the app) and the launcher. The how-to for module
-authors is [`docs/modules.md`](../modules.md).
+Dokumen ini adalah kontrak antara modul (aplikasinya) dan launcher. Cara membuatnya untuk
+pembuat modul ada di [`docs/modules.md`](../modules.md).
 
-## Declaration
+## Deklarasi
 
-In the module's `AndroidManifest.xml`, on the activity that already has the `LEANBACK_LAUNCHER`
-filter (the one the launcher shows as a tile):
+Di `AndroidManifest.xml` modul, pada aktivitas yang sudah punya filter `LEANBACK_LAUNCHER`
+(yang ditampilkan launcher sebagai ubin):
 
 ```xml
 <activity android:name=".LibraryActivity" android:exported="true">
@@ -34,148 +34,148 @@ filter (the one the launcher shows as a tile):
 <card spec="1" label="Retro" caption="NES games" accent="#E8A33D" />
 ```
 
-Rules for the declaration:
+Aturan deklarasi:
 
-- The card filter and the `meta-data` sit on an activity that also has `MAIN` +
-  `LEANBACK_LAUNCHER`, is `exported` and is enabled. A card on any other activity is dropped.
-- The `meta-data` must use `android:resource` pointing at an XML resource. `android:value` is not
-  read.
-- One card per package. If a package declares more than one, only the first the system lists is
-  read.
-- The root element is `<card>` with attributes only, no XML namespace. Child elements are ignored.
-  Unknown attributes are ignored, up to 16 attributes in total.
+- Filter kartu dan `meta-data` berada di aktivitas yang juga punya `MAIN` +
+  `LEANBACK_LAUNCHER`, `exported`, dan aktif. Kartu di aktivitas lain dibuang.
+- `meta-data` harus memakai `android:resource` yang menunjuk ke resource XML. `android:value` tidak
+  dibaca.
+- Satu kartu per paket. Kalau sebuah paket mendeklarasikan lebih dari satu, hanya yang pertama dalam daftar sistem yang
+  dibaca.
+- Elemen akar adalah `<card>` dengan atribut saja, tanpa namespace XML. Elemen anak diabaikan.
+  Atribut yang tidak dikenal diabaikan, sampai 16 atribut seluruhnya.
 
-## Fields
+## Field
 
-Values are literal text written in the XML file. References (`@string/name`, `?attr/name`) are
-not resolved in spec 1 and make the card invalid, so a card is not localisable in spec 1.
+Nilainya teks literal yang ditulis di berkas XML. Referensi (`@string/name`, `?attr/name`)
+tidak dipecahkan di spec 1 dan membuat kartu tidak valid, jadi kartu tidak bisa dilokalkan di spec 1.
 
-| Attribute | Required | Rule |
+| Atribut | Wajib | Aturan |
 | :- | :- | :- |
-| `spec` | yes | Decimal integer. This launcher reads spec `1`. Any other value: the card is ignored, with one log line. |
-| `label` | yes | 1 to 24 characters from `A-Z a-z 0-9` space `. & + ' -`, no leading or trailing space, at least one letter or digit. See the reserved names below. |
-| `caption` | no | Up to 32 characters from the same set. Shown after the label while the card is focused in the grid. The name line under the tile is one line; label and caption together show about 26 characters on a 4 column grid, so keep the caption to a few words. |
-| `accent` | no | `#RRGGBB`. The ambient glow colour while the card is focused in the dock. |
+| `spec` | ya | Bilangan bulat desimal. Launcher ini membaca spec `1`. Nilai lain: kartu diabaikan, dengan satu baris log. |
+| `label` | ya | 1 sampai 24 karakter dari `A-Z a-z 0-9` spasi `. & + ' -`, tanpa spasi di awal atau akhir, sedikitnya satu huruf atau angka. Lihat nama cadangan di bawah. |
+| `caption` | tidak | Sampai 32 karakter dari himpunan yang sama. Tampil setelah label saat kartu fokus di kisi. Baris nama di bawah ubin satu baris; label dan caption bersama-sama menampilkan sekitar 26 karakter di kisi 4 kolom, jadi caption cukup beberapa kata. |
+| `accent` | tidak | `#RRGGBB`. Warna cahaya ambient saat kartu fokus di dock. |
 
-The resource compiler stores some attribute values in a typed form; the launcher accepts the forms
-it hands back for the values above (`spec="1"` as an integer, `accent="#E8A33D"` as a colour,
-which comes back as `#ffe8a33d`). Keep labels and captions as words: a value that reads as a
-number with a unit or as a colour is stored in that typed form and will not match what you wrote.
+Kompiler resource menyimpan sebagian nilai atribut dalam bentuk bertipe; launcher menerima bentuk
+yang dikembalikannya untuk nilai di atas (`spec="1"` sebagai integer, `accent="#E8A33D"` sebagai warna,
+yang kembali sebagai `#ffe8a33d`). Biarkan label dan caption sebagai kata: nilai yang terbaca sebagai
+angka dengan satuan atau sebagai warna disimpan dalam bentuk bertipe itu dan tidak akan cocok dengan yang kamu tulis.
 
 ### Reserved names
 
-Comparisons use the folded form of the label: lower case, with everything except ASCII letters
-and digits removed. "Live TV", "live-tv" and "LIVETV" are the same name.
+Perbandingan memakai bentuk lipatan label: huruf kecil, dengan segala sesuatu selain huruf ASCII
+dan angka dihapus. "Live TV", "live-tv", dan "LIVETV" adalah nama yang sama.
 
-A label is rejected when:
+Sebuah label ditolak kalau:
 
-- it contains `verified` or `official` anywhere: words that imply endorsement are reserved, and
-  nothing a module declares is ever presented as endorsed (the same two words are refused in the
+- berisi `verified` atau `official` di mana pun: kata yang menyiratkan endorsement dicadangkan, dan
+  tidak ada yang dideklarasikan modul yang pernah ditampilkan sebagai didukung (dua kata yang sama ditolak di
   caption);
-- it is one of the names the launcher's own UI uses, in English or in the TV's language: what its
-  pills and dialogs say (`Home`, `Settings`, `Inputs`, `Wi-Fi`, `Live TV`, `App library`,
-  `Choose default home`), the name of the clock screensaver in the TV's screensaver picker (`Clock`),
-  `Default home` word for word, and the two project names `cleanyourtv` and `tv-vibehack`;
-- it names an input the Inputs menu shows: `HDMI` and anything starting with it, `AV`;
-- while the prompt is due (a new card, or one whose signing key or label changed): it equals the label of
-  another app installed on this TV (the names on the home screen), or the app's own label equals
-  another installed app's label. The module's own app label is fine: a card named "Retro" from an
-  app named "Retro" is the normal case. Once the owner has answered, the name stays with that card:
-  an app installed afterwards with the same label does not displace it. The answer is for that name:
-  a card that changes its label on an update is pending again and goes through these checks anew;
-- two cards share a label: the one the owner already decided on keeps the name (the oldest
-  decision wins), the other is dropped; when neither has a decision, both are dropped and nobody is
-  asked about a contested name.
+- sama dengan salah satu nama yang dipakai UI launcher sendiri, dalam bahasa Inggris atau bahasa TV: yang
+  dikatakan pil dan dialognya (`Home`, `Settings`, `Inputs`, `Wi-Fi`, `Live TV`, `App library`,
+  `Choose default home`), nama screensaver jam di pemilih screensaver TV (`Clock`),
+  `Default home` kata per kata, dan dua nama proyek `cleanyourtv` dan `tv-vibehack`;
+- menamai input yang ditampilkan menu Input: `HDMI` dan apa pun yang diawali itu, `AV`;
+- selagi prompt jatuh tempo (kartu baru, atau yang kunci penandatangan atau labelnya berubah): sama dengan label
+  aplikasi lain yang terpasang di TV ini (nama di layar utama), atau label aplikasi modul itu sendiri sama dengan
+  label aplikasi terpasang lain. Label aplikasi milik modul sendiri tidak masalah: kartu bernama "Retro" dari
+  aplikasi bernama "Retro" adalah kasus biasa. Setelah pemilik menjawab, nama itu tetap pada kartu itu:
+  aplikasi yang dipasang kemudian dengan label yang sama tidak menggesernya. Jawaban itu untuk nama itu:
+  kartu yang mengubah labelnya pada pembaruan menjadi tertunda lagi dan melewati pemeriksaan ini dari awal;
+- dua kartu berbagi label: yang sudah diputuskan pemilik mempertahankan nama itu (keputusan
+  tertua yang menang), yang lain dibuang; kalau keduanya belum punya keputusan, keduanya dibuang dan tidak ada yang
+  ditanya tentang nama yang diperebutkan.
 
 ## Limits
 
-The launcher never trusts a module's input to be small or well formed. Everything is bounded and
-any violation drops that one card, with a log line and no other effect.
+Launcher tidak pernah percaya masukan modul kecil atau terbentuk baik. Semuanya berbatas dan
+pelanggaran apa pun membuang kartu yang satu itu, dengan satu baris log dan tanpa efek lain.
 
-| What | Limit |
+| Apa | Batas |
 | :- | :- |
-| Cards read per package list refresh | 32, the rest are ignored |
-| Cards shown as tiles | 8, by label; the rest are listed as over the limit in the Module cards list and keep their ordinary tile |
-| Decisions remembered in `cards.json` | 128, the oldest are dropped beyond that |
-| XML events walked per card | 64 |
-| XML nesting depth | 2 (`<card>` and its direct children) |
-| Attributes on `<card>` | 16 |
-| Label and caption length | 24 and 32 characters, checked before anything else looks at the value |
-| Signers | exactly one signing certificate; a package with several is rejected |
+| Kartu yang dibaca per penyegaran daftar paket | 32, sisanya diabaikan |
+| Kartu yang ditampilkan sebagai ubin | 8, menurut label; sisanya dicantumkan sebagai melewati batas di daftar Module cards dan tetap memakai ubin biasa |
+| Keputusan yang diingat di `cards.json` | 128, yang tertua dibuang di luar itu |
+| Peristiwa XML yang dijelajah per kartu | 64 |
+| Kedalaman sarang XML | 2 (`<card>` dan anak langsungnya) |
+| Atribut pada `<card>` | 16 |
+| Panjang label dan caption | 24 dan 32 karakter, diperiksa sebelum yang lain melihat nilainya |
+| Penandatangan | tepat satu sertifikat penandatangan; paket dengan beberapa ditolak |
 
-## Launcher behaviour
+## Perilaku launcher
 
-1. Discovery. Every time the home screen comes to the front, the launcher asks the package manager
-   for activities with `MAIN` + `com.gathin.tvhome.category.DOCK_CARD` (a package manager query,
-   no polling, no services, no network). For each one it checks the activity, reads the XML through the package
-   manager, applies the rules above and computes the signer digest. Every card is read inside its
-   own error boundary.
-2. Signer digest. SHA-256 of the DER encoded signing certificate of the package's single signer,
-   as `apksigner verify` with the `print-certs` option prints it ("Signer #1 certificate SHA-256
-   digest"). On Android 9 and newer the launcher reads the current signer; on Android 8 it reads
-   the package's signature. A package signed with more than one certificate is rejected.
-3. Decision record. The owner's decision is stored per package in the launcher's private storage
-   (`files/cards.json`, format version 2): package, signer digest, the card's folded label, decision
-   (`show` or `hide`), first seen, decided at. The file is written atomically and validated strictly when read; a file that does not
-   validate is moved to `cards.json.bad` and the launcher continues as if no decision had been made.
-   The record never leaves the TV (backups are off for the launcher).
-4. Prompt. A card with no record, or whose signer digest or folded label differs from its record, is
-   not shown. Once
-   the grid is laid out and the home screen has focus, with no menu open, the launcher shows one
-   prompt. It names the app by its own label (control and formatting characters removed, at most 40
-   characters) and package and the key by the first twelve hex characters of the digest; when the
-   card label differs from the app label it says both names.
-   The buttons are "Keep hidden" (focused first) and "Show card"; Back means Keep hidden. The prompt
-   also says how to change the answer afterwards. Left and Right move between the buttons; Up and Down
-   do nothing. After an answer, the next card with a pending prompt follows at once.
-5. Signer change. A package whose signer digest differs from its record is treated as new: the card
-   is not shown, and the prompt says the app was updated with a different signing key. The record is
-   replaced only by the owner's answer, never by the detection alone.
-   Label change. A card whose folded label differs from its record is treated the same way: not
-   shown, and the prompt says the card changed its name. A decision is for one name under one key.
-6. Placement. A shown card stands in for every tile of its package: the ordinary tile is not shown
-   next to it. A package in `hidden_apps` (`config.xml`) shows neither a tile nor a card. A package in
-   `dock_apps` gets its card in that dock slot. Other cards sort right after the configured dock apps
-   and before the alphabetical grid, by label. On the default configuration, four dock apps and four
-   columns, that is the first grid tile. With fewer `dock_apps` than columns, the free dock slots take
-   the first grid apps (`fill_dock`, on by default), so a shown card fills the free dock slot, since
-   the dock is then simply the first row; with `fill_dock` false the free slots stay empty and a
-   shown card is the first grid tile. In the dock, the top shelf shows the label and the glow uses
-   the accent; in the grid, the name line under the focused tile shows the label and the caption,
-   as far as they fit on one line. A card uses the app's own banner (or icon) for its artwork.
-7. Hide. A hidden card leaves the app's ordinary tile exactly as before: hiding a card never
-   removes an app, and showing one never installs anything. A card is hidden or shown again from
-   the Module cards list: hold OK on the Settings pill. The list shows every discovered card with
-   its app label, package, full signer digest and state; OK toggles Shown and Hidden.
-8. Uninstall. Removing the module removes the card. Its record stays, so a reinstall with the same
-   signing key needs no new prompt.
-9. Launch. A card launches the declaring activity by explicit component with no extras and no data,
-   the same way every tile is launched. No field of a card can name an intent, a URI, a class or a
-   package. Holding OK on a card opens the app's App info page, like any tile.
-10. Off switch. `module_cards` in `config.xml` or the `config.json` theme overlay (default `true`). When `false` the launcher never looks
-    for cards, never asks, and the Module cards list only says that none are installed.
+1. Penemuan. Setiap kali layar utama tampil di depan, launcher menanyakan package manager
+   untuk aktivitas dengan `MAIN` + `com.gathin.tvhome.category.DOCK_CARD` (query package manager,
+   tanpa polling, tanpa layanan, tanpa jaringan). Untuk masing-masing ia memeriksa aktivitas, membaca XML lewat package
+   manager, menerapkan aturan di atas, dan menghitung digest penandatangan. Setiap kartu dibaca di dalam
+   batas kesalahannya sendiri.
+2. Digest penandatangan. SHA-256 sertifikat penandatangan berkode DER dari satu-satunya penandatangan paket,
+   seperti yang dicetak `apksigner verify` dengan opsi `print-certs` ("Signer #1 certificate SHA-256
+   digest"). Di Android 9 dan yang lebih baru launcher membaca penandatangan saat ini; di Android 8 ia membaca
+   tanda tangan paket. Paket yang ditandatangani dengan lebih dari satu sertifikat ditolak.
+3. Catatan keputusan. Keputusan pemilik disimpan per paket di penyimpanan pribadi launcher
+   (`files/cards.json`, format versi 2): paket, digest penandatangan, label terlipat kartu, keputusan
+   (`show` atau `hide`), pertama terlihat, diputuskan pada. Berkas ditulis secara atomik dan divalidasi ketat saat dibaca; berkas yang tidak
+   lolos validasi dipindah ke `cards.json.bad` dan launcher lanjut seolah belum ada keputusan.
+   Catatan tidak pernah meninggalkan TV (cadangan dimatikan untuk launcher).
+4. Prompt. Kartu tanpa catatan, atau yang digest penandatangan atau label terlipatnya berbeda dari catatannya,
+   tidak ditampilkan. Setelah
+   kisi tertata dan layar utama punya fokus, tanpa menu terbuka, launcher menampilkan satu
+   prompt. Ia menyebut aplikasi dengan labelnya sendiri (karakter kendali dan pemformatan dihapus, paling banyak 40
+   karakter) dan paket, serta kunci dengan dua belas karakter heksa pertama digest; kalau
+   label kartu berbeda dari label aplikasi, keduanya disebut.
+   Tombolnya "Keep hidden" (fokus lebih dulu) dan "Show card"; Back berarti Keep hidden. Prompt
+   juga menjelaskan cara mengubah jawaban sesudahnya. Kiri dan Kanan berpindah antar tombol; Atas dan Bawah
+   tidak melakukan apa-apa. Setelah jawaban, kartu berikutnya yang prompt-nya tertunda menyusul langsung.
+5. Perubahan penandatangan. Paket yang digest penandatangannya berbeda dari catatannya diperlakukan sebagai baru: kartu
+   tidak ditampilkan, dan prompt mengatakan aplikasi diperbarui dengan kunci penandatangan yang berbeda. Catatan
+   diganti hanya oleh jawaban pemilik, tidak pernah oleh deteksi saja.
+   Perubahan label. Kartu yang label terlipatnya berbeda dari catatannya diperlakukan sama: tidak
+   ditampilkan, dan prompt mengatakan kartu mengubah namanya. Keputusan adalah untuk satu nama di bawah satu kunci.
+6. Penempatan. Kartu yang ditampilkan menggantikan setiap ubin paketnya: ubin biasa tidak ditampilkan
+   di sebelahnya. Paket di `hidden_apps` (`config.xml`) tidak menampilkan ubin maupun kartu. Paket di
+   `dock_apps` mendapat kartunya di slot dock itu. Kartu lain diurutkan tepat setelah aplikasi dock yang dikonfigurasi
+   dan sebelum kisi alfabet, menurut label. Pada konfigurasi bawaan, empat aplikasi dock dan empat
+   kolom, itu ubin kisi pertama. Dengan `dock_apps` lebih sedikit daripada kolom, slot dock yang kosong mengambil
+   aplikasi kisi pertama (`fill_dock`, nyala secara bawaan), jadi kartu yang ditampilkan mengisi slot dock yang kosong, karena
+   dock lalu hanya baris pertama; dengan `fill_dock` false slot kosong tetap kosong dan
+   kartu yang ditampilkan adalah ubin kisi pertama. Di dock, rak atas menampilkan label dan cahaya memakai
+   accent; di kisi, baris nama di bawah ubin yang fokus menampilkan label dan caption,
+   sejauh muat dalam satu baris. Kartu memakai banner (atau ikon) milik aplikasi untuk gambarnya.
+7. Sembunyi. Kartu yang disembunyikan meninggalkan ubin biasa aplikasi persis seperti sebelumnya: menyembunyikan kartu tidak pernah
+   menghapus aplikasi, dan menampilkannya tidak pernah memasang apa pun. Kartu disembunyikan atau ditampilkan lagi dari
+   daftar Module cards: tahan OK pada pil Settings. Daftar menampilkan setiap kartu yang ditemukan dengan
+   label aplikasi, paket, digest penandatangan penuh, dan status; OK mengalihkan Shown dan Hidden.
+8. Copot pemasangan. Menghapus modul menghapus kartu. Catatannya tetap, jadi pemasangan ulang dengan
+   kunci penandatangan yang sama tidak butuh prompt baru.
+9. Peluncuran. Kartu meluncurkan aktivitas yang mendeklarasikannya dengan komponen eksplisit, tanpa extra dan tanpa data,
+   dengan cara yang sama setiap ubin diluncurkan. Tidak ada field kartu yang bisa menamai intent, URI, kelas, atau
+   paket. Menahan OK pada kartu membuka halaman Info aplikasi, seperti ubin mana pun.
+10. Sakelar mati. `module_cards` di `config.xml` atau overlay theme `config.json` (bawaan `true`). Kalau `false` launcher tidak pernah mencari
+    kartu, tidak pernah bertanya, dan daftar Module cards hanya mengatakan tidak ada yang terpasang.
 
-## Security
+## Keamanan
 
-- The launcher never installs, downloads, enables or disables anything, binds no service, loads no
-  code, views or resources from a module beyond the one XML file and the label and artwork every
-  tile already uses, and has no network permission.
-- Nothing is shown until the owner says so, and the answer is pinned to the signing key. The owner
-  judges a package name and an app label; the launcher judges the digest.
-- A card can only make its own activity look different; it cannot start anything else. Launching it
-  is the same as launching the app's ordinary tile.
-- Label rules are ASCII only so that look-alike letters cannot imitate another name, and labels
-  that match another installed app or the launcher's own UI are refused.
-- The card code can never take the home screen down: if any part of it fails on a TV, cards switch
-  off for that session with one log line and Home behaves as with `module_cards` false.
-- Residual risk: an app that holds the "draw over other apps" permission could draw over the prompt
-  text. It cannot press the prompt's buttons from a remote. The prompt is only shown while the home
-  screen has window focus and is dismissed when the home screen leaves the front.
+- Launcher tidak pernah memasang, mengunduh, mengaktifkan, atau menonaktifkan apa pun, tidak mengikat layanan, tidak memuat
+  kode, view, atau resource dari modul di luar satu berkas XML itu serta label dan gambar yang sudah
+  dipakai setiap ubin, dan tidak punya izin jaringan.
+- Tidak ada yang ditampilkan sampai pemilik mengatakannya, dan jawaban terikat ke kunci penandatangan. Pemilik
+  menilai nama paket dan label aplikasi; launcher menilai digest.
+- Kartu hanya bisa membuat aktivitasnya sendiri tampil berbeda; ia tidak bisa memulai yang lain. Meluncurkannya
+  sama dengan meluncurkan ubin biasa aplikasi.
+- Aturan label hanya ASCII supaya huruf yang mirip tidak bisa meniru nama lain, dan label
+  yang cocok dengan aplikasi terpasang lain atau UI launcher sendiri ditolak.
+- Kode kartu tidak pernah bisa menjatuhkan layar utama: kalau ada bagian yang gagal di sebuah TV, kartu dimatikan
+  untuk sesi itu dengan satu baris log dan Home berperilaku seperti `module_cards` false.
+- Risiko sisa: aplikasi yang memegang izin "draw over other apps" bisa menggambar di atas teks
+  prompt. Ia tidak bisa menekan tombol prompt dari remote. Prompt hanya ditampilkan selagi layar
+  utama punya fokus jendela dan ditutup saat layar utama meninggalkan depan.
 
-## Rejections
+## Penolakan
 
-Every rejected card produces one line in logcat under the tag `TvHomeCards`, with the package and
-the reason, for example:
+Setiap kartu yang ditolak menghasilkan satu baris di logcat di bawah tag `TvHomeCards`, dengan paket dan
+alasannya, misalnya:
 
 ```
 W TvHomeCards: io.example.spoof: label 'Retro' is the name of another installed app
@@ -183,5 +183,5 @@ W TvHomeCards: io.example.deep: XML nested deeper than 2
 W TvHomeCards: io.example.big: label is longer than 24 characters
 ```
 
-Read them with `adb logcat -s TvHomeCards` (or `tools/tv.py 'logcat -d -s TvHomeCards'`). A rejected
-card has no other effect: the app keeps its ordinary tile.
+Baca dengan `adb logcat -s TvHomeCards` (atau `tools/tv.py 'logcat -d -s TvHomeCards'`). Kartu yang ditolak
+tidak punya efek lain: aplikasi tetap memakai ubin biasanya.

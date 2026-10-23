@@ -6,7 +6,7 @@ and crossfading into the next after 20 seconds (or what you set). A clip plays o
 fill the screen, then the loop moves on; a lone clip loops. Any key wakes the TV back to where it was.
 
 Package `com.gathin.photodream`. You see it as **Photos** (Dutch: **Foto's**) in the TV's screensaver
-settings. On cleanyourtv's Home it is also a module card, **Photos**: OK starts the same slideshow at once,
+settings. On VibeYourTV's Home it is also a module card, **Photos**: OK starts the same slideshow at once,
 holding OK (or Menu) opens the settings, Back leaves.
 
 ## Options
@@ -73,7 +73,7 @@ At most two screen-sized pictures are held, as GPU bitmaps, and one hardware vid
 is decoded at screen size. On a TCL 43P69K (1.5 GB) a 1080p clip played with the screensaver at about
 42 MB and 705 MB RAM still free.
 
-## Permissions
+## Permissions (izin)
 
 - **Network: `INTERNET` and `ACCESS_COARSE_LOCATION`**, used only by the weather option, which is off by
   default. With it on, the TV's rough location, rounded to two decimals (about 1 km), goes to

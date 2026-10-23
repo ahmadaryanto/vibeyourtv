@@ -110,7 +110,7 @@ the hub. Later, go to **Sources > Add a source**.
 
 `AndroidManifest.xml` puts the `com.gathin.tvhome.category.DOCK_CARD` filter and the
 `com.gathin.tvhome.card` meta-data on `MainActivity`, the same exported activity as
-`LEANBACK_LAUNCHER`, as [the spec](https://github.com/Gathin23/cleanyourtv/blob/main/docs/specs/card.md) requires:
+`LEANBACK_LAUNCHER`, as [the spec](https://github.com/Gathin23/VibeYourTV/blob/main/docs/specs/card.md) requires:
 
 ```xml
 <card spec="1" label="TV Hub" caption="Live channels" accent="#4FA3E0" />
@@ -120,7 +120,7 @@ The launcher finds it the next time Home comes to the front and asks once. Nothi
 you choose **Show card**, and you can change your answer by holding OK on its Settings pill. TV Hub
 changes nothing under `launcher/`. On other launchers the card is ignored and TV Hub is an ordinary app.
 
-## Permissions
+## Permissions (izin)
 
 - `INTERNET` is the only permission: playlists, guides, logos and streams, and only to the sources you add.
 - "Scan the network" sends a UDP broadcast on port 65001 to the local network, only when you press it.

@@ -2,16 +2,16 @@
 
 Skyworth board `RG_HS352_D1E8_SW_B10` (HiSilicon Hi3751V350, 1 GB RAM), firmware 1.01.08 (build
 2025-09). Serial numbers of this version start with `BYU4B01C`. Both halves work: the debloat list and
-the Clean Your TV launcher as Home. Tested on 19 October 2026.
+the VibeYourTV launcher as Home. Tested on 19 October 2026.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 15 packages that were disabled, grouped and commented |
+| `debloat.txt` | 15 packages that were disabled, grouped and commented |
 | `config.json` | Dock order, hidden apps, Inputs panel, columns; push it with `tools/theme.sh` |
 
-All commands run from the repo root, with the projector's IP in `TV_HOST`.
+Semua perintah dari root repo, with the projector's IP in `TV_HOST`.
 
-## Turning ADB on
+## Menyalakan ADB
 
 Android's Developer options are blocked on this firmware: unlocking them works (About → Build, 7
 times), but the screen closes as soon as it opens. BYINTEK's own settings app hides an ADB switch
@@ -36,7 +36,7 @@ TV_HOST=<projector-ip> tools/venv/bin/python -I -c "import sys; sys.path.insert(
 The firmware has other key sequences in the same app (projector calibration, factory screens). Leave
 them alone: they change keystone, focus and panel calibration.
 
-## Install, from scratch or again
+## Instal, dari nol atau ulang
 
 ```bash
 TV_HOST=<projector-ip> tools/disable.sh examples/byintek-u4/debloat.txt
@@ -60,7 +60,7 @@ TV_HOST=<projector-ip> tools/venv/bin/python -I tools/tv.py 'pm hide com.zeasn.d
 
 Restart the projector once so it stops.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<projector-ip> tools/restore.sh examples/byintek-u4/debloat.txt com.zeasn.whale.saas

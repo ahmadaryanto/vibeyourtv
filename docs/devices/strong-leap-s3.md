@@ -1,3 +1,11 @@
+# Strong LEAP-S3: kotak Google TV, daftar dua hari, dan urutan yang menghindari layar hitam
+
+Ringkasan (Bahasa Indonesia): STRONG LEAP S3 (SkyworthDigital, Amlogic S905Y4, Google TV 14). Daftar diterapkan manual dengan `pm disable-user`, **bukan** entri `examples/` (satu hari + reboot). Urutan Home: nonaktifkan `setupwraith` dulu (Wi-Fi tersimpan miliknya), lalu `launcherx`. Satu kegagalan reboot (layar hitam) dipulihkan reset hardware; percobaan kedua dengan pairing wireless debugging berhasil. Tombol gear butuh `HomeKeyService` dan keycode 83 di `config.xml`.
+
+Teks asli Inggris di bawah.
+
+---
+
 # Strong LEAP-S3: a Google TV box, a two-day list, and the order that avoids a black screen
 
 The `Strong LEAP-S3` is a set-top box (the box and the label under it say "STRONG LEAP S3"). Android calls

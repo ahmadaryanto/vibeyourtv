@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
-"""What a firmware update undid, compared with the list that was applied (#359).
+"""Apa yang dibalik update firmware, dibanding daftar yang sudah diterapkan (#359).
 
-    check.py <debloat list> [launcher package]        report the drift; exit 1 when there is any
-    check.py --fix <debloat list> [launcher package]  re-disable what came back and put the launcher
-                                                      back on Home
+    check.py <debloat list> [launcher package]        laporkan drift; keluar 1 kalau ada
+    check.py --fix <debloat list> [launcher package]  nonaktifkan lagi yang hidup kembali dan kembalikan
+                                                      launcher ke Home
 
-A firmware update re-enables listed packages, hands Home back to the stock launcher and adds new
-preloads, and nothing in this repo notices: nobody runs disable.sh again, and restore.sh would undo
-the cleanup instead of redoing it. This command compares the TV with the list and exits 1 when the
-TV drifted, so it fits a cron job; --fix applies the list again without touching the recovery
-record (the packages were already recorded before the first run, so undo still means undo).
+Update firmware mengaktifkan lagi paket di daftar, mengembalikan Home ke stock launcher, dan menambah
+aplikasi bawaan baru, dan tidak ada di repo ini yang menyadarinya: tidak ada yang menjalankan disable.sh
+lagi, dan restore.sh malah membatalkan pembersihan. Perintah ini membandingkan TV dengan daftar dan
+keluar 1 kalau TV-nya drift, jadi cocok untuk cron; --fix menerapkan daftar lagi tanpa menyentuh catatan
+pemulihan (paket sudah dicatat sebelum jalan pertama, jadi undo tetap berarti undo).
 
-It reads the list, not the record: the record holds what the TV looked like *before* cleanup, which
-is what restore needs, while the target here is the list itself.
+Yang dibaca adalah daftar, bukan catatan: catatan menyimpan wajah TV *sebelum* dibersihkan, yang
+dibutuhkan restore, sedangkan target di sini adalah daftar itu sendiri.
 
---fix runs the same safety checks as disable.sh before it disables anything (the Wi-Fi network
-setupwraith owns, the packages under the HDMI/AV inputs), because a firmware update is exactly the
-moment those come back into play: the update can turn setupwraith back on for a TV whose network it
-owns, and a fix that skipped the checks would take that TV off Wi-Fi with no way back in.
+--fix menjalankan pemeriksaan aman yang sama dengan disable.sh sebelum menonaktifkan apa pun (jaringan
+Wi-Fi milik setupwraith, paket di bawah input HDMI/AV), karena update firmware justru saat hal itu
+hidup lagi: update bisa menyalakan setupwraith di TV yang jaringannya miliknya, dan perbaikan yang
+melewati pemeriksaan itu akan melepaskan TV dari Wi-Fi tanpa jalan masuk.
 
-Exit codes: 0 in sync (or fixed), 1 drift, an incomplete fix, or packages a safety check left on,
-2 the TV could not be read.
+Kode keluar: 0 kalau selaras (atau sudah diperbaiki), 1 drift, perbaikan yang belum selesai, atau paket
+yang dibiarkan nyala oleh pemeriksaan aman, 2 kalau TV tidak bisa dibaca.
 """
 import os
 import re
@@ -80,8 +80,8 @@ def launcher_to_use(dev, listed, preferred=None):
             raise SystemExit(f"not a package name: {preferred!r}")
         match = [c for c in home_activities(dev) if home_of(c) == preferred]
         if not match:
-            raise SystemExit(f"{preferred} has no HOME activity on this TV: is the launcher "
-                             f"installed? (launcher/build-and-install.sh)")
+            raise SystemExit(f"{preferred} tidak punya aktivitas HOME di TV ini: launcher-nya "
+                             f"sudah terpasang? (launcher/build-and-install.sh)")
         return match[0]
     candidates = [c for c in home_activities(dev)
                   if home_of(c) not in listed and home_of(c) not in NOT_LAUNCHERS
@@ -117,7 +117,7 @@ def inspect(dev, listed, preferred=None):
 
 
 def report(list_path, listed, home, back_on, gone, home_drifted, expected=None):
-    print(f"checking {list_path} ({len(listed)} packages) on {os.environ.get('TV_HOST', '?')}")
+    print(f"mengecek {list_path} ({len(listed)} paket) di {os.environ.get('TV_HOST', '?')}")
     if back_on:
         print(f"  back on ({len(back_on)}): {', '.join(back_on)}")
     if home_drifted:
@@ -133,11 +133,11 @@ def report(list_path, listed, home, back_on, gone, home_drifted, expected=None):
         print(f"  not installed any more ({len(gone)}): {', '.join(gone)}")
     drift = len(back_on) + (1 if home_drifted else 0)
     if not drift:
-        print(f"nothing drifted: {len(listed) - len(gone)} listed packages are still disabled and "
+        print(f"nothing drifted: {len(listed) - len(gone)} paket di daftar masih nonaktif dan "
               f"Home is {home}")
         return 0
-    print(f"drift: {drift} of {len(listed)}; re-apply the list with --fix, or run "
-          f"tools/disable.sh and the install script by hand")
+    print(f"drift: {drift} dari {len(listed)}; terapkan lagi daftarnya dengan --fix, atau jalankan "
+          f"tools/disable.sh dan skrip instal secara manual")
     return 1
 
 
@@ -168,23 +168,23 @@ def safety_checks(dev, names):
         owns = setupwraith_owns_wifi(dev)
         if owns is not False:
             # Be safe when the TV could not say: a wrong guess here is the TV off the network.
-            why = ("the saved Wi-Fi network belongs to it, so disabling it deletes that network and "
-                   "takes the TV off Wi-Fi: on the TV, forget the network and join it again in "
-                   "Settings > Network & Internet, then run --fix again (or set "
-                   "FORCE_SETUPWRAITH=1 if it uses Ethernet)" if owns else
-                   "could not read which app owns the saved Wi-Fi networks (dumpsys wifi failed or "
-                   "showed none); set FORCE_SETUPWRAITH=1 if the TV uses Ethernet")
+            why = ("jaringan Wi-Fi tersimpan milik paket ini, jadi menonaktifkannya menghapus jaringan itu dan "
+                   "TV lepas dari Wi-Fi: di TV, lupakan jaringan itu lalu sambungkan lagi lewat "
+                   "Settings > Network & Internet, kemudian jalankan --fix lagi (atau set "
+                   "FORCE_SETUPWRAITH=1 kalau pakai Ethernet)" if owns else
+                   "tidak bisa baca aplikasi mana yang punya jaringan Wi-Fi tersimpan (dumpsys wifi gagal atau "
+                   "tidak menampilkan apa pun); set FORCE_SETUPWRAITH=1 kalau TV pakai Ethernet")
             skipped.append((SETUPWRAITH, why))
     if not os.environ.get("TVINPUT_ALLOW"):
         for name in names:
             if any(name == skipped_name for skipped_name, _ in skipped):
                 continue
             if asks_for_input_hardware(dev, name):
-                skipped.append((name, "it asks for android.permission.TV_INPUT_HARDWARE, so it is "
-                                      "the software layer under the HDMI/AV/tuner inputs: with it "
-                                      "disabled those ports stay black and only a full restore and "
-                                      "a cold boot bring them back (set TVINPUT_ALLOW=1 to disable "
-                                      "it)"))
+                skipped.append((name, "paket ini minta android.permission.TV_INPUT_HARDWARE, jadi ini "
+                                      "lapisan perangkat lunak di bawah input HDMI/AV/tuner: kalau "
+                                      "dinonaktifkan port itu tetap hitam dan hanya restore penuh plus "
+                                      "cold boot yang mengembalikannya (set TVINPUT_ALLOW=1 untuk menonaktifkan "
+                                      "nya)"))
     return skipped
 
 
@@ -196,15 +196,15 @@ def fix(dev, listed, back_on, home_drifted, preferred):
     if home_drifted:
         target = launcher_to_use(dev, listed, preferred)
         if not target:
-            print("Home: nothing to switch to: the launcher is not installed, or nothing but the "
-                  "packages this list disables answers HOME. Run launcher/build-and-install.sh, "
-                  "then check again; nothing was changed on the TV.")
+            print("Home: tidak ada yang bisa dituju: launcher belum terpasang, atau tidak ada yang menjawab "
+                  "HOME selain paket yang daftar ini nonaktifkan. Jalankan launcher/build-and-install.sh, "
+                  "lalu cek lagi; tidak ada yang diubah di TV.")
             return 1
         recovery.shell(dev, f"cmd package set-home-activity --user 0 {target}")
         home = recovery.query_home(dev)
         if home != target:
-            print(f"Home: asked for {target} but the TV still resolves {home or 'nothing'}; "
-                  f"reboot it and check again")
+            print(f"Home: diminta {target} tapi TV masih mengarah ke {home or 'nothing'}; "
+                  f"reboot lalu cek lagi")
             failed = True
         else:
             print(f"Home: set to {target}")
@@ -222,16 +222,16 @@ def fix(dev, listed, back_on, home_drifted, preferred):
         still_on = [name for name in todo if name not in disabled]
         if still_on:
             failed = True
-            print(f"still enabled after --fix: {', '.join(still_on)} (the firmware may pin them; "
-                  f"re-run the list by hand after the next reboot)")
+            print(f"still enabled after --fix: {', '.join(still_on)} (firmware mungkin mengunci mereka; "
+                  f"jalankan daftarnya manual setelah reboot berikutnya)")
         elif todo:
-            print(f"disabled {len(todo)} package(s) the update had turned back on")
+            print(f"disabled {len(todo)} package(s) yang update hidupkan lagi")
         if left_on:
             # Not a failure of the fix, but not a clean run either: the list asks for something this
             # TV cannot give up safely, and the next check reports the same drift until the owner
             # clears the obstacle (the Wi-Fi network) or accepts it (TVINPUT_ALLOW=1).
-            print(f"left {len(left_on)} package(s) on that this list disables; the TV is not fully "
-                  f"back to the list until they are dealt with")
+            print(f"membiarkan {len(left_on)} package(s) tetap nyala padahal daftar ini menonaktifkannya; TV is not fully "
+                  f"back to the list sampai itu dibereskan")
     return 1 if failed or left_on else 0
 
 
@@ -240,7 +240,7 @@ def main():
     wanted = "--fix" in args
     args = [a for a in args if a != "--fix"]
     if not 1 <= len(args) <= 2:
-        sys.stderr.write("usage: check.py [--fix] <debloat list> [launcher package]\n")
+        sys.stderr.write("cara pakai: check.py [--fix] <debloat list> [launcher package]\n")
         return 2
     list_path = args[0]
     preferred = args[1] if len(args) == 2 else None
@@ -250,15 +250,15 @@ def main():
     core = recovery.core_packages(listed)
     if core:
         # The same refusal as disable.sh: --fix would disable these again (#884).
-        sys.stderr.write(f"refusing {list_path}: it disables core Android packages, and without them "
-                         f"the TV may not boot again (#884): {', '.join(core)}. Take these lines out "
-                         f"of the list and run it again. Nothing was checked or changed.\n")
+        sys.stderr.write(f"Menolak {list_path}: daftar ini menonaktifkan paket Android inti, dan tanpa paket itu "
+                         f"TV bisa gagal nyala lagi (#884): {', '.join(core)}. Hapus baris ini "
+                         f"dari daftar lalu jalankan lagi. Tidak ada yang dicek atau diubah.\n")
         return 2
 
     try:
         dev = recovery.connect()
     except (OSError, ConnectionError) as e:
-        sys.stderr.write(f"could not reach the TV ({e}). Check it is on and TV_HOST is right "
+        sys.stderr.write(f"could not reach the TV ({e}). Cek TV-nya nyala dan TV_HOST sudah benar "
                          f"(tools/venv/bin/python -I tools/tv.py --probe).\n")
         return 2
     try:

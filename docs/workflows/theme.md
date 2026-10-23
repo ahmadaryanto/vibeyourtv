@@ -1,15 +1,15 @@
-# Workflow: Add a theme
+# Alur: Menambah theme
 
-**When to use this:** a new look that the keys in `themes/README.md` already carry.
+**Kapan dipakai:** tampilan baru yang sudah muat di key pada `themes/README.md`.
 
-1. Create `themes/<name>/config.json` using only keys from the table in `themes/README.md`;
-   `themes/default/config.json` is the starting point.
-2. Add `wallpaper.jpg` or a `wallpapers/` folder if it uses them: dark, 1920x1080, under about 300 KB each,
-   and art you have the right to use.
-3. Push it to a real TV with `tools/theme.sh themes/<name>` and take `screenshot.jpg` of Home with the focus
-   on the dock: a JPEG at 1280x720 (16:9), at most 300 KB. Not a mock-up, not an emulator.
-   `tests/test_themes.py` fails without it.
-4. Add a row to the table in `themes/README.md` showing the screenshot, like the others.
-5. A look that needs a new key is a launcher switch first, in its own PR.
+1. Buat `themes/<name>/config.json` hanya dengan key dari tabel di `themes/README.md`;
+   `themes/default/config.json` adalah titik awalnya.
+2. Tambah `wallpaper.jpg` atau folder `wallpapers/` kalau memakainya: gelap, 1920x1080, masing-masing di bawah sekitar 300 KB,
+   dan karya yang memang hakmu untuk dipakai.
+3. Dorong ke TV sungguhan dengan `tools/theme.sh themes/<name>` dan ambil `screenshot.jpg` Home dengan fokus
+   di dock: JPEG 1280x720 (16:9), paling besar 300 KB. Bukan mock-up, bukan emulator.
+   `tests/test_themes.py` gagal tanpanya.
+4. Tambah satu baris ke tabel di `themes/README.md` yang menampilkan screenshot, seperti yang lain.
+5. Tampilan yang butuh key baru adalah sakelar launcher dulu, di PR-nya sendiri.
 
-Then run the tests: `python3 -m unittest discover -s tests -v`.
+Lalu jalankan tes: `python3 -m unittest discover -s tests -v`.

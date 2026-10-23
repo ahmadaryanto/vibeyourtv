@@ -277,6 +277,91 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private RecyclerView.OnScrollListener pendingFocusScroll;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
+
+    // ---- crypto_ticker: BTC price under the date ----
+    private static final long CRYPTO_INTERVAL_MS = 5 * 60 * 1000L;
+    private static final String CRYPTO_URL =
+            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true";
+    private boolean cryptoTicker;
+    private TextView cryptoView;
+    private boolean cryptoRunning;
+    private volatile boolean cryptoFetching;
+    /** Last good line; kept across failures. */
+    private CharSequence cryptoLine;
+    private final Runnable cryptoTick = new Runnable() {
+        @Override
+        public void run() {
+            if (!cryptoRunning) return;
+            fetchCrypto();
+            handler.postDelayed(this, CRYPTO_INTERVAL_MS);
+        }
+    };
+
+    private void startCryptoTicker() {
+        if (!cryptoTicker || cryptoView == null || cryptoRunning) return;
+        cryptoRunning = true;
+        if (cryptoLine != null) { cryptoView.setText(cryptoLine); cryptoView.setVisibility(View.VISIBLE); }
+        handler.post(cryptoTick);
+    }
+
+    private void stopCryptoTicker() {
+        cryptoRunning = false;
+        handler.removeCallbacks(cryptoTick);
+    }
+
+    private void fetchCrypto() {
+        if (cryptoFetching) return;
+        cryptoFetching = true;
+        Thread t = new Thread(() -> {
+            CharSequence line = null;
+            java.net.HttpURLConnection c = null;
+            try {
+                c = (java.net.HttpURLConnection) new java.net.URL(CRYPTO_URL).openConnection();
+                c.setConnectTimeout(8000);
+                c.setReadTimeout(8000);
+                c.setRequestProperty("Accept", "application/json");
+                c.setRequestProperty("User-Agent", "VibeYourTV");
+                if (c.getResponseCode() == 200) {
+                    StringBuilder sb = new StringBuilder();
+                    try (java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(
+                            c.getInputStream(), java.nio.charset.StandardCharsets.UTF_8))) {
+                        char[] buf = new char[512];
+                        int n;
+                        while ((n = r.read(buf)) > 0 && sb.length() < 8192) sb.append(buf, 0, n);
+                    }
+                    org.json.JSONObject btc = new org.json.JSONObject(sb.toString()).getJSONObject("bitcoin");
+                    double usd = btc.getDouble("usd");
+                    double ch = btc.optDouble("usd_24h_change", Double.NaN);
+                    String price = "BTC  $" + String.format(java.util.Locale.US, "%,.0f", usd);
+                    if (Double.isNaN(ch)) {
+                        line = price;
+                    } else {
+                        String chg = String.format(java.util.Locale.US, "%+.1f%%", ch);
+                        SpannableString sp = new SpannableString(price + "  " + chg);
+                        sp.setSpan(new android.text.style.ForegroundColorSpan(ch >= 0 ? 0xFF4CD964 : 0xFFFF5A52),
+                                price.length() + 2, sp.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        line = sp;
+                    }
+                }
+            } catch (Exception | OutOfMemoryError ignored) {
+                // Quiet: keep the last value.
+            } finally {
+                if (c != null) c.disconnect();
+            }
+            final CharSequence result = line;
+            handler.post(() -> {
+                cryptoFetching = false;
+                if (result != null) cryptoLine = result;
+                if (cryptoRunning && cryptoView != null && cryptoLine != null) {
+                    cryptoView.setText(cryptoLine);
+                    cryptoView.setVisibility(View.VISIBLE);
+                }
+            });
+        }, "crypto");
+        t.setDaemon(true);
+        t.start();
+    }
+
     /** Refreshes the network pill when the connection changes: at boot Wi-Fi often connects after Home is shown. */
     private final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
@@ -402,6 +487,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ambient.forceHasOverlappingRendering(false);
         ambientGlow = cfg.ambientGlow;
         appGlow = cfg.appGlow;
+        cryptoTicker = cfg.cryptoTicker;
+        cryptoView = findViewById(R.id.cryptoTicker);
         if (!ambientGlow) ambient.setVisibility(View.GONE);
         heroName = findViewById(R.id.heroName);
         hero = findViewById(R.id.hero);
@@ -824,6 +911,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return;
         }
         restartIdleClock();
+        startCryptoTicker();
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
         switch (tileRefresh.onResume(packagesChangedSinceRebuild())) {
@@ -1023,6 +1111,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     protected void onPause() {
         super.onPause();
         root.removeCallbacks(showIdleClock);
+        stopCryptoTicker();
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
         stopAmbientAnimation();

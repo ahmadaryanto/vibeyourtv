@@ -1,3 +1,9 @@
+# Haier HRA962X2 (Ali6G, China): laporan lapangan satu hari
+
+Ringkasan Bahasa Indonesia: laporan satu hari di TV Haier China dengan launcher VibeYourTV lokal. Mencakup instal APK, routing Settings, debloat, dan batas (tanpa root). Nama file APK pabrik (`CleanYourTV.apk`) tetap seperti di perangkat; proyek disebut VibeYourTV.
+
+---
+
 # Haier HRA962X2_2G_ALI6G_A (China): launcher, physical Home and settings overlay
 
 One-day field report, tested on 2026-10-21 using a locally adapted CleanYourTV

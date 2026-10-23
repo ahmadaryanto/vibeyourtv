@@ -24,14 +24,14 @@ export TV_HOST=192.168.68.51
 A backup of the state before any change (package lists, getprop, all settings, Home, display size) is in
 `backup/nebula-laser-3-20261022-0140/` (not committed: it holds the serial number and device names).
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 examples/anker-nebula-d2426/restore.sh                     # re-enable all 17, stock Home back, screensaver back
 examples/anker-nebula-d2426/restore.sh --remove-launcher   # same, and uninstall the new launcher
 ```
 
-## Re-enable one app
+## Aktifkan lagi satu app
 
 On the projector: Settings > Apps > See all apps > show system apps > pick the app > Enable.
 
@@ -86,7 +86,7 @@ examples/anker-nebula-d2426/build-and-install.sh
 It builds the APK, installs it, applies `debloat.txt` (which disables the stock home only once the new one can
 take over), makes the new launcher Home and pushes `config.json`.
 
-## Notes from this projector
+## Catatan from this projector
 
 - The Inputs pill lists HDMI 1 (the only input); it opens in Google's passthrough player. Screenshots of HDMI
   come back empty, which is the projector, not a fault.

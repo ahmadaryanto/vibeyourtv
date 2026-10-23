@@ -1,11 +1,11 @@
 # Super General (CVTE TP.SK708D.PC821, Android 9): notes
 
-Done remotely on one set. Debloat from `debloat.txt`; Home is a third-party launcher,
-[Afnon](https://github.com/egyjs/afnon-android-tv-launcher), not the reference launcher.
+Dikerjakan remote di satu set. Debloat dari `debloat.txt`; Home adalah launcher pihak ketiga
+[Afnon](https://github.com/egyjs/afnon-android-tv-launcher), bukan launcher referensi VibeYourTV.
 
-## 1. Turn on network ADB
+## 1. Nyalakan ADB jaringan
 
-There is no Developer options screen. ADB is in CVTE's factory menu:
+Tidak ada layar Developer options. ADB ada di menu pabrik CVTE:
 
 1. Switch to a source first (TV or HDMI). The factory menu does not open from the launcher.
 2. On the remote press **MENU**, then **1 1 4 7** quickly. The Factory Menu opens.

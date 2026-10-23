@@ -4,9 +4,9 @@ TCL 55C745, device `G08`, model "Smart TV Pro", product `G08_4K_GB`, firmware `U
 MediaTek `tcl9618`, about 2.4 GB RAM. The same firmware build as examples/tcl-q7c-google-tv and
 examples/tcl-85rm7l-google-tv, and the same G08 board as the C755, QM6K and 75T7 (US) lists. Set up on
 Ethernet; a France/UK household (French and UK catch-up apps alongside Stremio and a third-party YouTube
-client). Both halves work on this set: the debloat list and the Clean Your TV launcher as Home.
+client). Both halves work on this set: the debloat list and the VibeYourTV launcher as Home.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
 | `debloat.txt` | The 48 app packages disabled, grouped and commented (plus the stock launcher and setup wizard) |
 | `config.json` | Dock (Stremio + a third-party YouTube client only), hidden tiles and the Live TV app; push it with `tools/theme.sh` |
@@ -39,14 +39,14 @@ and join it again in Settings before you disable the wizard.
 (`sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"` into `~/Android/Sdk` if you don't
 already have one). On a Mac where `java_home -v 17` answers with a newer JDK, pass `JAVA_HOME` explicitly.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<tv-ip> tools/restore.sh examples/tcl-55c745/debloat.txt com.google.android.apps.tv.launcherx
 TV_HOST=<tv-ip> tools/theme.sh --reset
 ```
 
-## Notes for this set
+## Catatan for this set
 
 - **com.tcl.eva was disabled here**, unlike examples/tcl-q7c-google-tv which left it untouched over its
   camera and TCL BI permissions. It survived two reboots with no visible issue, matching

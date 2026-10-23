@@ -1,16 +1,16 @@
 # Skyworth 7S60_A5 (Coocaa OS, China market, Android 8)
 
 Skyworth 7S60_A5, board 6A658B (`sky8S34`, armeabi-v7a, about 1.9 GB RAM), Coocaa OS on Android 8.0,
-build `OPR5.170623.014` / `022.008.220`. Both halves work: the debloat list, and the Clean Your TV
+build `OPR5.170623.014` / `022.008.220`. Both halves work: the debloat list, and the VibeYourTV
 launcher as Home. Coocaa OS is what Skyworth ships on its China-market sets, and it does not hand
 Home over the way Android TV does, so the launcher needs three extra steps, explained below.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
 | `debloat.txt` | Coocaa ads, push, usage reporting, auto-installer, preloads; grouped and commented |
 | `config.json` | Inputs menu from Coocaa's own source list, the source panel as fallback, a dock |
 
-All commands run from the repo root. Network ADB on port 5555 was already on; accept the
+Semua perintah dari root repo. Network ADB on port 5555 was already on; accept the
 authorisation prompt on the TV the first time.
 
 ```bash

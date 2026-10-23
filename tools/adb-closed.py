@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Check that the TV's network ADB port is closed, after turning debugging off (no nc needed).
+"""Cek port ADB jaringan TV sudah tertutup, setelah debugging dimatikan (tidak perlu nc).
 
-    adb-closed.py <tv ip[:port]> [port]   port defaults to TV_PORT or 5555; the IP to TV_HOST
+    adb-closed.py <tv ip[:port]> [port]   port default-nya TV_PORT atau 5555; IP-nya TV_HOST
 
-Exits 0 when the port refuses the connection or does not answer, 1 when it is still open, and 2
-when the check itself could not run (a name that does not resolve, no route to the TV).
+Keluar 0 kalau port menolak koneksi atau tidak menjawab, 1 kalau masih terbuka, dan 2
+kalau pengecekan itu sendiri tidak jalan (nama tidak ketemu, tidak ada rute ke TV).
 """
 import os
 import socket
@@ -36,7 +36,7 @@ def main():
         return 2
     raw_host = args[0] if args else os.environ.get("TV_HOST", "")
     if not raw_host:
-        sys.stderr.write("usage: adb-closed.py <tv ip> [port]\n")
+        sys.stderr.write("cara pakai: adb-closed.py <tv ip> [port]\n")
         return 2
     host, endpoint_port = split_host_port(raw_host)
     if len(args) == 2:
@@ -51,25 +51,25 @@ def main():
         if not (1 <= port <= 65535):
             raise ValueError
     except ValueError:
-        sys.stderr.write(f"not a port number: {port_str!r}\n")
+        sys.stderr.write(f"not a port number: {port_str!r} (bukan nomor port)\n")
         return 2
 
     try:
         with socket.create_connection((host, port), timeout=TIMEOUT_S):
             pass
     except ConnectionRefusedError:
-        print(f"{host}:{port} is closed: the TV refused the connection.")
+        print(f"{host}:{port} is closed: the TV refused koneksinya. Port-nya sudah tertutup.")
         return 0
     except socket.timeout:
         # Some firmware drops instead of refusing, but so does a TV that is off or at another address.
-        print(f"{host}:{port} did not answer in {TIMEOUT_S:.0f} s: closed, unless the TV is off or not at "
-              "this address.")
+        print(f"{host}:{port} tidak menjawab dalam {TIMEOUT_S:.0f} dtk: dianggap tertutup, kecuali TV mati atau bukan "
+              "di alamat ini.")
         return 0
     except OSError as e:
-        sys.stderr.write(f"could not check {host}:{port} ({e}). Is the TV on and on this network?\n")
+        sys.stderr.write(f"tidak bisa cek {host}:{port} ({e}). TV-nya nyala dan di jaringan yang sama?\n")
         return 2
-    sys.stderr.write(f"{host}:{port} is still open: network ADB is on. On the TV, turn USB debugging and\n"
-                     "Network/ADB debugging off, reboot it, and check again.\n")
+    sys.stderr.write(f"{host}:{port} is still open: ADB jaringan masih nyala. Di TV, matikan USB debugging dan\n"
+                     "Network/ADB debugging, reboot, lalu cek lagi.\n")
     return 1
 
 

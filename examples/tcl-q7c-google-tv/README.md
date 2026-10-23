@@ -3,11 +3,11 @@
 TCL Q7C QD-Mini LED, device `G08`, model "Smart TV Pro", product `G08_4K_GB`, firmware `UTT2.250416.001 AU02`,
 MediaTek `tcl9618`, about 2.4 GB RAM. The same firmware build as the 85RM7L list and the same G08 board as the
 C755, QM6K and 75T7 (US) lists. Set up on Ethernet in Austria. Both halves work on this set: the debloat list and the
-Clean Your TV launcher as Home.
+VibeYourTV launcher as Home.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 37 packages that were disabled, grouped and commented |
+| `debloat.txt` | 37 packages that were disabled, grouped and commented |
 | `config.json` | Dock, hidden TCL tiles, Live TV app, the Settings and YouTube buttons; push it with `tools/theme.sh` |
 | `65q7d-pro-home.png` | Home on the second unit, a TCL 65Q7D Pro (see [Second unit](#second-unit-65q7d-pro-greece-wi-fi)) |
 
@@ -16,7 +16,7 @@ and survived a reboot. launcherx and setupwraith were disabled afterwards, for t
 the HDMI list in the Inputs menu, the Input, Settings and YouTube buttons, and D-pad navigation were checked on the
 TV.
 
-All commands run from the repo root with the TV's IP in `TV_HOST`. USB debugging must be on while you run them.
+Semua perintah dari root repo with the TV's IP in `TV_HOST`. USB debugging must be on while you run them.
 On this set, switching it on opens port 5555 by itself. Wireless debugging cannot be switched on over Ethernet,
 and it is not needed.
 
@@ -40,7 +40,7 @@ join it again in Settings before you disable the wizard.
 `build-and-install.sh` needs JDK 17 for Gradle 8.9. On a Mac where `java_home -v 17` answers with a newer JDK, pass
 `JAVA_HOME` explicitly.
 
-## Undo everything
+## Kembalikan semua
 
 ```bash
 TV_HOST=<tv-ip> tools/restore.sh examples/tcl-q7c-google-tv/debloat.txt com.google.android.apps.tv.launcherx
@@ -68,7 +68,7 @@ usage and turns them into keycodes, so map them by keycode (scancode entries wou
 The YouTube button sends 190 here. The G09 list maps 4065 for its YouTube button, so check yours. Re-pass both
 `*_KEY_SERVICE=1` flags on every reinstall: a reinstall drops the services from the accessibility list.
 
-## Notes for this set
+## Catatan for this set
 
 - **Check that ADB is really closed when you are done.** Here the USB debugging switch in Developer options
   did not take: `settings get global adb_enabled` still said `1`, and port 5555 was still open after a reboot.

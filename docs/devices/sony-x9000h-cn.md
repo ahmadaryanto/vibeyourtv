@@ -1,3 +1,9 @@
+# Sony X9000H (China): catatan perangkat
+
+Ringkasan Bahasa Indonesia: firmware CN — IDD/agent, debloat, dan paket telemetri Sony.
+
+---
+
 # Sony X9000H (China firmware): launcher handover and debloat notes
 
 Owner report for a China-market X9000H. The retail model was supplied by the owner; Android exposes

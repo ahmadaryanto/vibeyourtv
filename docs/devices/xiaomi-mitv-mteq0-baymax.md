@@ -1,3 +1,9 @@
+# Xiaomi MiTV-MTEQ0 (baymax): catatan HyperOS
+
+Ringkasan Bahasa Indonesia: MiTV baymax — debloat CN, Home, screensaver, dan catatan ADB.
+
+---
+
 # Xiaomi MiTV-MTEQ0 (baymax): China firmware notes
 
 Tested on a Xiaomi TV EA Pro 55" (MiTV-MTEQ0, `baymax`, sold as L55MA-EP), MediaTek/MStar,

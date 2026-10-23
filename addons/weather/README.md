@@ -1,11 +1,11 @@
 # Weather
 
 The weather for one city, full screen on the TV: now (temperature, feels-like, conditions), the US air quality
-index as a coloured pill, and the next three days. For the [Clean Your TV](../../README.md) launcher it declares a
+index as a coloured pill, and the next three days. For the [VibeYourTV](../../README.md) launcher it declares a
 [module card](../../docs/modules.md), so once you answer **Show card** its tile reads "Weather" with a
 sky-blue glow; on any other Android TV home it is an ordinary app.
 
-![The weather page](https://raw.githubusercontent.com/Sumyabazar1/cleanyourtv/pr-assets/addon-weather/addon-3-weather.png)
+![The weather page](https://raw.githubusercontent.com/Sumyabazar1/VibeYourTV/pr-assets/addon-weather/addon-3-weather.png)
 
 - **The city** is chosen once: type its name with the remote's keyboard (or voice), pick it from the matches,
   and it is kept. **Change city** at the bottom chooses another.
@@ -28,9 +28,9 @@ Set in `app/src/main/res/values/options.xml` before building. With the defaults 
 | `show_humidity` | `false` | The relative humidity now, after "Feels like". |
 | `show_wind` | `false` | The wind speed now in km/h, after "Feels like". |
 
-![A week, with humidity and wind](https://raw.githubusercontent.com/majnioui/cleanyourtv-contrib/pr-assets/addon-weather-week/weather-options.png)
+![A week, with humidity and wind](https://raw.githubusercontent.com/majnioui/VibeYourTV-contrib/pr-assets/addon-weather-week/weather-options.png)
 
-## Permissions
+## Permissions (izin)
 
 | Permission | Why |
 |---|---|
@@ -40,7 +40,7 @@ That is all. What is sent: the city name you type in the search, then that place
 account, no telemetry, no ads, no background service, no location permission. The chosen city stays in the
 app's own storage (backups are off).
 
-## Build and install
+## Build dan pasang
 
 JDK 17 and Android SDK platform 34 with build-tools 34.0.0, as for the launcher:
 

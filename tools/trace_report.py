@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""The standard launcher numbers from traces recorded with tools/trace.py: per run, median and range.
+"""Angka launcher standar dari jejak yang direkam tools/trace.py: per jalanan, median, dan rentang.
 
-    tools/trace_report.py traces/before                       one set of runs
-    tools/trace_report.py traces/before --vs traces/after     before against after, with the change
-    tools/trace_report.py ... --markdown                      tables to paste into a pull request
+    tools/trace_report.py traces/before                       satu set jalanan
+    tools/trace_report.py traces/before --vs traces/after     sebelum lawan sesudah, plus perubahannya
+    tools/trace_report.py ... --markdown                      tabel untuk ditempel ke pull request
 
-TRACES are .pftrace files or folders of them. Needs the optional `perfetto` package
-(tools/venv/bin/pip install -r tools/requirements-perf.txt). Its first run downloads Perfetto's query
-engine; --engine PATH uses a trace_processor_shell you downloaded yourself. Read tools/trace.md first.
+TRACES adalah file .pftrace atau foldernya. Butuh paket opsional `perfetto`
+(tools/venv/bin/pip install -r tools/requirements-perf.txt). Jalanan pertama mengunduh mesin kueri
+Perfetto; --engine PATH memakai trace_processor_shell yang kamu unduh sendiri. Baca tools/trace.md dulu.
 
-For a start (cold, coldsys, home and custom traces) it reports the time from the launcher starting
-(bindApplication in a new process, else performStart) to its first frame drawn, the lifecycle steps
-inside that, and the frames drawn and deadlines missed in the 1.5 s after. For nav traces it reports
-frame times and missed deadlines over the whole recording.
+Untuk start (jejak cold, coldsys, home, dan custom) dilaporkan waktu dari launcher mulai
+(bindApplication di proses baru, kalau tidak performStart) sampai frame pertama tergambar, langkah
+siklus hidup di dalamnya, serta frame yang tergambar dan tenggat yang terlewat dalam 1,5 dtk sesudahnya.
+Untuk jejak nav dilaporkan waktu frame dan tenggat terlewat sepanjang rekaman.
 """
 import argparse
 import glob
@@ -178,8 +178,8 @@ def opener(engine=None):
     try:
         from perfetto.trace_processor import TraceProcessor, TraceProcessorConfig
     except ImportError:
-        sys.exit("trace_report.py needs the optional perfetto package: "
-                 "tools/venv/bin/pip install -r tools/requirements-perf.txt (see tools/trace.md)")
+        sys.exit("trace_report.py butuh paket opsional perfetto: "
+                 "tools/venv/bin/pip install -r tools/requirements-perf.txt (lihat tools/trace.md)")
 
     def open_trace(path):
         tp = TraceProcessor(trace=path, config=TraceProcessorConfig(bin_path=engine))
@@ -255,13 +255,13 @@ def render(head, rows, markdown):
 def report(before, after, markdown, nav):
     """The tables for one set of runs, or for two with the change in the medians."""
     names = NAV_METRICS if nav else START_METRICS
-    parts = [("Before" if after else "Runs") + f" ({len(before)}):", table(before, names, markdown)]
+    parts = [("Sebelum" if after else "Jalanan") + f" ({len(before)}):", table(before, names, markdown)]
     if after:
-        parts += ["", f"After ({len(after)}):", table(after, names, markdown), "",
+        parts += ["", f"Sesudah ({len(after)}):", table(after, names, markdown), "",
                   "Change in the median:", compare(before, after, names, markdown)]
     if _has_outlier(before) or (after and _has_outlier(after)):
-        parts += ["", "* more than twice the median: often memory pressure on the TV (tools/trace.md). "
-                      "Report it rather than dropping it."]
+        parts += ["", "* more than twice the median: sering tekanan memori di TV (tools/trace.md). "
+                      "Laporkan, jangan dibuang."]
     return "\n".join(parts)
 
 
@@ -271,12 +271,12 @@ def _has_outlier(runs):
 
 
 def parse(argv):
-    p = argparse.ArgumentParser(description="Launcher numbers from tools/trace.py traces. See tools/trace.md.")
-    p.add_argument("traces", nargs="+", help=".pftrace files or folders of them")
-    p.add_argument("--vs", nargs="+", metavar="TRACES", help="the traces to compare against the first set")
-    p.add_argument("--package", default="com.gathin.tvhome", help="the launcher's package (default com.gathin.tvhome)")
-    p.add_argument("--engine", metavar="PATH", help="a trace_processor_shell to use instead of downloading one")
-    p.add_argument("--markdown", action="store_true", help="print Markdown tables")
+    p = argparse.ArgumentParser(description="Angka launcher dari jejak tools/trace.py. Lihat tools/trace.md.")
+    p.add_argument("traces", nargs="+", help="file .pftrace atau foldernya")
+    p.add_argument("--vs", nargs="+", metavar="TRACES", help="jejak pembanding untuk set pertama")
+    p.add_argument("--package", default="com.gathin.tvhome", help="paket launcher (default com.gathin.tvhome)")
+    p.add_argument("--engine", metavar="PATH", help="trace_processor_shell yang dipakai, bukan yang diunduh")
+    p.add_argument("--markdown", action="store_true", help="cetak tabel Markdown")
     args = p.parse_args(argv)
     if not PACKAGE.match(args.package):
         p.error(f"not a package name: {args.package!r}")
@@ -288,15 +288,15 @@ def main(argv=None):
     sets = [expand(args.traces)] + ([expand(args.vs)] if args.vs else [])
     for paths in sets:
         if not paths:
-            sys.exit("no .pftrace files found; record some with tools/trace.py")
+            sys.exit("tidak ada file .pftrace; rekam dulu dengan tools/trace.py")
         missing = [p for p in paths if not os.path.isfile(p)]
         if missing:
-            sys.exit("not a file: " + ", ".join(missing))
+            sys.exit("bukan file: " + ", ".join(missing))
     families = [{"nav" if scenario_of(p) == "nav" else "start" for p in paths} for paths in sets]
     if any(len(family) > 1 for family in families):
-        sys.exit("cannot mix nav and start traces in one set; report them separately")
+        sys.exit("jejak nav dan start harus dilaporkan separately, jangan dicampur dalam satu set")
     if len(families) > 1 and families[0] != families[1]:
-        sys.exit("cannot compare nav and start traces with --vs; report them separately")
+        sys.exit("jejak nav dan start tidak bisa dibanding dengan --vs; report them separately")
     open_trace = opener(args.engine)
     measured = [measure(paths, args.package, open_trace) for paths in sets]
     nav = families[0] == {"nav"}

@@ -6,9 +6,9 @@ Google TV home (`launcherx`) in Basic TV mode, 32-bit userspace, about 2.4 GB RA
 TCL Channel, TCL Live free channels, a retail sticker, a hotel portal and TCL Guard. It has no Google Cast and
 no voice assistant.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 28 packages that were disabled, grouped and commented |
+| `debloat.txt` | 28 packages that were disabled, grouped and commented |
 | `config.json` | Dock, hidden apps, no Live TV row, remote buttons; push it with `tools/theme.sh` |
 
 **How much testing is behind it:** one set, 22 October 2026. The list was applied with `tools/disable.sh` in
@@ -74,7 +74,7 @@ remembered channel. Two notes for that case: the launcher's `input:` targets sen
 `com.tcl.tv` does accept for the tuner (`UriTuneInputIntent`); TCL's own panel sends
 `com.tcl.tv/.TVActivity` with the string extra `inputId` instead.
 
-## Notes for this set
+## Catatan for this set
 
 - The set was in Google TV Basic TV mode with no Google account (`dumpsys account`: 0), which is why Netflix,
   YouTube and Stan were disabled before the list ran. Sign in under Settings → Accounts to use the Play Store.

@@ -1,18 +1,18 @@
 # Epson LS800 (Android TV 14 laser projector)
 
 Epson's Android TV module HA90 (built by Askey, board `sti6202d101`, Amlogic), firmware
-UKG3.250826.001 (`u-2.05-U-0`, June 2026). Both halves work: the debloat list and the Clean Your TV
+UKG3.250826.001 (`u-2.05-U-0`, June 2026). Both halves work: the debloat list and the VibeYourTV
 launcher as Home. Tested on 21 October 2026.
 
-| File | What it is |
+| File | Isinya |
 |---|---|
-| `debloat.txt` | The 9 packages that were disabled, grouped and commented, with what to keep and why (`build-and-install.sh` disables the stock launcher on top) |
+| `debloat.txt` | 9 packages that were disabled, grouped and commented, with what to keep and why (`build-and-install.sh` disables the stock launcher on top) |
 | `config.json` | Dock order and hidden tiles; push it with `tools/theme.sh` |
 | `restore.sh` | Undo everything below in one go |
 
-All commands run from the repo root, with the projector's IP in `TV_HOST`.
+Semua perintah dari root repo, with the projector's IP in `TV_HOST`.
 
-## Turning ADB on
+## Menyalakan ADB
 
 Settings → Device Preferences → About → press OK on **Build** 7 times, then Developer options. This
 firmware only offers **Wireless debugging** (TLS), not plain network ADB, so pair once with Google's
@@ -24,7 +24,7 @@ firmware only offers **Wireless debugging** (TLS), not plain network ADB, so pai
 
 Android switches Wireless debugging off whenever Wi-Fi drops, so pair again if the port disappears.
 
-## Install, from scratch or again
+## Instal, dari nol atau ulang
 
 ```bash
 TV_HOST=<projector-ip> tools/disable.sh examples/epson-ls800/debloat.txt
@@ -85,7 +85,7 @@ launcher. Two buttons are handled by the firmware before any app sees them:
   system launcher. Re-enabling `com.google.android.tvlauncher` brings it back (along with the stock home
   screen's background work); the new launcher's grid already lists every app.
 
-## When you are done
+## Selesai
 
 Switch **USB debugging** and **Wireless debugging** off in Developer options, revoke the debugging
 authorisations there, restart, and check that ADB is closed:

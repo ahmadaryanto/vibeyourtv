@@ -2,8 +2,8 @@
 
 Laporan pemilik
 [#470](https://github.com/Gathin23/cleanyourtv/issues/470): satu sesi dan satu hari pemakaian, tanpa
-launcher terinstal. **Bukan** daftar teruji dalam arti `examples/` - CONTRIBUTING minta
-beberapa hari memakai daftar sebelum masuk sana - jadi paket dan dua jebakan
+launcher terinstal. It is **not** a tested list in the `examples/` sense — CONTRIBUTING asks for
+several days of living with a list before it goes there — jadi paket dan dua jebakan
 dicatat di sini, dan catatan bisa naik ke `examples/` setelah pemilik
 menjalankannya lebih lama.
 
@@ -50,7 +50,7 @@ akhir sesi.
 
 ## Dibiarkan, dan mengapa
 
-- `com.google.android.tvrecommendations` dan `com.haier.launcher.haiermatrix` kembali setiap
+- `com.google.android.tvrecommendations` dan `com.haier.launcher.haiermatrix` come back on every
   boot: `com.at.factory.factorymanager` memanggil `enableApp` untuk keduanya, dan yang kedua apl sistem
   re-enabled during the boot package scan. Disabling them looks like it worked until the next
   restart. ([PR #434](https://github.com/Gathin23/cleanyourtv/pull/434) is the tool that reports

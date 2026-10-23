@@ -1,99 +1,99 @@
-# Workflow: measure a launcher performance change, before and after
+# Alur: mengukur perubahan kinerja launcher, sebelum dan sesudah
 
-**When to use this:** any change under `launcher/`. The regression check below is optional for most of them
-(about six minutes on one TV), but welcome. A change meant to make the launcher faster or lighter, or one
-whose check fails, then follows the full method
-#666 used, to show by how much and where the time went.
+**Kapan dipakai:** perubahan apa pun di bawah `launcher/`. Pemeriksaan regresi di bawah opsional untuk sebagian besar
+(sekitar enam menit di satu TV), tetapi diterima. Perubahan yang dimaksudkan membuat launcher lebih cepat atau lebih ringan, atau yang
+pemeriksaannya gagal, lalu mengikuti metode penuh
+yang dipakai #666, untuk menunjukkan seberapa banyak dan ke mana waktunya pergi.
 
-## The regression check, for any launcher change (optional)
+## Pemeriksaan regresi, untuk perubahan launcher apa pun (opsional)
 
-1. **Before you change anything,** install the base build with `launcher/build-and-install.sh` and run:
+1. **Sebelum mengubah apa pun,** pasang build dasar dengan `launcher/build-and-install.sh` dan jalankan:
 
    ```bash
    TV_HOST=<tv ip> tools/venv/bin/python tools/bench.py --out-dir work/bench-before
    ```
 
-2. Make the change, install your build the same way, and run `tools/bench.py --out-dir work/bench-after`.
-3. Compare the two `result.json` files. Leave out any field that is `null` in both:
+2. Buat perubahannya, pasang build-mu dengan cara yang sama, dan jalankan `tools/bench.py --out-dir work/bench-after`.
+3. Bandingkan kedua berkas `result.json`. Abaikan field yang `null` di keduanya:
 
-   | Field | Fails when the after value is |
+   | Field | Gagal kalau nilai sesudahnya |
    |---|---|
-   | `response_ms.p50` | more than 10% and 5 ms above before |
-   | `return_to_home_ms.p50` | more than 10% and 10 ms above before |
-   | `cold_start_ms.p50` | more than 10% and 30 ms above before |
-   | `jank_pct` | more than 1 point above before |
-   | `pss_mb` | more than 2 MB above before |
-   | `idle_launcher_cpu_pct` | more than 0.5 points above before |
+   | `response_ms.p50` | lebih dari 10% dan 5 ms di atas sebelum |
+   | `return_to_home_ms.p50` | lebih dari 10% dan 10 ms di atas sebelum |
+   | `cold_start_ms.p50` | lebih dari 10% dan 30 ms di atas sebelum |
+   | `jank_pct` | lebih dari 1 poin di atas sebelum |
+   | `pss_mb` | lebih dari 2 MB di atas sebelum |
+   | `idle_launcher_cpu_pct` | lebih dari 0,5 poin di atas sebelum |
 
-4. **If a field fails,** follow the method below with that scenario (`home`, `cold` or `nav`) to find
-   the cost. Fix it and go back to step 2. Fixes that usually work:
-   - doing the work after the first frame;
-   - skipping work when nothing changed;
-   - decoding images at their display size;
-   - keeping results instead of recomputing them.
-5. Put the six fields, before and after, in the PR. If a feature has to cost something, give the number
-   and the reason. Once it works, spend one more pass on its cost.
+4. **Kalau sebuah field gagal,** ikuti metode di bawah dengan skenario itu (`home`, `cold`, atau `nav`) untuk menemukan
+   biayanya. Perbaiki dan kembali ke langkah 2. Perbaikan yang biasanya berhasil:
+   - kerjakan setelah frame pertama;
+   - lewati pekerjaan kalau tidak ada yang berubah;
+   - dekode gambar pada ukuran tampilannya;
+   - simpan hasil, jangan hitung ulang.
+5. Taruh keenam field, sebelum dan sesudah, di PR. Kalau sebuah fitur memang harus berbiaya, beri angkanya
+   dan alasannya. Setelah berhasil, habiskan satu putaran lagi untuk biayanya.
 
-Some notes on the numbers:
-- **Noise:** two runs of the same build on a TCL C755 differed by 0 ms in key response, up to 45 ms in
-  cold start and 1 MB in PSS, and the limits sit above that. Rerun both builds if a field lands near
-  its limit.
-- **Run time:** a full run takes about 6 minutes.
-- **TVs that don't log injected keys:** `return_to_home_ms` is `null`, and `response_ms` includes the ADB
-  round trip. It still compares two builds on the same TV.
+Beberapa catatan tentang angka:
+- **Derau:** dua jalanan build yang sama di TCL C755 berbeda 0 ms pada respons tombol, sampai 45 ms pada
+  cold start dan 1 MB pada PSS, dan batasnya berada di atas itu. Jalankan ulang kedua build kalau sebuah field mendarat dekat
+  batasnya.
+- **Lama jalan:** satu jalanan penuh sekitar 6 menit.
+- **TV yang tidak mencatat tombol yang disuntikkan:** `return_to_home_ms` bernilai `null`, dan `response_ms` mencakup
+  perjalanan bolak-balik ADB. Tetap bisa membandingkan dua build di TV yang sama.
 
-## The full method
+## Metode penuh
 
-Tools: [`tools/trace.py` and `tools/trace_report.py`](../../tools/trace.md),
-[`tools/flamechart.py`](../../tools/flamechart.md) and [`tools/screendiff.py`](../../tools/screendiff.md).
-Install them once:
+Alat: [`tools/trace.py` dan `tools/trace_report.py`](../../tools/trace.md),
+[`tools/flamechart.py`](../../tools/flamechart.md) dan [`tools/screendiff.py`](../../tools/screendiff.md).
+Pasang sekali:
 
 ```bash
 tools/venv/bin/pip install -r tools/requirements-perf.txt
 ```
 
-Copy this checklist into your notes and tick it off:
+Salin daftar centang ini ke catatanmu dan centang:
 
 ```
-- [ ] 1. Write down the scenario and the slices you expect to shrink
-- [ ] 2. Trace the base build, 5 runs
-- [ ] 3. Trace your build, 5 runs
-- [ ] 4. Report; if the change isn't there, go back to your code
-- [ ] 5. Draw the flame charts
-- [ ] 6. Screenshots identical, or the visual change described
-- [ ] 7. Check the behaviour your change could break
-- [ ] 8. Write it up
+- [ ] 1. Tulis skenario dan irisan yang kamu harapkan menyusut
+- [ ] 2. Rekam jejak build dasar, 5 jalanan
+- [ ] 3. Rekam jejak build-mu, 5 jalanan
+- [ ] 4. Laporan; kalau perubahannya tidak ada, kembali ke kode
+- [ ] 5. Gambar flame chart
+- [ ] 6. Screenshot identik, atau perubahan visualnya dijelaskan
+- [ ] 7. Cek perilaku yang bisa rusak karena perubahanmu
+- [ ] 8. Tuliskan
 ```
 
-## 1. Decide before you measure
+## 1. Putuskan sebelum mengukur
 
-Write down two things:
-- **The scenario:** `home` (the return to Home), `cold` (start-up) or `nav` (D-pad, drawing).
-- **The slice names** your change should remove or shorten, e.g. `activityResume`, `RV OnBindView`.
+Tulis dua hal:
+- **Skenarionya:** `home` (kembali ke Home), `cold` (nyala), atau `nav` (D-pad, menggambar).
+- **Nama irisan** yang seharusnya dihilangkan atau dipendekkan perubahanmu, misalnya `activityResume`, `RV OnBindView`.
 
-They become `trace.py`'s scenario and `flamechart.py`'s `--highlight`. Choosing them after looking at
-the results proves nothing.
+Itu jadi skenario `trace.py` dan `--highlight` `flamechart.py`. Memilihnya setelah melihat
+hasil tidak membuktikan apa pun.
 
-## 2–3. Trace both builds
+## 2–3. Rekam jejak kedua build
 
-Install each build with `launcher/build-and-install.sh`, using the same config, theme and wallpaper.
-Let Home sit for a minute after each install, then record:
+Pasang setiap build dengan `launcher/build-and-install.sh`, memakai konfigurasi, theme, dan wallpaper yang sama.
+Biarkan Home diam semenit setelah setiap pemasangan, lalu rekam:
 
 ```bash
 tools/venv/bin/python -I tools/trace.py home --runs 5 --out traces/before   # base build installed
 tools/venv/bin/python -I tools/trace.py home --runs 5 --out traces/after    # your build installed
 ```
 
-## 4. Report
+## 4. Laporan
 
 ```bash
 tools/venv/bin/python tools/trace_report.py traces/before --vs traces/after --markdown
 ```
 
-- **No change, or the wrong steps moved:** fix the code before drawing anything.
-- **A starred run** (one over twice the median) stays in the table, named as an outlier.
+- **Tidak ada perubahan, atau langkah yang salah yang bergeser:** perbaiki kode sebelum menggambar apa pun.
+- **Jalanan berbintang** (satu yang lebih dari dua kali median) tetap di tabel, disebut sebagai pencilan.
 
-## 5. Draw
+## 5. Gambar
 
 ```bash
 tools/venv/bin/python tools/flamechart.py traces/before traces/after \
@@ -101,16 +101,16 @@ tools/venv/bin/python tools/flamechart.py traces/before traces/after \
     --subtitle '<TV>, <Android version> · magenta: <what they are>' --out chart.png
 ```
 
-For a change to Home, add the frames after the start:
+Untuk perubahan pada Home, tambahkan frame setelah awal:
 
 ```bash
 tools/venv/bin/python tools/flamechart.py traces/before traces/after \
     --window start:1500 --threads RenderThread --highlight '^DrawFrame' --out frames.png
 ```
 
-## 6. Screenshots
+## 6. Screenshot
 
-Take the same screenshot on both builds, then compare:
+Ambil screenshot yang sama di kedua build, lalu bandingkan:
 
 ```bash
 tools/venv/bin/python -I tools/tv.py --screenshot shots/before.png HOME DPAD_RIGHT   # each build
@@ -118,21 +118,21 @@ tools/venv/bin/python tools/screendiff.py shots/before.png shots/after.png \
     --mask <clock box> --blur <network name box> --out shots/before-after.png
 ```
 
-`identical` backs "no visible change". If it says `different`, find out why before posting.
+`identical` menopang "tidak ada perubahan yang kelihatan". Kalau hasilnya `different`, cari tahu kenapa sebelum memposting.
 
-## 7. Behaviour
+## 7. Perilaku
 
-On the TV, check what your change could break, and note what you saw. For the return to Home, for
-example:
-- an app disabled while another app was in front is gone on return;
-- focus comes back to the tile you left from;
-- Home on Home goes to the first tile.
+Di TV, cek apa yang bisa rusak karena perubahanmu, dan catat yang kamu lihat. Untuk kembali ke Home,
+misalnya:
+- aplikasi yang dinonaktifkan selagi aplikasi lain di depan sudah hilang saat kembali;
+- fokus kembali ke ubin yang kamu tinggalkan;
+- Home di atas Home pergi ke ubin pertama.
 
-## 8. The pull request
+## 8. Pull request
 
-- **Tested on:** the TV, Android version and firmware.
-- **The tables:** `trace_report.py --markdown` before, after and the change, with outliers named.
-- **The charts:** each with its `--highlight` stated.
-- **The screenshots:** the pair from `screendiff.py` and its result.
-- **The behaviour checks:** what you checked and what you saw.
-- **Leave out** `traces/` and raw screenshots: they're large and hold your TV's details.
+- **Diuji di:** TV, versi Android, dan firmware.
+- **Tabel:** `trace_report.py --markdown` sebelum, sesudah, dan perubahannya, dengan pencilan disebut.
+- **Grafik:** masing-masing dengan `--highlight`-nya disebut.
+- **Screenshot:** pasangan dari `screendiff.py` dan hasilnya.
+- **Pemeriksaan perilaku:** apa yang kamu cek dan apa yang kamu lihat.
+- **Jangan ikutkan** `traces/` dan screenshot mentah: besar, dan menyimpan detail TV-mu.

@@ -1,35 +1,35 @@
-# Workflow: Add or update a TV list
+# Alur: Menambah atau memperbarui daftar TV
 
-**When to use this:** you tested a TV's debloat list for a few days and want to share it, or you have a second unit or a fix for a list that exists.
+**Kapan dipakai:** kamu sudah menguji daftar debloat sebuah TV selama beberapa hari dan ingin membagikannya, atau kamu punya unit kedua atau perbaikan untuk daftar yang sudah ada.
 
-1. Check `examples/README.md` first. The same product code and firmware as an existing folder is usually a
-   second unit or a re-badge: add your notes to that folder instead of a new one.
-2. Create `examples/<brand>-<model>/debloat.txt`, lower-case with hyphens. Copy the format of
+1. Cek `examples/README.md` dulu. Kode produk dan firmware yang sama dengan folder yang sudah ada biasanya
+   unit kedua atau re-badge: tambahkan catatanmu ke folder itu, bukan folder baru.
+2. Buat `examples/<brand>-<model>/debloat.txt`, huruf kecil dengan tanda hubung. Salin format
    `examples/xiaomi-mi-tv-4a/debloat.txt`:
-   - The first line is a comment with the exact model, Android version and firmware build
-     (`tools/tv.py --probe` prints them).
-   - Then the Apply and Undo lines, the stock launcher and Live TV package if they differ, and what was kept and why.
-   - One package per line, grouped under a comment that names the group, with a trailing comment on anything
-     non-obvious. No duplicates, nothing but package names outside comments.
-3. List only packages you actually disabled and lived with for a few days. Note anything you re-enabled.
-   Mark untested entries as comments.
-4. Add one row to the table in `examples/README.md` (`` | `<folder>/` | TV | OS | Notes | ``) and one to the
-   TV table in `README.md` (`| TV | OS |`). The TV cell must be the same text in both; `tests/test_examples.py`
-   compares them.
-5. Leave the counts alone (the `TV models` number in the card's alt text, the brand line): CI checks them only
-   on `main`, and they are fixed up on merge.
-6. A `README.md` for TV-specific notes and a `config.json` with the dock are welcome in the folder. Do not add
-   install or restore scripts, Private DNS or AdGuard setup, or `pm uninstall` steps: the folder only
-   disables, and `tools/disable.sh` and `tools/restore.sh` do the rest.
+   - Baris pertama komentar dengan model persis, versi Android, dan build firmware
+     (`tools/tv.py --probe` mencetaknya).
+   - Lalu baris Apply dan Undo, paket launcher bawaan dan Live TV kalau berbeda, serta apa yang dibiarkan dan kenapa.
+   - Satu paket per baris, dikelompokkan di bawah komentar yang menamai kelompoknya, dengan komentar di ujung untuk yang
+     tidak jelas. Tanpa duplikat, di luar komentar hanya nama paket.
+3. Cantumkan hanya paket yang benar-benar kamu nonaktifkan dan kamu pakai selama beberapa hari. Catat yang kamu aktifkan lagi.
+   Tandai entri yang belum diuji sebagai komentar.
+4. Tambah satu baris ke tabel di `examples/README.md` (`` | `<folder>/` | TV | OS | Notes | ``) dan satu ke
+   tabel TV di `README.md` (`| TV | OS |`). Sel TV harus teks yang sama di keduanya; `tests/test_examples.py`
+   membandingkannya.
+5. Biarkan hitungannya (angka `TV models` di teks alt kartu, baris merek): CI hanya memeriksanya
+   di `main`, dan diperbaiki saat merge.
+6. `README.md` untuk catatan khusus TV dan `config.json` dengan dock diterima di folder itu. Jangan menambah
+   skrip pasang atau pulihkan, penyiapan Private DNS atau AdGuard, atau langkah `pm uninstall`: folder itu hanya
+   menonaktifkan, dan `tools/disable.sh` serta `tools/restore.sh` yang mengerjakan sisanya.
 
-A model with notes but no several-day list goes in `docs/devices/<brand-model>.md`, with one line under the notes
-list at the end of `examples/README.md`. A folder in `examples/` must have packages in it.
+Model yang punya catatan tetapi belum punya daftar beberapa hari masuk ke `docs/devices/<brand-model>.md`, dengan satu baris di daftar catatan
+di akhir `examples/README.md`. Folder di `examples/` harus berisi paket.
 
-## Update an existing list
+## Memperbarui daftar yang sudah ada
 
-Keep the header accurate: add the second unit's model, firmware and region rather than replacing the first.
-Explain each added or re-enabled package in a comment. A list that disables the firmware updater says why in the
-header; keeping it enabled is preferred. `pm hide` or `pm block` needs the matching undo in the header. Edits to
-someone else's list are judgement calls, so say in the PR which TV you tested on and for how long.
+Jaga header tetap akurat: tambahkan model, firmware, dan wilayah unit kedua, jangan mengganti yang pertama.
+Jelaskan setiap paket yang ditambah atau diaktifkan lagi di komentar. Daftar yang menonaktifkan pemutakhir firmware menjelaskan kenapa di
+header; lebih baik membiarkannya aktif. `pm hide` atau `pm block` butuh undo yang sesuai di header. Suntingan pada
+daftar orang lain adalah penilaian, jadi sebutkan di PR TV mana yang kamu uji dan berapa lama.
 
-Then run the tests: `python3 -m unittest discover -s tests -v`.
+Lalu jalankan tes: `python3 -m unittest discover -s tests -v`.

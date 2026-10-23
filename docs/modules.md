@@ -1,18 +1,18 @@
-# Making a module
+# Membuat modul
 
-A module is a normal Android TV app that declares a card for this launcher. Your repo, your
-licence, your signing key, released as an APK wherever you like, for example on your GitHub
-Releases page with its SHA-256. The TV owner sideloads it like any other app. The launcher finds the
-card and asks the owner once; if they answer Show, your app appears as a card from then on: your
-label, an optional caption, and your colour in the ambient glow, placed ahead of the alphabetical
-grid.
+Modul adalah aplikasi Android TV biasa yang mendeklarasikan kartu untuk launcher VibeYourTV. Repomu, lisensimu,
+kunci penandatanganmu, dirilis sebagai APK di mana pun kamu mau, misalnya di halaman GitHub
+Releases dengan SHA-256-nya. Pemilik TV men-sideload-nya seperti aplikasi lain. Launcher menemukan
+kartu itu dan bertanya sekali; kalau mereka menjawab Show, aplikasimu tampil sebagai kartu sejak itu:
+labelmu, keterangan opsional, dan warnamu di cahaya ambient, diletakkan di depan kisi
+alfabet.
 
-The contract is [`docs/specs/card.md`](specs/card.md). This page is the short version.
+Kontraknya [`docs/specs/card.md`](specs/card.md). Halaman ini versi singkatnya.
 
-## 1. Declare the card
+## 1. Deklarasikan kartu
 
-On the activity that already has the `LEANBACK_LAUNCHER` filter, add a second filter and a
-`meta-data` entry:
+Pada aktivitas yang sudah punya filter `LEANBACK_LAUNCHER`, tambah filter kedua dan entri
+`meta-data`:
 
 ```xml
 <activity android:name=".LibraryActivity" android:exported="true">
@@ -28,86 +28,86 @@ On the activity that already has the `LEANBACK_LAUNCHER` filter, add a second fi
 </activity>
 ```
 
-Then create `res/xml/module_card.xml`:
+Lalu buat `res/xml/module_card.xml`:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <card spec="1" label="Retro" caption="NES games" accent="#E8A33D" />
 ```
 
-- `label`: 1 to 24 characters, letters, digits, space and `. & + ' -`. Keep it short; it is the
-  name on the tile and in the top shelf. Words like "verified" or "official", the launcher's own UI
-  names and input names such as HDMI are refused, and so is a new card whose label (or whose app
-  label) is the name of another app installed on the TV (the full list is in the spec). Changing
-  the label in an update makes the owner decide again, so pick it once.
-- `caption`: optional, up to 32 characters, shown after the label while the card is focused. The
-  endorsement words refused in labels are refused here too. The
-  name line under the tile is one line; label and caption together show about 26 characters on a
-  4 column grid, so keep the caption to a few words.
-- `accent`: optional `#RRGGBB`, the glow colour behind the card while it is focused in the dock.
-- Write the values as literal text. `@string` references are not resolved in spec 1.
+- `label`: 1 sampai 24 karakter, huruf, angka, spasi, dan `. & + ' -`. Buat pendek; ini
+  nama di ubin dan di rak atas. Kata seperti "verified" atau "official", nama UI milik launcher,
+  dan nama input seperti HDMI ditolak, begitu juga kartu baru yang labelnya (atau label
+  aplikasinya) sama dengan nama aplikasi lain yang terpasang di TV (daftar lengkapnya ada di spec). Mengganti
+  label di pembaruan membuat pemilik memutuskan lagi, jadi pilih sekali.
+- `caption`: opsional, sampai 32 karakter, tampil setelah label saat kartu fokus. Kata
+  endorsement yang ditolak di label juga ditolak di sini. Baris
+  nama di bawah ubin satu baris; label dan caption bersama-sama menampilkan sekitar 26 karakter di
+  kisi 4 kolom, jadi caption cukup beberapa kata.
+- `accent`: opsional `#RRGGBB`, warna cahaya di belakang kartu saat fokus di dock.
+- Tulis nilainya sebagai teks literal. Referensi `@string` tidak dipecahkan di spec 1.
 
-The card must sit on the same activity as your `LEANBACK_LAUNCHER` filter, and that activity must
-be exported and enabled. Otherwise the card is dropped.
+Kartu harus berada di aktivitas yang sama dengan filter `LEANBACK_LAUNCHER`-mu, dan aktivitas itu harus
+exported dan aktif. Kalau tidak, kartu dibuang.
 
-## 2. Keep it light
+## 2. Buat tetap ringan
 
-The launcher targets TVs with 1 GB of RAM, and the owners trust what they put on their home screen.
+Launcher VibeYourTV menyasar TV dengan RAM 1 GB, dan pemilik mempercayai apa yang mereka taruh di layar utama.
 
-- No background services unless the feature needs one, and say so in your README.
-- No telemetry without an opt-in. No ads.
-- Do not bundle content you have no right to redistribute.
-- Use your own art. Do not use other companies' logos as your banner or icon.
-- Describe every permission you request in your README.
+- Jangan pakai layanan latar kecuali fiturnya memang butuh, dan sebutkan di README.
+- Tanpa telemetri kecuali opt-in. Tanpa iklan.
+- Jangan ikutkan konten yang tidak hakmu untuk disebarluaskan.
+- Pakai karyamu sendiri. Jangan pakai logo perusahaan lain sebagai banner atau ikon.
+- Jelaskan setiap izin yang kamu minta di README.
 
-## 3. Test on a TV
+## 3. Uji di TV
 
-Install over ADB, press Home, and the prompt appears:
+Pasang lewat ADB, tekan Home, dan prompt muncul:
 
 ```bash
 adb install -r app/build/outputs/apk/release/app-release.apk
 adb shell input keyevent KEYCODE_HOME
 ```
 
-(This repo's `tools/tv.py` works where the `adb` binary is blocked; see the README.)
+(`tools/tv.py` di repo ini jalan di tempat biner `adb` diblokir; lihat README.)
 
-Useful checks:
+Pemeriksaan yang berguna:
 
 ```bash
-# Did the card filter and the meta-data land on the right activity?
+# Apakah filter kartu dan meta-data mendarat di aktivitas yang benar?
 adb shell pm dump io.github.udhaykumarbala.retro | grep -B2 -A6 DOCK_CARD
 
-# Why was a card rejected? One line per reason.
+# Kenapa kartu ditolak? Satu baris per alasan.
 adb logcat -s TvHomeCards
 ```
 
-Then: answer Keep hidden and check the app keeps its ordinary tile; hold OK on Settings, open the
-Module cards list, set it to Shown, and check the card takes the tile's place; press OK on the card
-and check your app opens; uninstall and check the card is gone. Take a screenshot of the card
-focused in the grid for your README.
+Lalu: jawab Keep hidden dan cek aplikasi tetap punya ubin biasa; tahan OK di Settings, buka daftar
+Module cards, setel ke Shown, dan cek kartu menggantikan ubin; tekan OK pada kartu
+dan cek aplikasimu terbuka; copot pemasangan dan cek kartunya hilang. Ambil screenshot kartu
+yang fokus di kisi untuk README-mu.
 
-## 4. Release and keep your key
+## 4. Rilis dan simpan kuncimu
 
-The owner's answer is pinned to your signing certificate. Publish the certificate digest with every
-release so people can check what they install:
+Jawaban pemilik terikat ke sertifikat penandatanganmu. Publikasikan digest sertifikat di setiap
+rilis supaya orang bisa memeriksa yang mereka pasang:
 
 ```bash
 apksigner verify -print-certs app-release.apk | grep 'SHA-256'
 ```
 
-(`apksigner` accepts its options with one dash as well as two.)
+(`apksigner` menerima opsi dengan satu tanda hubung maupun dua.)
 
-The line "Signer #1 certificate SHA-256 digest" is what the launcher computes on the TV. Sign every
-update with the same key: a different key makes every TV ask again, and the card stays hidden
-until the owner answers. Sign with one certificate; the launcher rejects APKs with several signers.
-Keep the keystore out of your repo.
+Baris "Signer #1 certificate SHA-256 digest" adalah yang dihitung launcher di TV. Tanda tangani setiap
+pembaruan dengan kunci yang sama: kunci berbeda membuat setiap TV bertanya lagi, dan kartu tetap tersembunyi
+sampai pemilik menjawab. Tanda tangani dengan satu sertifikat; launcher menolak APK dengan beberapa penandatangan.
+Jangan taruh keystore di repo.
 
-Publish the APK's own SHA-256 next to it as well.
+Publikasikan juga SHA-256 APK itu sendiri di sebelahnya.
 
-## Reference module
+## Modul acuan
 
-Retro, an NES library for the TV, declares a card exactly as above:
+Retro, pustaka NES untuk TV, mendeklarasikan kartu persis seperti di atas:
 <https://github.com/udhaykumarbala/tv-vibehack-retro>.
 
-A launcher that wants other apps' Continue watching rows can read them, see
+Launcher yang ingin baris Lanjutkan menonton dari aplikasi lain bisa membacanya, lihat
 [`docs/watch-next.md`](watch-next.md).

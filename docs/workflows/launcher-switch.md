@@ -1,27 +1,27 @@
-# Workflow: Add an off-by-default launcher switch
+# Alur: Menambah sakelar launcher yang mati secara bawaan
 
-**When to use this:** a launcher behaviour or look that existing config keys can't carry.
+**Kapan dipakai:** perilaku atau tampilan launcher yang tidak muat di key konfigurasi yang sudah ada.
 
-The core takes a switch only if it changes nothing until a theme or `config.xml` turns it on:
+Inti hanya menerima sakelar kalau tidak ada yang berubah sampai theme atau `config.xml` menyalakannya:
 
-1. Add the key to `launcher/app/src/main/res/values/config.xml` with a comment that says what it does and
-   that a theme can set it, defaulting to off (`false`, `0` or the current behaviour).
-2. Read it in `launcher/app/src/main/java/com/gathin/tvhome/Config.java`, from the resource and from the
-   theme JSON, the way existing keys such as `show_stats` are read.
-3. Add a row to the Keys table in `themes/README.md`.
-4. If it adds a row to Launcher settings, put its strings in `launcher/app/src/main/res/values/strings.xml`
-   and every `values-*` folder.
-5. With the key off, nothing new runs: no receiver, no service, no write, no permission grant in the install
-   script. The bot checks this in the diff, not in the description.
-6. Add a JVM unit test under `launcher/app/src/test/java/com/gathin/tvhome/` for any logic that can be tested
-   without a TV.
-7. Keep it small: a switch should cost a few hundred bytes to about 1 KB of APK. Build and check the size
-   gate; the gate is hard.
-8. Verify on a real TV with the switch on and off, D-pad from every edge, and attach screenshots.
-9. If you can, run the regression check in [`perf-ab.md`](perf-ab.md) with the
-   switch on: a baseline before you start, your build after, and the numbers in the PR. It's optional, but welcome.
+1. Tambah key ke `launcher/app/src/main/res/values/config.xml` dengan komentar yang menjelaskan fungsinya dan
+   bahwa theme bisa mengaturnya, bawaan mati (`false`, `0`, atau perilaku yang sekarang).
+2. Baca di `launcher/app/src/main/java/com/gathin/tvhome/Config.java`, dari resource dan dari
+   JSON theme, seperti key yang sudah ada misalnya `show_stats`.
+3. Tambah satu baris ke tabel Keys di `themes/README.md`.
+4. Kalau menambah baris di Launcher settings, taruh string-nya di `launcher/app/src/main/res/values/strings.xml`
+   dan setiap folder `values-*`.
+5. Dengan key mati, tidak ada yang baru berjalan: tidak ada receiver, layanan, penulisan, atau pemberian izin di skrip
+   pasang. Bot memeriksa ini di diff, bukan di deskripsi.
+6. Tambah tes unit JVM di `launcher/app/src/test/java/com/gathin/tvhome/` untuk logika yang bisa diuji
+   tanpa TV.
+7. Buat tetap kecil: satu sakelar sebaiknya menambah beberapa ratus byte sampai sekitar 1 KB pada APK. Bangun dan periksa gerbang
+   ukuran; gerbangnya keras.
+8. Verifikasi di TV sungguhan dengan sakelar nyala dan mati, D-pad dari setiap tepi, dan lampirkan screenshot.
+9. Kalau bisa, jalankan pemeriksaan regresi di [`perf-ab.md`](perf-ab.md) dengan
+   sakelar nyala: baseline sebelum mulai, build-mu sesudahnya, dan angkanya di PR. Opsional, tapi diterima.
 
-Anything TV-specific goes in `config.xml` or a theme, not in code. A bug fix that corrects wrong behaviour needs
-no switch. No new dependencies in `launcher/app/build.gradle` without an issue first.
+Yang khusus satu TV masuk ke `config.xml` atau theme, bukan ke kode. Perbaikan bug yang membetulkan perilaku salah tidak butuh
+sakelar. Jangan menambah dependensi di `launcher/app/build.gradle` tanpa issue dulu.
 
-Then run the tests: `python3 -m unittest discover -s tests -v`.
+Lalu jalankan tes: `python3 -m unittest discover -s tests -v`.

@@ -1,67 +1,67 @@
 # Sky
 
-An optional backdrop that follows the clock: night blues until dawn, a soft blue day, then a warm
-horizon that peaks at seven in the evening. It is off in the built-in configuration, so a
-launcher built from this repository behaves exactly like before until a theme turns it on.
+Latar belakang opsional yang mengikuti jam: biru malam sampai fajar, biru siang yang lembut, lalu
+cakrawala hangat yang puncaknya jam tujuh malam. Di konfigurasi bawaan ini mati, jadi
+launcher VibeYourTV yang dibangun dari repo ini tetap berperilaku seperti sebelumnya sampai sebuah theme menyalakannya.
 
 ```json
 { "sky_intensity": 60 }
 ```
 
-![The backdrop at dusk](sky-sunset.jpg)
+![Latar belakang saat senja](sky-sunset.jpg)
 
-Push that as a theme's `config.json` and restart Home:
+Dorong itu sebagai `config.json` sebuah theme, lalu mulai ulang Home:
 
 ```bash
 TV_HOST=192.168.1.50 tools/theme.sh themes/your-theme
 ```
 
-## What it draws
+## Yang digambar
 
-A full-screen gradient in three bands — top, middle, bottom — with a soft warm glow near the horizon
-whose horizontal position follows the sun: left at sunrise, right at sunset. `sky_intensity` is its
-opacity, 0 to 100; the colours themselves are interpolated between a handful of anchors through the
-day, which is what makes it drift instead of switching at fixed hours.
+Gradien layar penuh dalam tiga pita — atas, tengah, bawah — dengan cahaya hangat lembut di dekat cakrawala.
+Posisi horizontalnya mengikuti matahari: kiri saat matahari terbit, kanan saat terbenam. `sky_intensity` adalah
+opasitasnya, 0 sampai 100; warnanya sendiri diinterpolasi di antara beberapa titik jangkar sepanjang
+hari, jadi perubahannya mengambang, bukan berpindah di jam yang tetap.
 
-It sits behind everything, over the wallpaper when there is one, and the palette was chosen dark on
-purpose: the white clock, the greeting, the hero name and the dock band all keep their contrast at
-the default 60.
+Letaknya di belakang semuanya, di atas wallpaper kalau ada, dan paletnya sengaja gelap:
+jam putih, sapaan, nama hero, dan pita dock tetap kontras pada
+nilai bawaan 60.
 
 ## Where the sun is
 
-With nothing set, the day the sky is drawn on is a fixed temperate one: sunrise 07:30, sunset 19:00,
-counted on the TV's own clock. The warm glow therefore peaks at seven in the evening wherever the TV
-is, and its position travels left to right through that day — which for most of Europe lands a couple of
-hours before the real sunset in summer, and after it in winter.
+Kalau tidak ada yang diatur, hari yang digambar sky adalah satu hari sedang yang tetap: sunrise 07:30, sunset 19:00,
+dihitung dari jam TV sendiri. Cahaya hangatnya jadi memuncak jam tujuh malam di mana pun TV
+berada, dan posisinya berjalan dari kiri ke kanan sepanjang hari itu — yang di sebagian besar Eropa jatuh beberapa
+jam sebelum matahari terbenam sungguhan di musim panas, dan sesudahnya di musim dingin.
 
-To pin the sky to the real sun, set `latitude` and `longitude` in decimal degrees (south and west
-negative) in `launcher/app/src/main/res/values/config.xml`, before building the launcher:
+Untuk mengunci sky ke matahari sungguhan, isi `latitude` dan `longitude` dalam derajat desimal (selatan dan barat
+negatif) di `launcher/app/src/main/res/values/config.xml`, sebelum membangun launcher:
 
 ```xml
 <string name="latitude" translatable="false">54.69</string>
 <string name="longitude" translatable="false">25.28</string>
 ```
 
-The sky then stretches the same anchors onto that place's real sunrise and sunset: NOAA's solar
-position equations in `Sun.java`, run on the TV from today's date and the system time zone. No
-network, no location permission, nothing to query, and a tenth of a degree only moves sunset by
-about half a minute, so a city's coordinates are plenty.
+Sky lalu meregangkan jangkar yang sama ke matahari terbit dan terbenam sungguhan di tempat itu: persamaan posisi
+matahari NOAA di `Sun.java`, dijalankan di TV dari tanggal hari ini dan zona waktu sistem. Tanpa
+jaringan, tanpa izin lokasi, tanpa yang perlu ditanya, dan sepersepuluh derajat hanya menggeser matahari terbenam
+sekitar setengah menit, jadi koordinat kota sudah cukup.
 
-Two days keep that fixed day instead: one with no sunrise or sunset at all (polar night, or the
-midnight sun), and one whose sunset the arithmetic puts past midnight, as in Reykjavik in June.
-Nothing is guessed from the time zone: it only decides which clock the minutes are counted on.
+Dua jenis hari tetap memakai hari tetap itu: hari tanpa matahari terbit atau terbenam sama sekali (polar night, atau
+midnight sun), dan hari yang hitungannya menaruh matahari terbenam lewat tengah malam, seperti Reykjavik di bulan Juni.
+Tidak ada yang ditebak dari zona waktu: zona waktu hanya menentukan jam mana yang dipakai untuk menghitung menit.
 
-**A theme cannot set this.** `sky_intensity` comes from a theme's `config.json`, but the place is a
-launcher build setting — `SkyView` reads those two string resources and `Config` never looks for them
-in a theme. A theme that wants the right sun says so in its own README, with the two lines above.
+**Sebuah theme tidak bisa mengatur ini.** `sky_intensity` datang dari `config.json` theme, tetapi tempatnya adalah
+setelan build launcher — `SkyView` membaca dua string resource itu dan `Config` tidak pernah mencarinya
+di theme. Theme yang ingin matahari yang benar menuliskannya di README-nya sendiri, dengan dua baris di atas.
 
-## Cost
+## Biaya
 
-`Sky` is pure maths — no Android types, no clock of its own; the caller passes the minutes since
-midnight, which is why the palette is unit-tested on the JVM. `SkyView` renders one 480×270 bitmap
-and redraws it once a minute, from the same minute tick that updates the clock. Nothing is animated
-and nothing is requested: the backdrop is the only change, and a TV with 1 GB of RAM has nothing to
-keep up with.
+`Sky` murni matematika — tanpa tipe Android, tanpa jam sendiri; pemanggil mengirim menit sejak
+tengah malam, makanya paletnya diuji di JVM. `SkyView` merender satu bitmap 480×270
+dan menggambar ulang sekali semenit, dari detak menit yang sama yang memperbarui jam. Tidak ada yang dianimasikan
+dan tidak ada yang diminta: yang berubah cuma latar belakang, dan TV dengan RAM 1 GB tidak punya yang
+perlu dikejar.
 
-Turning the key off restores the plain background (or the theme's `wallpaper`/`background_color`)
-on the next Home start.
+Mematikan key ini mengembalikan latar polos (atau `wallpaper`/`background_color` theme)
+pada Home berikutnya.

@@ -1,12 +1,12 @@
-# Workflow: Add a showcase row
+# Alur: Menambah baris showcase
 
-**When to use this:** a project built on this repo that lives in its own repository.
+**Kapan dipakai:** proyek yang dibangun di atas repo ini dan tinggal di repositorinya sendiri.
 
-1. Add one row to the section of `SHOWCASE.md` that fits (home screens, forks, screensavers and add-ons,
-   tools, other platforms), and the project under its TV brand in "Find a project by TV brand".
-2. Keep each cell to one line: what it is, what it was built and tested on, and the author.
-3. The project is open source with a link people can read and build, says which TV it was tested on, collects
-   nothing beyond what its README says, and is yours or listed with the author's blessing.
-4. Put a screenshot in the PR description; it is linked from the row.
+1. Tambah satu baris ke bagian `SHOWCASE.md` yang cocok (home screen, fork, screensaver dan add-on,
+   alat, platform lain), dan proyek itu di bawah merek TV-nya di "Find a project by TV brand".
+2. Setiap sel satu baris: apa itu, di TV apa dibangun dan diuji, dan siapa pembuatnya.
+3. Proyeknya open source dengan tautan yang bisa dibaca dan dibangun orang, menyebut TV tempat diuji, tidak mengumpulkan
+   apa pun di luar yang disebut README-nya, dan milikmu atau dicantumkan dengan restu pembuatnya.
+4. Taruh screenshot di deskripsi PR; screenshot itu ditautkan dari barisnya.
 
-Then run the tests: `python3 -m unittest discover -s tests -v`.
+Lalu jalankan tes: `python3 -m unittest discover -s tests -v`.

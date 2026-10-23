@@ -7,9 +7,9 @@
 
 ---
 
-## 1. Overview
+## 1. Ringkasan
 
-This directory contains the debloat configuration and documentation for the **TCL 32L5A** Android TV set. The TV has been debloated of manufacturer telemetry, background bloat, and ad services, and the stock launcher (`com.google.android.tvlauncher`) has been replaced with a clean **Apple TV 4K-style native launcher**.
+Folder ini berisi konfigurasi debloat dan dokumentasi untuk set Android TV **TCL 32L5A**. TV sudah dibersihkan dari telemetri pabrikan, bloat background, dan layanan iklan; stock launcher (`com.google.android.tvlauncher`) diganti launcher native bergaya **Apple TV 4K** dari VibeYourTV.
 
 ---
 

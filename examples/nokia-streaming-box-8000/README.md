@@ -1,13 +1,13 @@
 # Nokia Streaming Box 8000
 
-Sagemcom/NES build, product `SEI600NK4`, device `HND`, Amlogic, 2 GB RAM, Android TV 14
-(`UKG3.240613.001`), German UI. Tested on a real unit on 2026-10-20.
+Build Sagemcom/NES, product `SEI600NK4`, device `HND`, Amlogic, RAM 2 GB, Android TV 14
+(`UKG3.240613.001`), UI Jerman. Diuji di unit asli 2026-10-20.
 
-Network debugging switches itself off on every reboot: after a restart, turn it on again in
+Network debugging mati sendiri setiap reboot: after a restart, turn it on again in
 Developer options before connecting. The box moves around on DHCP; it advertises itself over mDNS, so
 `avahi-browse -rt _adb._tcp` (Linux) or `dns-sd -B _adb._tcp` (macOS) finds it.
 
-## Why `tools/disable.sh` does not work here
+## Mengapa `tools/disable.sh` tidak jalan di sini
 
 The firmware answers every `pm disable-user`, `pm disable` and `pm disable-until-used` with
 `Warning! This command is illegal!`, refuses `pm hide` (no `MANAGE_USERS` for the shell) and refuses

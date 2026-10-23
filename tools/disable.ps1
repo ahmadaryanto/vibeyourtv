@@ -1,6 +1,6 @@
-# Windows version of disable.sh: disable every package listed in a debloat file on the TV
-# (one package per line, # comments allowed). Packages are disabled for user 0, never uninstalled.
-# Undo with tools\restore.ps1 <same file>.
+# Versi Windows dari disable.sh: nonaktifkan semua paket di file debloat di TV
+# (satu paket per baris, komentar # boleh). Paket dinonaktifkan untuk user 0, tidak pernah di-uninstall.
+# Balikin pakai tools\restore.ps1 <file yang sama>.
 #
 # Usage: tools\disable.ps1 -TvHost 192.168.1.50 examples\xiaomi-mi-tv-4a\debloat.txt
 param(
@@ -13,21 +13,21 @@ $OutputEncoding = New-Object System.Text.UTF8Encoding $false
 $repo = Split-Path -Parent $PSScriptRoot
 $List = (Resolve-Path $List).Path
 $py = Join-Path $repo 'tools\venv\Scripts\python.exe'
-if (-not (Test-Path $py)) { throw 'run: python -m venv tools\venv; tools\venv\Scripts\python.exe -m pip install -r tools\requirements.txt' }
-if (-not $TvHost) { throw 'pass -TvHost <tv ip> or set $env:TV_HOST' }
+if (-not (Test-Path $py)) { throw 'jalankan dulu: python -m venv tools\venv; tools\venv\Scripts\python.exe -m pip install -r tools\requirements.txt' }
+if (-not $TvHost) { throw 'kasih -TvHost <tv ip> atau set $env:TV_HOST' }
 $env:TV_HOST = $TvHost
 
 $pkgs = Get-Content $List | ForEach-Object { ($_ -replace '#.*$', '').Trim() } | Where-Object { $_ } | ForEach-Object { ($_ -split '\s+')[0] }
 # Lists come from contributors and each name is pasted into a shell command on the TV (#165).
 $bad = @($pkgs | Where-Object { $_ -notmatch '^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$' })
 if ($bad.Count -gt 0) {
-    throw "refusing $List, not a package name: $($bad -join ', ')"
+    throw "Menolak $List: not a package name: $($bad -join ', ')"
 }
 # Nothing to do: a list whose entries are all commented out is what CONTRIBUTING asks for while one
 # is untested. Say it here, before a query goes to the TV, rather than letting recovery.py stop the run
 # after them with a message about the record.
 if (-not $pkgs -or $pkgs.Count -eq 0) {
-    throw "refusing ${List}: no package names in it (every line is a comment or blank), so nothing was sent to the TV and no recovery record was written."
+    throw "Menolak ${List}: no package names di dalamnya (semua baris komentar atau kosong), jadi tidak ada yang dikirim ke TV dan catatan pemulihan tidak ditulis."
 }
 # Core Android packages, the same block as disable.sh: with one of these disabled Android itself can stop
 # booting (#884, an original Mi TV Stick). No switch overrides it. Keep both patterns in step with
@@ -36,7 +36,7 @@ $coreRe = '^(android|com\.android\.systemui|com\.android\.shell|com\.android\.ph
 $coreOk = '^com\.android\.providers\.(calendar|contacts|userdictionary|blockednumber)$'
 $core = @($pkgs | Where-Object { $_ -cmatch $coreRe -and $_ -cnotmatch $coreOk })
 if ($core.Count -gt 0) {
-    throw "refusing ${List}: it disables core Android packages, and without them the TV may not boot again (#884): $($core -join ', '). Take these lines out of the list (or comment them) and run it again. Nothing was changed on the TV."
+    throw "Menolak ${List}: daftar ini menonaktifkan paket Android inti, dan tanpa paket itu TV bisa gagal nyala lagi (#884): $($core -join ', '). Hapus baris ini dari daftar (atau jadikan komentar) lalu jalankan lagi. Tidak ada yang diubah di TV."
 }
 # A Wi-Fi network saved during the first-run wizard belongs to setupwraith, and Android deletes it when
 # setupwraith is disabled. Skip it while it owns the saved network; `$env:FORCE_SETUPWRAITH=1` overrides.
@@ -46,10 +46,10 @@ if ($pkgs -contains $setup -and -not $env:FORCE_SETUPWRAITH) {
     # Be safe: if we cannot read the owners (tv.py failed, timed out, or showed no network at all),
     # do not disable setupwraith, so the TV cannot lose the network it is on.
     if ($LASTEXITCODE -ne 0 -or $wifi -notmatch 'cname=') {
-        Write-Warning "Skipping ${setup}: could not check which app owns the saved Wi-Fi networks (dumpsys wifi failed or showed none). Try again, or set `$env:FORCE_SETUPWRAITH=1 if the TV uses Ethernet."
+        Write-Warning "Skipping ${setup}: could not check aplikasi mana yang punya jaringan Wi-Fi tersimpan (dumpsys wifi gagal atau tidak menampilkan apa pun). Coba lagi, atau set `$env:FORCE_SETUPWRAITH=1 kalau TV pakai Ethernet."
         $pkgs = @($pkgs | Where-Object { $_ -ne $setup })
     } elseif ($wifi -match 'cname=[^ ]*setupwraith') {
-        Write-Warning "Skipping ${setup}: the saved Wi-Fi network belongs to it, and disabling it would delete that network and take the TV off Wi-Fi. Forget the network and join it again in Settings > Network & Internet, then run this again (or set `$env:FORCE_SETUPWRAITH=1 on Ethernet)."
+        Write-Warning "Skipping ${setup}: jaringan Wi-Fi tersimpan milik paket ini, dan menonaktifkannya akan menghapus jaringan itu lalu TV lepas dari Wi-Fi. Di TV, lupakan jaringan itu lalu sambungkan lagi lewat Settings > Network & Internet, kemudian jalankan lagi (atau set `$env:FORCE_SETUPWRAITH=1 kalau pakai Ethernet)."
         $pkgs = @($pkgs | Where-Object { $_ -ne $setup })
     }
 }
@@ -96,13 +96,13 @@ if (-not $env:FORCE_HOME) {
         # Nor is a factory-test app (com.duokan.factorytest/.FactoryLauncher answers HOME on a Mi TV 4A).
         $others = @($claims | Where-Object { $_ -ne $homePkg -and $pkgs -notcontains $_ -and $notLaunchers -notcontains $_ -and $_ -notmatch 'factorytest|factory_test|factorymode' })
         if ($others.Count -eq 0) {
-            Write-Warning "Skipping ${homePkg}: it owns Home, and no other app that can answer Home is installed and staying enabled. Make the new launcher Home first (launcher\build-and-install.ps1), then run this list again to disable the old one; or set `$env:FORCE_HOME=1 if you can still reach the TV."
+            Write-Warning "Skipping ${homePkg}: paket ini yang pegang Home, dan tidak ada aplikasi lain yang bisa menjawab Home, terpasang, dan tetap aktif. Jadikan launcher baru sebagai Home dulu (launcher\build-and-install.ps1), lalu jalankan daftar ini lagi untuk menonaktifkan yang lama; atau set `$env:FORCE_HOME=1 kalau kamu masih bisa menjangkau TV."
             $pkgs = @($pkgs | Where-Object { $_ -ne $homePkg })
         }
     }
     # Neither query named Home, so the guard could not run. Say so (disable.sh, #795).
     if (-not $homePkg -and $pkgs.Count -gt 0) {
-        Write-Warning 'Could not tell which app owns Home on this TV, so the Home guard did not run: neither "cmd package resolve-activity" (added in Android 7) nor "dumpsys activity" named one. Check by hand that the list does not hold your launcher before running it: the replacement launcher needs Android 8.0 (minSdk 26), so on an older set the stock launcher is the only Home there is, and a set with no recovery has no way back (#795).'
+        Write-Warning 'Could not tell which app owns Home di TV ini, jadi penjaga Home tidak jalan: baik "cmd package resolve-activity" (ada sejak Android 7) maupun "dumpsys activity" tidak menyebutkannya. Cek sendiri bahwa daftar tidak memuat launcher kamu sebelum dijalankan. Launcher pengganti butuh Android 8.0 (minSdk 26), jadi di set yang lebih lama stock launcher adalah satu-satunya Home yang ada: kalau dinonaktifkan, tidak ada yang bisa dibuka, dan set tanpa pemulihan tidak ada jalan balik (#795).'
     }
 }
 # Same as disable.sh (#321): a package that asks for android.permission.TV_INPUT_HARDWARE is the software
@@ -119,11 +119,11 @@ if (-not $env:TVINPUT_ALLOW -and $pkgs.Count -gt 0) {
     $checked = $LASTEXITCODE -eq 0
     $ErrorActionPreference = 'Stop'
     if (-not $checked) {
-        Write-Warning 'Could not check which listed packages drive the HDMI/AV inputs (tv.py failed). Check every input after this run: a port that notices the cable and stays black means one of them was disabled, and only a full restore and a cold boot bring it back (#321).'
+        Write-Warning 'Could not check paket mana di daftar yang mengurus input HDMI/AV (tv.py gagal). Cek setiap input setelah proses ini: port yang mendeteksi kabel tapi tetap hitam berarti salah satunya dinonaktifkan, dan hanya restore penuh plus cold boot yang mengembalikannya (#321).'
     } else {
         foreach ($p in ($tvhw | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
             if ($pkgs -contains $p) {
-                Write-Warning "Skipping ${p}: it asks for android.permission.TV_INPUT_HARDWARE, so it is the software layer under the HDMI/AV/tuner inputs. With it disabled those inputs still notice the cable but stay black (No Signal), and re-enabling the pieces in batches does not restore the picture: a full restore plus a cold boot does (#321). Set `$env:TVINPUT_ALLOW=1 to disable it."
+                Write-Warning "Skipping ${p}: paket ini minta android.permission.TV_INPUT_HARDWARE, jadi ini lapisan perangkat lunak di bawah input HDMI/AV/tuner. Kalau dinonaktifkan, input itu tetap mendeteksi kabel tapi layar tetap hitam (No Signal), dan mengaktifkan ulang sepotong-sepotong tidak mengembalikan gambar: yang mengembalikan adalah restore penuh plus cold boot (#321). Minta izin itu bukan bukti: aplikasi bawaan bisa memintanya tanpa mengurus input sama sekali. Yang memastikan adalah paket mana yang benar-benar melayani layanan input: pm query-services --components -a android.media.tv.TvInputService. Kalau ${p} tidak ada di daftar itu, ini false positive di set kamu, seperti pemutar media USB MediaTek yang ternyata begitu (examples/cecotec-shandao). Cek setiap input setelah reboot sebelum percaya, lalu set `$env:TVINPUT_ALLOW=1 untuk menonaktifkannya."
                 $pkgs = @($pkgs | Where-Object { $_ -ne $p })
             }
         }
@@ -132,11 +132,11 @@ if (-not $env:TVINPUT_ALLOW -and $pkgs.Count -gt 0) {
 # Same as disable.sh: the state undo needs is recorded before the first command reaches the TV, and
 # a failed save leaves the TV untouched (#239).
 & $py -I (Join-Path $repo 'tools\recovery.py') --save $List
-if ($LASTEXITCODE -ne 0) { throw 'no recovery record was written, so nothing was disabled' }
+if ($LASTEXITCODE -ne 0) { throw 'catatan pemulihan tidak tertulis, jadi tidak ada yang dinonaktifkan' }
 
 $cmds = @($pkgs | ForEach-Object { "pm disable-user --user 0 $_" }) + 'pm list packages -d'
 $cmds | & $py -I (Join-Path $repo 'tools\tv.py') --batch
 
 if ($adbSecure -eq '0') {
-    Write-Warning "This TV reports ro.adb.secure=0, so network ADB on port 5555 accepts any device on your network without the `"Allow`" prompt. When you are done, turn USB debugging and Network/ADB debugging off on the TV and reboot it (README: `"Isn't ADB access a security hole?`")."
+    Write-Warning "Peringatan: TV ini melaporkan ro.adb.secure=0, jadi ADB jaringan di port 5555 menerima perangkat mana pun di jaringan kamu tanpa prompt `"Allow`". Setelah selesai, matikan USB debugging dan Network/ADB debugging di TV lalu reboot (README: `"Isn't ADB access a security hole?`")."
 }

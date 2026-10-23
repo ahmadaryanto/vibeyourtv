@@ -1,18 +1,18 @@
-"""Draws the wallpapers of themes/scenes: 14 dark illustrated landscapes, as SVG (1280x720) from code, so the
-collection is this repo's own work and can be changed or extended here.
+"""Menggambar wallpaper themes/scenes: 14 lanskap ilustrasi gelap, sebagai SVG (1280x720) dari kode, supaya
+koleksinya karya repo ini sendiri dan bisa diubah atau ditambah di sini.
 
-    python3 tools/scenes_wallpapers.py /tmp/scenes      # writes 01-dusk-peaks.svg ... 14-autumn-valley.svg
+    python3 tools/scenes_wallpapers.py /tmp/scenes      # menulis 01-dusk-peaks.svg ... 14-autumn-valley.svg
 
-Every scene keeps its lower third dark, because the dock, the grid and the text sit there. The random seeds are
-fixed, so the same code always draws the same SVGs.
+Setiap adegan menjaga sepertiga bawah tetap gelap, karena dock, kisi, dan teks duduk di sana. Seed acaknya
+tetap, jadi kode yang sama selalu menggambar SVG yang sama.
 
-themes/scenes/wallpapers/ holds them as 1920x1080 JPEG, each under 300 KB as themes/README.md asks: a headless
-Chrome screenshot of the SVG (a 1280x720 window at device scale 1.5), blended 1.8% with Pillow grain
-(Image.effect_noise, sigma 4) so the gradients do not band on an 8-bit panel, and saved at quality 86. The grain is
-random, so a new render looks the same but is not byte-identical.
+themes/scenes/wallpapers/ menyimpannya sebagai JPEG 1920x1080, masing-masing di bawah 300 KB seperti yang
+diminta themes/README.md: screenshot Chrome headless dari SVG (jendela 1280x720 pada skala perangkat 1,5),
+dicampur 1,8% dengan grain Pillow (Image.effect_noise, sigma 4) supaya gradien tidak bergaris di panel 8-bit,
+lalu disimpan pada kualitas 86. Grain-nya acak, jadi render baru kelihatan sama tapi tidak identik byte-nya.
 
-A new scene also needs its name in themes/scenes/wallpapers/captions.txt (`<file><TAB><name>`), which is what
-wallpaper_captions shows under the top-right pills; tests/test_scenes_captions.py fails until it has one.
+Adegan baru juga butuh namanya di themes/scenes/wallpapers/captions.txt (`<file><TAB><name>`), yang
+ditampilkan wallpaper_captions di bawah pil kanan atas; tests/test_scenes_captions.py gagal sampai ada.
 """
 import math
 import os
@@ -384,4 +384,4 @@ if __name__ == "__main__":
     for name, scene in SCENES:
         with open(os.path.join(out, f"{name}.svg"), "w") as f:
             f.write(scene())
-    print(len(SCENES), "scenes written to", out)
+    print(len(SCENES), "adegan tertulis ke", out)

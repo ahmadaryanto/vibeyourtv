@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fallback file transfer: send a file to the TV as base64 chunks through plain shell commands.
+"""Cadangan transfer file: kirim file ke TV sebagai potongan base64 lewat perintah shell biasa.
 
 Usage: b64push.py <local file> <remote path>
 
-The file is assembled under a temporary name next to the target and checked with md5sum; only a
-matching copy is moved over the target, so a failed or corrupted transfer leaves the old file alone.
+File dirakit dengan nama sementara di sebelah target lalu dicek dengan md5sum; hanya salinan
+yang cocok yang dipindah menimpa target, jadi transfer yang gagal atau rusak membiarkan file lama.
 """
 import base64
 import hashlib
@@ -37,8 +37,8 @@ def main():
         return 2
     local, remote = args
     if not safe_remote(remote):
-        sys.stderr.write(f"refusing remote path {remote!r}: use an absolute path of letters, digits, "
-                         "'.', '_', '-' and '/', without '..'\n")
+        sys.stderr.write(f"menolak path remote {remote!r}: pakai path absolut dari huruf, angka, "
+                         "'.', '_', '-' dan '/', tanpa '..'\n")
         return 2
     with open(local, "rb") as f:
         data = f.read()
@@ -63,25 +63,25 @@ def main():
             piece = base64.b64encode(data[i * chunk:(i + 1) * chunk]).decode()
             out = dev.shell(f"echo '{piece}' >> {q(b64)} && echo ok{i}", read_timeout_s=60.0)
             if f"ok{i}" not in out:
-                print(f"chunk {i} failed: {out}")
+                print(f"potongan {i} gagal: {out}")
                 dev.shell(f"rm -f {q(b64)} {q(part)}")
                 return 1
-            print(f"\rchunk {i + 1}/{n}", end="", flush=True)
+            print(f"\rpotongan {i + 1}/{n}", end="", flush=True)
         if n:
             print()
         out = dev.shell(f"base64 -d < {q(b64)} > {q(part)} && md5sum {q(part)}; rm -f {q(b64)}",
                         read_timeout_s=120.0)
         got = out.split()[0] if out.strip() else ""
         ok = got == want
-        print("md5 remote:", got, "local:", want, "MATCH" if ok else "MISMATCH")
+        print("md5 di TV:", got, "lokal:", want, "MATCH" if ok else "MISMATCH")
         if not ok:
             dev.shell(f"rm -f {q(part)}")
-            print(f"{remote} was left as it was.", file=sys.stderr)
+            print(f"{remote} dibiarkan seperti semula.", file=sys.stderr)
             return 1
         out = dev.shell(f"mv -f {q(part)} {q(remote)} && echo moved", read_timeout_s=60.0)
         if "moved" not in out:
             dev.shell(f"rm -f {q(part)}")
-            print(f"could not move the verified copy over {remote}: {out.strip()}", file=sys.stderr)
+            print(f"tidak bisa memindahkan salinan yang sudah dicek ke {remote}: {out.strip()}", file=sys.stderr)
             return 1
         return 0
     finally:
@@ -90,7 +90,7 @@ def main():
         try:
             dev.shell(f"rm -f {q(b64)} {q(part)}")
         except Exception as error:
-            print(f"could not remove temporary upload files: {error}", file=sys.stderr)
+            print(f"tidak bisa menghapus file unggahan sementara: {error}", file=sys.stderr)
         finally:
             dev.close()
 

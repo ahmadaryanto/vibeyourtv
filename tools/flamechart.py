@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""A before/after flame chart, as a PNG for a pull request, from traces recorded with tools/trace.py.
+"""Bagan api sebelum/sesudah, sebagai PNG untuk pull request, dari jejak tools/trace.py.
 
-One panel per trace, one lane per thread, every slice drawn on the same time scale, so the faster run is
-visibly shorter. Slices whose name matches --highlight are drawn in magenta, and their time is summed
-(nested slices once), with the change against the first panel.
+Satu panel per jejak, satu lajur per thread, setiap irisan digambar pada skala waktu yang sama, jadi
+jalanan yang lebih cepat kelihatan lebih pendek. Irisan yang namanya cocok --highlight digambar magenta,
+waktunya dijumlah (irisan bersarang sekali), dengan perubahan terhadap panel pertama.
 
     tools/flamechart.py traces/before traces/after --highlight '^(activityResume|RV OnBindView)$' \\
         --title 'Back to Home: Home press to first frame' --out chart.png
 
-BEFORE and AFTER are .pftrace files or folders; for a folder the median run is drawn, by the first of
-time to first frame, median frame time and median RenderThread draw that every run has. Needs the optional packages in
-tools/requirements-perf.txt. Read tools/flamechart.md first.
+BEFORE dan AFTER adalah file .pftrace atau folder; untuk folder yang digambar adalah jalanan median,
+dari yang pertama ada di setiap jalanan: waktu ke frame pertama, median waktu frame, atau median gambar
+RenderThread. Butuh paket opsional di tools/requirements-perf.txt. Baca tools/flamechart.md dulu.
 """
 import argparse
 import colorsys
@@ -33,18 +33,18 @@ def window(q, package, spec, nav):
     """(t0, t1) in ns: first-frame (launcher start to first frame drawn), start:MS, or all."""
     upid, main, _ = trace_report.threads(q, package)
     if main is None:
-        raise ValueError(f"no {package} process in the trace")
+        raise ValueError(f"tidak ada proses {package} di jejak")
     if spec == "all" or nav:
         row = q(f"select min(s.ts) as t0, max(s.ts + s.dur) as t1 from slice s join thread_track tt on s.track_id = tt.id "
                 f"join thread t using(utid) where t.upid = {upid}")[0]
         return row["t0"], row["t1"]
     anchor, end = trace_report.start_window(q, package)
     if anchor is None:
-        raise ValueError("no launcher start in the trace (bindApplication or performStart); try --window all")
+        raise ValueError("tidak ada start launcher di jejak (bindApplication atau performStart); coba --window all")
     if spec.startswith("start:"):
         return anchor - 500_000, anchor + int(float(spec[6:]) * MS)
     if end is None:
-        raise ValueError("no first frame after the start; try --window start:1500")
+        raise ValueError("tidak ada frame pertama setelah start; coba --window start:1500")
     return anchor - 500_000, end + 500_000
 
 
@@ -102,8 +102,8 @@ def median_run(paths, package, open_trace):
         if all(score is not None for score in scores):
             ranked = sorted(zip(scores, paths))
             return ranked[(len(ranked) - 1) // 2][1], label
-    raise ValueError("no measure every run has (time to first frame, frame time or draw time); "
-                     "pass a single trace to draw it as it is")
+    raise ValueError("tidak ada ukuran yang dimiliki setiap jalanan (waktu ke frame pertama, waktu frame, atau waktu gambar); "
+                     "kasih satu jejak saja untuk digambar apa adanya")
 
 
 def colour(name):
@@ -188,34 +188,34 @@ def draw(panels, rx, title, subtitle, out, width=1600):
 
 
 def parse(argv):
-    p = argparse.ArgumentParser(description="Before/after flame chart PNG from tools/trace.py traces. See tools/flamechart.md.")
-    p.add_argument("traces", nargs="+", metavar="TRACE", help="before, then after: .pftrace files or folders (median run)")
-    p.add_argument("--out", required=True, help="the PNG to write")
+    p = argparse.ArgumentParser(description="PNG bagan api sebelum/sesudah dari jejak tools/trace.py. Lihat tools/flamechart.md.")
+    p.add_argument("traces", nargs="+", metavar="TRACE", help="sebelum, lalu sesudah: file .pftrace atau folder (jalanan median)")
+    p.add_argument("--out", required=True, help="PNG yang ditulis")
     p.add_argument("--highlight", default="^(activityResume|RV OnBindView)$",
-                   help="regex of slice names to draw in magenta and total (default: onResume and tile binding)")
+                   help="regex nama irisan yang digambar magenta dan dijumlah (default: onResume dan pengikatan ubin)")
     p.add_argument("--window", default="first-frame",
-                   help="first-frame (start to first frame drawn, default), start:MS, or all")
-    p.add_argument("--threads", default="main,RenderThread", help="lanes, comma-separated (default main,RenderThread)")
-    p.add_argument("--labels", default="Before,After", help="panel labels, comma-separated")
-    p.add_argument("--title", default="Launcher: start to first frame", help="the chart's title")
-    p.add_argument("--subtitle", default="", help="a line under the title: the TV, the build, what magenta means")
+                   help="first-frame (start sampai frame pertama, default), start:MS, atau all")
+    p.add_argument("--threads", default="main,RenderThread", help="lajur, dipisah koma (default main,RenderThread)")
+    p.add_argument("--labels", default="Before,After", help="label panel, dipisah koma")
+    p.add_argument("--title", default="Launcher: start to first frame", help="judul bagan")
+    p.add_argument("--subtitle", default="", help="baris di bawah judul: TV, build, arti magenta")
     p.add_argument("--package", default="com.gathin.tvhome")
-    p.add_argument("--engine", metavar="PATH", help="a trace_processor_shell to use instead of downloading one")
+    p.add_argument("--engine", metavar="PATH", help="trace_processor_shell yang dipakai, bukan yang diunduh")
     p.add_argument("--width", type=int, default=1600)
     args = p.parse_args(argv)
     if len(args.traces) > 4:
-        p.error("at most four traces (panels)")
+        p.error("paling banyak empat jejak (panel)")
     if not re.fullmatch(r"first-frame|all|start:\d+(\.\d+)?", args.window):
-        p.error("--window is first-frame, all or start:MS")
+        p.error("--window adalah first-frame, all, atau start:MS")
     if not trace_report.PACKAGE.match(args.package):
         p.error(f"not a package name: {args.package!r}")
     try:
         args.rx = re.compile(args.highlight)
     except re.error as e:
-        p.error(f"--highlight is not a regex: {e}")
+        p.error(f"--highlight bukan regex: {e}")
     names = [n.strip() for n in args.threads.split(",") if n.strip()]
     if not names or not all(re.fullmatch(r"[A-Za-z0-9 _.:#-]+", n) for n in names):
-        p.error("--threads takes thread names such as main,RenderThread")
+        p.error("--threads butuh nama thread seperti main,RenderThread")
     args.thread_names = names
     return args
 
@@ -225,14 +225,14 @@ def main(argv=None):
     try:
         import PIL  # noqa: F401
     except ImportError:
-        sys.exit("flamechart.py needs Pillow: tools/venv/bin/pip install -r tools/requirements-perf.txt")
+        sys.exit("flamechart.py butuh Pillow: tools/venv/bin/pip install -r tools/requirements-perf.txt")
     open_trace = trace_report.opener(args.engine)
     labels = [l.strip() for l in args.labels.split(",")]
     panels = []
     for i, item in enumerate(args.traces):
         paths = trace_report.expand([item])
         if not paths:
-            sys.exit(f"no .pftrace files in {item}")
+            sys.exit(f"tidak ada file .pftrace di {item}")
         try:
             path, basis = median_run(paths, args.package, open_trace)
         except ValueError as e:
@@ -246,7 +246,7 @@ def main(argv=None):
             sys.exit(f"{path}: {e}")
         finally:
             close()
-        note = f"median of {len(paths)} runs by {basis} ({os.path.basename(path)})" if basis else os.path.basename(path)
+        note = f"median dari {len(paths)} jalanan menurut {basis} ({os.path.basename(path)})" if basis else os.path.basename(path)
         panels.append({"label": labels[i] if i < len(labels) else f"Run {i + 1}", "note": note,
                        "t0": t0, "t1": t1, "lanes": data})
     size = draw(panels, args.rx, args.title, args.subtitle, args.out, args.width)

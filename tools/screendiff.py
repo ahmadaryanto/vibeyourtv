@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Compare a before and an after screenshot, and draw the pair for a pull request.
+"""Bandingkan screenshot sebelum dan sesudah, lalu gambar pasangannya untuk pull request.
 
-A performance change should look exactly the same. This says whether it does: it compares the two
-screenshots pixel by pixel, leaving out the regions you --mask (the clock moves on), and reports how
-many pixels differ and where. It also writes the pair side by side, with the regions you --blur
-pixelated (your Wi-Fi name, an account picture), ready to attach.
+Perubahan performa seharusnya kelihatan sama persis. Skrip ini yang bilang apakah iya: membandingkan
+dua screenshot piksel demi piksel, mengabaikan daerah yang kamu --mask (jamnya jalan), dan melaporkan
+berapa piksel yang beda dan di mana. Juga menulis pasangan berdampingan, dengan daerah yang kamu --blur
+dibuat piksel (nama Wi-Fi, foto akun), siap dilampirkan.
 
     tools/screendiff.py shots/before.png shots/after.png --mask 90,40,900,220 \\
         --blur 1265,125,1525,197 --out shots/before-after.png
 
-Boxes are x0,y0,x1,y1 in the screenshots' pixels. Exit status: 0 identical, 1 different, 2 an error.
-Needs Pillow (tools/requirements-perf.txt). Read tools/screendiff.md first.
+Kotak adalah x0,y0,x1,y1 dalam piksel screenshot. Status keluar: 0 sama, 1 beda, 2 error.
+Butuh Pillow (tools/requirements-perf.txt). Baca tools/screendiff.md dulu.
 """
 import argparse
 import re
@@ -22,10 +22,10 @@ BOX = re.compile(r"^\d+,\d+,\d+,\d+$")
 def box(text):
     """'x0,y0,x1,y1' as a tuple, x0 < x1 and y0 < y1."""
     if not BOX.match(text):
-        raise argparse.ArgumentTypeError(f"a box is x0,y0,x1,y1 in pixels, not {text!r}")
+        raise argparse.ArgumentTypeError(f"kotak adalah x0,y0,x1,y1 dalam piksel, bukan {text!r}")
     x0, y0, x1, y1 = map(int, text.split(","))
     if x0 >= x1 or y0 >= y1:
-        raise argparse.ArgumentTypeError(f"a box needs x0 < x1 and y0 < y1: {text!r}")
+        raise argparse.ArgumentTypeError(f"kotak butuh x0 < x1 dan y0 < y1: {text!r}")
     return x0, y0, x1, y1
 
 
@@ -79,27 +79,27 @@ def pair(a, b, blurs, labels, scale):
 
 
 def parse(argv):
-    p = argparse.ArgumentParser(description="Compare two screenshots and draw the pair. See tools/screendiff.md.")
+    p = argparse.ArgumentParser(description="Bandingkan dua screenshot dan gambar pasangannya. Lihat tools/screendiff.md.")
     p.add_argument("before")
     p.add_argument("after")
     p.add_argument("--mask", type=box, action="append", default=[], metavar="BOX",
-                   help="leave a region out of the comparison (repeatable), e.g. the clock")
+                   help="abaikan satu daerah dari perbandingan (boleh diulang), misalnya jam")
     p.add_argument("--blur", type=box, action="append", default=[], metavar="BOX",
-                   help="pixelate a region in the picture (repeatable), e.g. the Wi-Fi name")
-    p.add_argument("--out", help="write the side-by-side pair here")
-    p.add_argument("--diff", metavar="PNG", help="write the differing pixels here, white on black")
-    p.add_argument("--labels", default="Before,After", help="labels over the pair, comma-separated")
-    p.add_argument("--scale", type=float, default=0.5, help="size of each screenshot in the pair (default 0.5)")
+                   help="jadikan piksel satu daerah di gambar (boleh diulang), misalnya nama Wi-Fi")
+    p.add_argument("--out", help="tulis pasangan berdampingan ke sini")
+    p.add_argument("--diff", metavar="PNG", help="tulis piksel yang beda ke sini, putih di atas hitam")
+    p.add_argument("--labels", default="Before,After", help="label di atas pasangan, dipisah koma")
+    p.add_argument("--scale", type=float, default=0.5, help="ukuran tiap screenshot di pasangan (default 0.5)")
     p.add_argument("--threshold", type=int, default=8,
-                   help="ignore channel differences up to this (0-255, default 8: compression noise)")
+                   help="abaikan selisih kanal sampai angka ini (0-255, default 8: derau kompresi)")
     args = p.parse_args(argv)
     if not 0 < args.scale <= 1:
-        p.error("--scale is between 0 and 1")
+        p.error("--scale ada di antara 0 dan 1")
     if not 0 <= args.threshold <= 255:
-        p.error("--threshold is between 0 and 255")
+        p.error("--threshold ada di antara 0 dan 255")
     labels = [l.strip() for l in args.labels.split(",")]
     if len(labels) != 2:
-        p.error("--labels takes two labels")
+        p.error("--labels butuh dua label")
     args.label_pair = labels
     return args
 
@@ -109,32 +109,32 @@ def main(argv=None):
     try:
         from PIL import Image
     except ImportError:
-        print("screendiff.py needs Pillow: tools/venv/bin/pip install -r tools/requirements-perf.txt", file=sys.stderr)
+        print("screendiff.py butuh Pillow: tools/venv/bin/pip install -r tools/requirements-perf.txt", file=sys.stderr)
         return 2
     try:
         a, b = Image.open(args.before), Image.open(args.after)
     except OSError as e:
-        print(f"cannot read a screenshot: {e}", file=sys.stderr)
+        print(f"tidak bisa baca screenshot: {e}", file=sys.stderr)
         return 2
     if a.size != b.size:
-        print(f"the screenshots differ in size: {a.size[0]}x{a.size[1]} and {b.size[0]}x{b.size[1]}", file=sys.stderr)
+        print(f"ukuran screenshot beda: {a.size[0]}x{a.size[1]} dan {b.size[0]}x{b.size[1]}", file=sys.stderr)
         return 2
     outside = [r for r in args.mask + args.blur if r[2] > a.size[0] or r[3] > a.size[1]]
     if outside:
-        print(f"a box is outside the {a.size[0]}x{a.size[1]} screenshot: {outside[0]}", file=sys.stderr)
+        print(f"ada kotak di luar screenshot {a.size[0]}x{a.size[1]}: {outside[0]}", file=sys.stderr)
         return 2
     count, bbox, worst, diff = _compare(a, b, args.mask, args.threshold)
     if args.out:
         pair(a, b, args.blur, args.label_pair, args.scale).save(args.out)
-        print(f"{args.out}: written")
+        print(f"{args.out}: tertulis")
     if args.diff:
         diff.save(args.diff)
     masked = f" ({len(args.mask)} region{'s' if len(args.mask) != 1 else ''} masked)" if args.mask else ""
     if count == 0:
-        print(f"identical{masked}: no pixel differs by more than {args.threshold}")
+        print(f"identical{masked}: tidak ada piksel yang beda lebih dari {args.threshold}")
         return 0
-    print(f"different{masked}: {count} pixels differ by more than {args.threshold}, inside "
-          f"{bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]} (largest difference {worst})")
+    print(f"beda{masked}: {count} pixels differ by more than {args.threshold}, inside "
+          f"{bbox[0]},{bbox[1]},{bbox[2]},{bbox[3]} (selisih terbesar {worst})")
     return 1
 
 

@@ -1,7 +1,7 @@
-"""Renders the stat strip (docs/stats.png), the top part of the README card.
+"""Menggambar strip statistik (docs/stats.png), bagian atas kartu README.
 
-Update STATS, then: python3 tools/readme_stats.py Fredoka.ttf docs/stats.png
-and rebuild the card with tools/readme_card.py. Fredoka is the variable TTF from Google Fonts."""
+Perbarui STATS, lalu: python3 tools/readme_stats.py Fredoka.ttf docs/stats.png
+dan susun ulang kartunya dengan tools/readme_card.py. Fredoka adalah TTF variabel dari Google Fonts."""
 import sys
 from PIL import Image, ImageDraw, ImageFont
 FONT, OUT = sys.argv[1], sys.argv[2]

@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-"""Measure the launcher's key latency, jank and idle cost on a TV.
+"""Ukur latensi tombol, jank, dan biaya diam launcher di TV.
 
-The launcher is the app that answers HOME. The script presses a fixed sequence of D-pad keys,
-one at a time, and reads the frame timestamps that `dumpsys gfxinfo <pkg> framestats` reports:
+Launcher adalah aplikasi yang menjawab HOME. Skrip menekan urutan tetap tombol D-pad,
+satu per satu, lalu membaca cap waktu frame yang dilaporkan `dumpsys gfxinfo <pkg> framestats`:
 
-  * response  = the first frame that FINISHED after the key was injected
-  * movement  = the end of the continuous run of frames that started with it
-  * jank      = janky frames / total frames, from the same dump
+  * response  = frame pertama yang SELESAI setelah tombol disuntikkan
+  * movement  = akhir rentetan frame yang dimulai oleh tombol itu
+  * jank      = frame patah / total frame, dari dump yang sama
 
-It also measures the cold start (`am start -W`), the return to Home (HOME key from another app),
-the idle CPU of the whole device and the launcher's own PSS. Nothing on the TV is changed.
+Juga mengukur cold start (`am start -W`), kembali ke Home (tombol HOME dari aplikasi lain),
+CPU diam seluruh perangkat, dan PSS launcher. Tidak ada yang diubah di TV.
 
-The TV is reached through tools/tv.py, the client this project already ships: it speaks ADB over
-TCP with the adb_shell library, so no adb binary is needed. That matters on macOS, where the
-platform tools are not installed by default.
+TV dijangkau lewat tools/tv.py, klien yang memang dibawa proyek ini: bicara ADB lewat
+TCP dengan pustaka adb_shell, jadi tidak perlu biner adb. Itu penting di macOS, yang
+platform tools-nya tidak terpasang secara bawaan.
 
 Usage:
     TV_HOST=192.168.1.50 python tools/bench.py --keys 36 --series 3
     TV_HOST=192.168.1.50 python tools/bench.py --keys 36 --series 3 --out-dir my-results
 
-The output is a summary plus the raw per-key numbers, so a run can be compared with another one
-or re-analysed later.
+Keluaran berupa ringkasan plus angka mentah per tombol, supaya satu jalanan bisa dibanding
+dengan yang lain atau dianalisis lagi nanti.
 
-Why the frame is matched by its completion time and not by its intended vsync: on a launcher
-that moves the focus in a single frame (no animation), the frame that reacts to a key is born
-from the vsync BEFORE the key and only finishes after it. Matching on the intended vsync drops
-most of those keys and leaves a sample too small to say anything.
+Kenapa frame dicocokkan dari waktu selesai, bukan vsync yang dituju: di launcher yang
+memindah fokus dalam satu frame (tanpa animasi), frame yang bereaksi lahir dari vsync
+SEBELUM tombol dan baru selesai setelahnya. Mencocokkan vsync yang dituju membuang
+sebagian besar tombol itu dan menyisakan sampel yang terlalu kecil.
 """
 import argparse
 import atexit
@@ -78,7 +78,7 @@ class TV:
             try:
                 import tv as tv_client  # noqa: E402
             except ModuleNotFoundError as e:
-                raise SystemExit(f"bench.py needs {e.name}: python3 -m venv tools/venv && "
+                raise SystemExit(f"bench.py butuh {e.name}: python3 -m venv tools/venv && "
                                  "tools/venv/bin/pip install -r tools/requirements.txt") from e
             tv_client.HOST, tv_client.PORT = self.host, int(self.port)
             self.client = tv_client.connect()
@@ -365,7 +365,7 @@ def cold_start(tv, component, repeats):
     values = []
     other = other_app(tv)
     if not other:
-        print("Could not find another app to switch to; the cold start is not measured.")
+        print("Tidak ketemu aplikasi lain untuk pindah; cold start tidak diukur.")
         return values
     package = tv.package_of(component)
     # Read once, before the first stop: the force-stop clears the setting on these TVs, so after the
@@ -392,7 +392,7 @@ def return_to_home(tv, component, repeats):
     values = []
     other = other_app(tv)
     if not other:
-        print("Could not find another app to switch to; the return to Home is not measured.")
+        print("Tidak ketemu aplikasi lain untuk pindah; kembali ke Home tidak diukur.")
         return values
     # AM/WM resume events identify the activity by its full class name, even when the
     # resolved component abbreviates it as pkg/.Class.
@@ -500,17 +500,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--host", default=os.environ.get("TV_HOST"),
-                        help="TV address (or set TV_HOST)")
+                        help="alamat TV (atau set TV_HOST)")
     parser.add_argument("--port", type=int, default=int(os.environ.get("TV_PORT", "5555")))
-    parser.add_argument("--keys", type=int, default=36, help="keys per series")
-    parser.add_argument("--series", type=int, default=3, help="how many series")
-    parser.add_argument("--cold", type=int, default=5, help="cold starts")
-    parser.add_argument("--returns", type=int, default=10, help="returns to Home")
-    parser.add_argument("--idle", type=int, default=60, help="idle seconds")
-    parser.add_argument("--out-dir", default="bench-results", help="where to write the results")
+    parser.add_argument("--keys", type=int, default=36, help="tombol per seri")
+    parser.add_argument("--series", type=int, default=3, help="berapa seri")
+    parser.add_argument("--cold", type=int, default=5, help="cold start")
+    parser.add_argument("--returns", type=int, default=10, help="kembali ke Home")
+    parser.add_argument("--idle", type=int, default=60, help="detik diam")
+    parser.add_argument("--out-dir", default="bench-results", help="tempat menulis hasil")
     args = parser.parse_args()
     if not args.host:
-        raise SystemExit("pass --host or set TV_HOST")
+        raise SystemExit("kasih --host atau set TV_HOST")
     venv = venv_python()
     if importlib.util.find_spec("adb_shell") is None and venv \
             and os.path.realpath(venv) != os.path.realpath(sys.executable):
@@ -521,17 +521,17 @@ def main():
     atexit.register(tv.close)
     component = tv.home_component()
     if not component:
-        raise SystemExit("no component answers HOME on this TV")
+        raise SystemExit("no component answers HOME on this TV — tidak ada yang menjawab Home")
     package = tv.package_of(component)
     version = tv.version_of(package)
     os.makedirs(args.out_dir, exist_ok=True)
 
     print(f"Launcher: {component} ({version})")
-    print(f"Keys: {args.series} x {args.keys}; writing to {args.out_dir}")
+    print(f"Tombol: {args.series} x {args.keys}; menulis ke {args.out_dir}")
 
     samples = []
     for series in range(1, args.series + 1):
-        print(f"Series {series}/{args.series}")
+        print(f"Seri {series}/{args.series}")
         tv.shell("input keyevent 3")
         time.sleep(3)
         # Start on the first grid row, not on the top bar: at the end of the top bar a Right
@@ -539,8 +539,8 @@ def main():
         tv.shell("input keyevent 20")
         time.sleep(2)
         if not tv.is_in_front(package):
-            print("The launcher is not the focused window; the keys would measure nothing.")
-            print(f"Focused: {tv.focused_window()}")
+            print("Launcher bukan jendela yang fokus; tombolnya tidak akan mengukur apa pun.")
+            print(f"Fokus: {tv.focused_window()}")
             return 1
         for index in range(args.keys):
             keycode = DEFAULT_SEQUENCE[index % len(DEFAULT_SEQUENCE)]
@@ -560,11 +560,11 @@ def main():
     frames = sum(s.get("frames", 0) for s in measured)
     janky = sum(s.get("janky", 0) for s in measured)
 
-    print("Cold starts")
+    print("Cold start")
     colds = cold_start(tv, component, args.cold)
-    print("Returns to Home")
+    print("Kembali ke Home")
     returns = return_to_home(tv, component, args.returns)
-    print(f"Idle {args.idle}s")
+    print(f"Diam {args.idle} dtk")
     tv.shell("input keyevent 3")
     time.sleep(20)
     device_cpu, launcher_cpu = idle_cpu(tv, package, args.idle)
@@ -596,7 +596,7 @@ def main():
     with open(path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
     print(json.dumps({k: v for k, v in result.items() if k != "samples"}, indent=2))
-    print(f"Written: {path}")
+    print(f"Tertulis: {path}")
 
 
 if __name__ == "__main__":

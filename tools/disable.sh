@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Disable every package listed in a debloat file on the TV (one package per line, # comments allowed).
-# Packages are disabled for user 0, never uninstalled. Undo with tools/restore.sh <same file>.
+# Nonaktifkan semua paket di file debloat di TV (satu paket per baris, komentar # boleh).
+# Paket dinonaktifkan untuk user 0, tidak pernah di-uninstall. Balikin pakai tools/restore.sh <file yang sama>.
 #
 # Usage: TV_HOST=192.168.1.50 tools/disable.sh examples/xiaomi-mi-tv-4a/debloat.txt
 set -euo pipefail
-LIST="${1:?usage: disable.sh <debloat list>}"
+LIST="${1:?cara pakai: disable.sh <debloat list>}"
 # Resolve the list against the caller's directory before moving into the repo. Git Bash's pwd says
 # /c/Users/..., which the Windows Python cannot open with MSYS_NO_PATHCONV=1 set; pwd -W gives
 # C:/Users/..., the same path (and so the same record) as the PowerShell scripts.
@@ -14,13 +14,13 @@ cd "$(dirname "$0")/.."
 PY=tools/venv/bin/python
 [ -x "$PY" ] || PY=tools/venv/Scripts/python.exe
 export MSYS_NO_PATHCONV=1
-[ -x "$PY" ] || { echo "run: python3 -m venv tools/venv && tools/venv/bin/pip install -r tools/requirements.txt"; exit 1; }
+[ -x "$PY" ] || { echo "jalankan dulu: python3 -m venv tools/venv && tools/venv/bin/pip install -r tools/requirements.txt"; exit 1; }
 # Lists come from contributors, and the package name is pasted into a shell command on the TV.
 # Refuse the whole list unless every entry is a bare package name (#165).
 # A list read from a directory that is not there dies in the `cd` above; one whose file is not
 # readable only made awk complain, so say it in the script's own words, next to the empty-list
 # message below rather than as a stray awk line.
-[ -r "$LIST" ] || { echo "cannot read the list: $LIST" >&2; exit 1; }
+[ -r "$LIST" ] || { echo "File daftarnya tidak kebaca — cannot read the list: $LIST" >&2; exit 1; }
 # Normalise first: Notepad on Windows saves a BOM and CRLF, and without this the first "# TV" line
 # arrives as a package name and every entry keeps a trailing \r (#208).
 # `|| true`: an empty result is not a failure of this pipeline. Under pipefail the grep exits 1 when
@@ -31,7 +31,7 @@ PKGS=$(LC_ALL=C awk 'NR==1{sub(/^\357\273\277/,"")} {sub(/\r$/,""); print}' "$LI
   | grep -vE '^\s*(#|$)' | sed -E 's/\s+#.*$//' | awk '{print $1}' || true)
 BAD=$(printf '%s\n' "$PKGS" | grep -vE '^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$' || true)
 if [ -n "$BAD" ]; then
-  { echo "refusing $LIST: not a package name:"; printf '%s\n' "$BAD" | sed 's/^/  /'; } >&2
+  { echo "Menolak $LIST: not a package name:"; printf '%s\n' "$BAD" | sed 's/^/  /'; } >&2
   exit 1
 fi
 # Nothing to do, and nothing to lose by saying so before the TV is asked anything: no record is
@@ -39,8 +39,8 @@ fi
 # refusal after the shape check because it is the one a contributor is most likely to hit: a list
 # whose entries are all commented out is what CONTRIBUTING asks for while an entry is untested.
 if [ -z "$PKGS" ]; then
-  echo "refusing $LIST: no package names in it (every line is a comment or blank), so nothing was" >&2
-  echo "sent to the TV and no recovery record was written." >&2
+  echo "Menolak $LIST: no package names di dalamnya (semua baris komentar atau kosong), jadi tidak ada" >&2
+  echo "yang dikirim ke TV dan catatan pemulihan tidak ditulis." >&2
   exit 1
 fi
 # Core Android packages: with one of these disabled, Android itself can stop booting. An original Mi TV
@@ -52,9 +52,9 @@ CORE_RE='^(android|com\.android\.systemui|com\.android\.shell|com\.android\.phon
 CORE_OK='^com\.android\.providers\.(calendar|contacts|userdictionary|blockednumber)$'
 CORE=$(printf '%s\n' "$PKGS" | grep -E "$CORE_RE" | grep -vE "$CORE_OK" || true)
 if [ -n "$CORE" ]; then
-  { echo "refusing $LIST: it disables core Android packages, and without them the TV may not boot again (#884):"
+  { echo "Menolak $LIST: daftar ini menonaktifkan paket Android inti, dan tanpa paket itu TV bisa gagal nyala lagi (#884):"
     printf '%s\n' "$CORE" | sed 's/^/  /'
-    echo "Take these lines out of the list (or comment them) and run it again. Nothing was changed on the TV."; } >&2
+    echo "Hapus baris ini dari daftar (atau jadikan komentar) lalu jalankan lagi. Tidak ada yang diubah di TV."; } >&2
   exit 1
 fi
 # A Wi-Fi network saved during the first-run wizard belongs to setupwraith, and Android deletes it the
@@ -68,14 +68,14 @@ if printf '%s\n' "$PKGS" | grep -x "$SETUP" >/dev/null && [ -z "${FORCE_SETUPWRA
   WIFI="$("$PY" -I tools/tv.py "dumpsys wifi")" || WIFI=""
   OWNERS="$(printf '%s\n' "$WIFI" | grep -o 'cname=[^ ]*' || true)"
   if [ -z "$OWNERS" ]; then
-    echo "Skipping $SETUP: could not check which app owns the saved Wi-Fi networks (dumpsys wifi failed" >&2
-    echo "or showed none). Try again, or set FORCE_SETUPWRAITH=1 if the TV uses Ethernet." >&2
+    echo "Skipping $SETUP: could not check aplikasi mana yang punya jaringan Wi-Fi tersimpan (dumpsys wifi gagal" >&2
+    echo "atau tidak menampilkan apa pun). Coba lagi, atau set FORCE_SETUPWRAITH=1 kalau TV pakai Ethernet." >&2
     PKGS="$(printf '%s\n' "$PKGS" | grep -vx "$SETUP" || true)"
   # no grep -q here: with pipefail its early exit would SIGPIPE the grep before it and fail open
   elif printf '%s\n' "$OWNERS" | grep setupwraith >/dev/null; then
-    echo "Skipping $SETUP: the saved Wi-Fi network belongs to it, and disabling it would delete that" >&2
-    echo "network and take the TV off Wi-Fi. On the TV, forget the network and join it again in" >&2
-    echo "Settings > Network & Internet, then run this again (or set FORCE_SETUPWRAITH=1 on Ethernet)." >&2
+    echo "Skipping $SETUP: jaringan Wi-Fi tersimpan milik paket ini, dan menonaktifkannya akan menghapus jaringan" >&2
+    echo "itu lalu TV lepas dari Wi-Fi. Di TV, lupakan jaringan itu lalu sambungkan lagi lewat" >&2
+    echo "Settings > Network & Internet, kemudian jalankan lagi (atau set FORCE_SETUPWRAITH=1 kalau pakai Ethernet)." >&2
     PKGS="$(printf '%s\n' "$PKGS" | grep -vx "$SETUP" || true)"
   fi
 fi
@@ -124,9 +124,9 @@ if [ -n "$HOME_PKG" ] && printf '%s\n' "$PKGS" | grep -xF "$HOME_PKG" >/dev/null
     | grep -vxF "$HOME_PKG" | grep -vxF "$PKGS" \
     | grep -vxF -e com.google.android.tungsten.setupwraith -e com.android.tv.settings -e com.android.settings -e com.android.provision || true)
   if [ -z "$OTHERS" ]; then
-    echo "Skipping $HOME_PKG: it owns Home, and no other app that can answer Home is installed and" >&2
-    echo "staying enabled. Make the new launcher Home first (launcher/build-and-install.sh), then run" >&2
-    echo "this list again to disable the old one; or set FORCE_HOME=1 if you can still reach the TV." >&2
+    echo "Skipping $HOME_PKG: paket ini yang pegang Home, dan tidak ada aplikasi lain yang bisa menjawab Home," >&2
+    echo "terpasang, dan tetap aktif. Jadikan launcher baru sebagai Home dulu (launcher/build-and-install.sh), lalu jalankan" >&2
+    echo "daftar ini lagi untuk menonaktifkan yang lama; atau set FORCE_HOME=1 kalau kamu masih bisa menjangkau TV." >&2
     PKGS="$(printf '%s\n' "$PKGS" | grep -vxF "$HOME_PKG" || true)"
   fi
 fi
@@ -134,11 +134,11 @@ fi
 # exactly like a check that passed, and on a set too old for the launcher there is nothing to lose by
 # keeping every listed package (#795).
 if [ -n "$PKGS" ] && [ -z "$HOME_PKG" ] && [ -z "${FORCE_HOME:-}" ]; then
-  echo "Could not tell which app owns Home on this TV, so the Home guard did not run: neither" >&2
-  echo '"cmd package resolve-activity" (added in Android 7) nor "dumpsys activity" named one.' >&2
-  echo 'Check by hand that the list does not hold your launcher before running it. The replacement' >&2
-  echo 'launcher needs Android 8.0 (minSdk 26), so on an older set the stock launcher is the only Home' >&2
-  echo 'there is: disabled, it leaves nothing to start, and a set with no recovery has no way back (#795).' >&2
+  echo "Could not tell which app owns Home di TV ini, jadi penjaga Home tidak jalan: baik" >&2
+  echo '"cmd package resolve-activity" (ada sejak Android 7) maupun "dumpsys activity" tidak menyebutkannya.' >&2
+  echo 'Cek sendiri bahwa daftar tidak memuat launcher kamu sebelum dijalankan. Launcher pengganti' >&2
+  echo 'butuh Android 8.0 (minSdk 26), jadi di set yang lebih lama stock launcher adalah satu-satunya Home' >&2
+  echo 'yang ada: kalau dinonaktifkan, tidak ada yang bisa dibuka, dan set tanpa pemulihan tidak ada jalan balik (#795).' >&2
 fi
 
 # Only the package's own "requested permissions" block counts: a vendor app in a shared UID would otherwise
@@ -169,24 +169,24 @@ if [ -n "$PKGS" ] && [ -z "${TVINPUT_ALLOW:-}" ]; then
     for p in $TV_HW; do
       # grep without -q: with pipefail an early exit could SIGPIPE printf and fail the run (see above).
       printf '%s\n' "$PKGS" | grep -xF "$p" >/dev/null || continue
-      echo "Skipping $p: it asks for android.permission.TV_INPUT_HARDWARE, so it is the software layer" >&2
-      echo "under the HDMI/AV/tuner inputs. With it disabled those inputs still notice the cable but stay" >&2
-      echo "black (\"No Signal\"), and re-enabling the pieces in batches does not restore the picture: a" >&2
-      echo "full restore plus a cold boot does (#321)." >&2
-      echo "Asking for the permission is not proof, though: a preloaded app can request it and drive no" >&2
-      echo "input at all. What settles it is which packages actually serve the input service:" >&2
+      echo "Skipping $p: paket ini minta android.permission.TV_INPUT_HARDWARE, jadi ini lapisan perangkat lunak" >&2
+      echo "di bawah input HDMI/AV/tuner. Kalau dinonaktifkan, input itu tetap mendeteksi kabel tapi layar tetap" >&2
+      echo "hitam (\"No Signal\"), dan mengaktifkan ulang sepotong-sepotong tidak mengembalikan gambar: yang" >&2
+      echo "mengembalikan adalah restore penuh plus cold boot (#321)." >&2
+      echo "Minta izin itu bukan bukti: aplikasi bawaan bisa memintanya tanpa mengurus input sama sekali. Yang" >&2
+      echo "memastikan adalah paket mana yang benar-benar melayani layanan input:" >&2
       echo "  pm query-services --components -a android.media.tv.TvInputService" >&2
-      echo "If $p is absent from that list it is a false positive on your set, as a MediaTek USB media" >&2
-      echo "player turned out to be (examples/cecotec-shandao). Check every input after a reboot before" >&2
-      echo "trusting it, then set TVINPUT_ALLOW=1 to disable it." >&2
+      echo "Kalau $p tidak ada di daftar itu, ini false positive di set kamu, seperti pemutar media USB MediaTek" >&2
+      echo "yang ternyata begitu (examples/cecotec-shandao). Cek setiap input setelah reboot sebelum" >&2
+      echo "percaya, lalu set TVINPUT_ALLOW=1 untuk menonaktifkannya." >&2
       PKGS="$(printf '%s\n' "$PKGS" | grep -vxF "$p" || true)"
     done
   else
     # Do not skip anything on a guess, but say the check did not run: a black input is easy to blame on
     # the cable, and the ports are the one thing the owner cannot test from here.
-    echo "Could not check which listed packages drive the HDMI/AV inputs (tv.py failed). Check every" >&2
-    echo "input after this run: a port that notices the cable and stays black means one of them was" >&2
-    echo "disabled, and only a full restore and a cold boot bring it back (#321)." >&2
+    echo "Could not check paket mana di daftar yang mengurus input HDMI/AV (tv.py gagal). Cek setiap" >&2
+    echo "input setelah proses ini: port yang mendeteksi kabel tapi tetap hitam berarti salah satunya" >&2
+    echo "dinonaktifkan, dan hanya restore penuh plus cold boot yang mengembalikannya (#321)." >&2
   fi
 fi
 
@@ -201,7 +201,7 @@ fi
 } | "$PY" -I tools/tv.py --batch
 
 if [ "$ADB_SECURE" = "0" ]; then
-  echo "Warning: this TV reports ro.adb.secure=0, so network ADB on port 5555 accepts any device on" >&2
-  echo "your network without the \"Allow\" prompt. When you are done, turn USB debugging and" >&2
-  echo "Network/ADB debugging off on the TV and reboot it (README: \"Isn't ADB access a security hole?\")." >&2
+  echo "Peringatan: TV ini melaporkan ro.adb.secure=0, jadi ADB jaringan di port 5555 menerima perangkat mana pun di" >&2
+  echo "jaringan kamu tanpa prompt \"Allow\". Setelah selesai, matikan USB debugging dan" >&2
+  echo "Network/ADB debugging di TV lalu reboot (README: \"Isn't ADB access a security hole?\")." >&2
 fi

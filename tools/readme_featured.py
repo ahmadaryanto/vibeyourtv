@@ -1,7 +1,7 @@
-"""Renders the Featured in panel (docs/featured.png), the middle part of the README card.
+"""Menggambar panel Featured in (docs/featured.png), bagian tengah kartu README.
 
-Update LOGOS / MORE, then: python3 tools/readme_featured.py Fredoka.ttf docs/featured.png
-and rebuild the card with tools/readme_card.py. Logos come from docs/press/."""
+Perbarui LOGOS / MORE, lalu: python3 tools/readme_featured.py Fredoka.ttf docs/featured.png
+dan susun ulang kartunya dengan tools/readme_card.py. Logo berasal dari docs/press/."""
 import sys
 from PIL import Image, ImageDraw, ImageFont
 FONT, OUT = sys.argv[1], sys.argv[2]

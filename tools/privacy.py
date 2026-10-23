@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""What this TV runs for voice, ACR and telemetry, with the evidence for each name (#444).
+"""Apa yang TV ini jalankan untuk suara, ACR, dan telemetri, beserta bukti tiap nama (#444).
 
-    privacy.py                      audit the connected TV and print the report
-    privacy.py --write <file>       write the candidates as a debloat list for tools/disable.sh
+    privacy.py                      audit TV yang tersambung dan cetak laporannya
+    privacy.py --write <file>       tulis kandidat sebagai daftar debloat untuk tools/disable.sh
     privacy.py --write <file> --include-low
-                                    also the packages that only matched by name
+                                    juga paket yang hanya cocok dari namanya
 
-The honest part is the evidence, not the category. On firmware where most packages run under
-`android.uid.system`, about fifty of them "have" RECORD_AUDIO and none of them record anything;
-a per-package permission scan would call all fifty listeners. So this audit says which names the
-firmware itself nominated, which ones are known components with a known job, which ones only matched
-by name, and which ones have microphone access in the returned AppOps history. It never claims a
-package is listening.
+Yang jujur adalah buktinya, bukan kategorinya. Di firmware yang sebagian besar paketnya jalan di bawah
+`android.uid.system`, sekitar lima puluh di antaranya "punya" RECORD_AUDIO dan tidak ada yang merekam;
+pemindaian izin per paket akan menuduh kelima puluh itu pendengar. Jadi audit ini menyebut nama yang
+ditunjuk firmware sendiri, komponen yang sudah dikenal beserta tugasnya, yang hanya cocok dari nama,
+dan yang punya jejak akses mikrofon di riwayat AppOps yang kembali. Audit ini tidak pernah mengklaim
+sebuah paket sedang mendengarkan.
 
-Disabling is left to `tools/disable.sh`, so the undo path is the one every list already uses: the
-record written before the first change, replayed by `tools/restore.sh`.
+Penonaktifan diserahkan ke `tools/disable.sh`, jadi jalur undo-nya sama dengan daftar lain: catatan
+yang ditulis sebelum perubahan pertama, diputar ulang oleh `tools/restore.sh`.
 """
 import os
 import re
@@ -29,45 +29,44 @@ PACKAGE_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+")
 CATALOGUE = {
     "com.google.android.katniss": (
         "voice",
-        "Google Assistant and voice search; the remote's mic button and voice search inside apps go "
-        "dead without it",
+        "Google Assistant dan pencarian suara; tombol mic di remote dan pencarian suara di dalam aplikasi mati tanpanya",
     ),
     "com.google.android.speech.pumpkin": (
         "voice",
-        "offline hotword model, unused once the assistant above is off",
+        "model hotword offline, tidak terpakai begitu asisten di atas dimatikan",
     ),
     "org.droidtv.amazonalexa": (
         "voice",
-        "Amazon Alexa on Philips sets; the microphone is in the remote, not the panel",
+        "Amazon Alexa di set Philips; mikrofonnya ada di remote, bukan di panel",
     ),
     "tv.inscape.tvclient.inscapeacr": (
         "acr",
-        "Inscape ACR client: identifies what is on screen, HDMI included, from the picture, and needs "
-        "only INTERNET, not RECORD_AUDIO",
+        "klien Inscape ACR: mengenali apa yang ada di layar, termasuk HDMI, dari gambarnya, dan hanya butuh "
+        "INTERNET, not RECORD_AUDIO",
     ),
     "com.skyworth.aisense": (
         "acr",
-        "Coocaa/Skyworth ACR, used to target the ads pushed to the set",
+        "ACR Coocaa/Skyworth, dipakai untuk menarget iklan yang didorong ke set",
     ),
     "org.droidtv.candeebug": (
         "telemetry",
-        "\"DAC\" analytics on Philips sets",
+        "analitik \"DAC\" di set Philips",
     ),
     "org.droidtv.gel": (
         "telemetry",
-        "\"GEL\" analytics; it runs inside the candeebug process, so both go together",
+        "analitik \"GEL\"; jalan di dalam proses candeebug, jadi keduanya ikut",
     ),
     "org.droidtv.usagelogger": (
         "telemetry",
-        "boot stats, remote keypress counts and panel telemetry",
+        "statistik boot, jumlah tombol remote, dan telemetri panel",
     ),
     "org.droidtv.tv.frameworklogger": (
         "telemetry",
-        "framework and reboot logging",
+        "log framework dan reboot",
     ),
     "com.google.android.feedback": (
         "telemetry",
-        "feedback reports to Google",
+        "laporan masukan ke Google",
     ),
 }
 
@@ -83,10 +82,10 @@ NAME_HINT = re.compile(
 
 VOICE_SETTINGS = ("voice_interaction_service", "voice_recognition_service", "assistant")
 TITLES = (
-    ("voice", "Voice assistants and wake word"),
-    ("acr", "ACR (identifies what is on screen, no microphone needed)"),
-    ("telemetry", "Telemetry and analytics"),
-    ("unknown", "Matched by name only, nothing else known"),
+    ("voice", "Voice assistants and wake word — asisten suara dan kata pemicu"),
+    ("acr", "ACR (identifies what is on screen, no microphone needed) — mengenali layar, tanpa mikrofon"),
+    ("telemetry", "Telemetry and analytics — telemetri dan analitik"),
+    ("unknown", "Matched by name only, nothing else known — hanya cocok dari nama, yang lain tidak diketahui"),
 )
 # `dumpsys package` is slow on old firmware; a TV with fifty name matches is not worth ten minutes.
 MAX_PROBES = 25
@@ -103,13 +102,13 @@ def connect():
     try:
         import tv
     except ImportError as e:
-        raise SystemExit(f"cannot load tools/tv.py ({e}).\nrun: python3 -m venv tools/venv && "
+        raise SystemExit(f"tidak bisa memuat tools/tv.py ({e}).\njalankan dulu: python3 -m venv tools/venv && "
                          "tools/venv/bin/pip install -r tools/requirements.txt")
     try:
         return tv.connect()
     except Exception as e:
-        raise SystemExit(f"cannot reach the TV at {os.environ.get('TV_HOST', 'TV_HOST')}: {e}\n"
-                         "Check TV_HOST and that USB debugging is still on (tools/tv.py --probe).")
+        raise SystemExit(f"cannot reach the TV di {os.environ.get('TV_HOST', 'TV_HOST')}: {e}\n"
+                         "Cek TV_HOST dan USB debugging masih nyala (tools/tv.py --probe).")
 
 
 def query_packages(dev):
@@ -121,8 +120,8 @@ def query_packages(dev):
         if PACKAGE_RE.fullmatch(name) and name not in installed:
             installed.append(name)
     if not installed:
-        raise SystemExit("the TV returned no packages, so there is nothing to audit. Check the "
-                         "connection (tools/tv.py --probe) and try again.")
+        raise SystemExit("TV returned no packages, jadi tidak ada yang bisa diaudit. Cek "
+                         "koneksinya (tools/tv.py --probe) lalu coba lagi.")
     disabled = {line.split(":", 1)[1].strip()
                 for line in shell(dev, "pm list packages -d").splitlines()
                 if line.startswith("package:")}
@@ -173,32 +172,32 @@ def used_microphone(ops):
 
 def classify(name, owners, probed):
     """(category, note, evidence lines) for one package."""
-    category, note = CATALOGUE.get(name, ("unknown", "matched by name only"))
+    category, note = CATALOGUE.get(name, ("unknown", "matched by name only (hanya cocok dari namanya)"))
     evidence = []
     if name in owners:
         # The firmware nominated it, which outranks both the catalogue and the name.
         category = "voice" if category == "unknown" else category
         if name not in CATALOGUE:
-            note = "the TV's own speech service"
+            note = "layanan ucapan milik TV sendiri"
         evidence.append(f"named by the TV: {', '.join(owners[name])}")
 
     uid = probed.get("uid")
     if uid == SYSTEM_UID:
         # About fifty packages on such firmware show RECORD_AUDIO granted because they share the
         # system UID; listing that per package is how a permission scan ends up crying wolf.
-        evidence.append("shares the system UID (uid 1000): the permissions it shows are the system's, "
-                        "not evidence that it records")
+        evidence.append("shares the system UID (uid 1000): izin yang kelihatan milik sistem, "
+                        "bukan bukti paket ini merekam")
     elif probed.get("declared"):
         evidence.append("declares RECORD_AUDIO")
 
     used = used_microphone(probed.get("appops", ""))
     if used is False:
-        evidence.append("appops: no RECORD_AUDIO history returned")
+        evidence.append("appops: no RECORD_AUDIO history returned (tidak ada jejak yang kembali)")
     elif used is True:
-        evidence.append("appops: recorded RECORD_AUDIO access in the returned history "
-                        "(read in full with `appops get <package> RECORD_AUDIO`)")
+        evidence.append("appops: recorded RECORD_AUDIO access di riwayat yang kembali "
+                        "(baca lengkapnya dengan `appops get <package> RECORD_AUDIO`)")
     else:
-        evidence.append("appops: RECORD_AUDIO access is unknown from this output")
+        evidence.append("appops: RECORD_AUDIO access is unknown dari keluaran ini")
     return category, note, evidence
 
 
@@ -238,8 +237,8 @@ def sections(entries):
 def print_report(result):
     installed = len(result["installed"])
     enabled = installed - len(result["disabled"])
-    print(f"Audit of the TV at {os.environ.get('TV_HOST', 'TV_HOST')}: {installed} packages, "
-          f"{enabled} enabled.\n")
+    print(f"Audit TV di {os.environ.get('TV_HOST', 'TV_HOST')}: {installed} paket, "
+          f"{enabled} aktif.\n")
     for title, group in sections(result["entries"]):
         print(title)
         for entry in group:
@@ -249,22 +248,22 @@ def print_report(result):
                 print(f"            {line}")
         print()
     if not result["entries"]:
-        print("No voice assistant, ACR client or telemetry package was found by name on this TV.")
-        print("That is not a clean bill of health: it only means nothing here recognised the names.")
+        print("Tidak ada asisten suara, klien ACR, atau paket telemetri yang dikenali dari nama di TV ini.")
+        print("Itu bukan surat sehat: artinya tidak ada nama di sini yang dikenali.")
         print()
     if result["skipped"]:
-        print(f"{result['skipped']} more name matches were not probed (the audit stops at "
-              f"{MAX_PROBES}); check them by hand with `dumpsys package <name>`.")
+        print(f"{result['skipped']} kecocokan nama lagi tidak diperiksa (audit berhenti di "
+              f"{MAX_PROBES}); cek manual dengan `dumpsys package <name>`.")
         print()
-    print("What to do with it")
-    print("  tools/privacy.py --write privacy.txt        # the voice, ACR and telemetry rows above")
-    print("  TV_HOST=<tv ip> tools/disable.sh privacy.txt   # applies it, records the undo first")
+    print("Apa yang bisa dilakukan")
+    print("  tools/privacy.py --write privacy.txt        # baris suara, ACR, dan telemetri di atas")
+    print("  TV_HOST=<tv ip> tools/disable.sh privacy.txt   # menerapkan, catatan undo ditulis dulu")
     print("  TV_HOST=<tv ip> tools/restore.sh privacy.txt   # undo")
     print()
-    print("What this audit cannot tell you: whether audio ever leaves the TV. `appops` shows the op "
-          "was touched, not what was done with the stream, and on many sets the microphone is in the "
-          "remote rather than the panel. Nothing on this list is proven to be recording, and nothing "
-          "here proves it is not.")
+    print("What this audit cannot tell you: whether audio ever leaves the TV. `appops` hanya menunjukkan op "
+          "terjamah, bukan apa yang dilakukan dengan alirannya, dan di banyak set the microphone is in the "
+          "remote rather than the panel. Tidak ada di daftar ini yang terbukti merekam, dan tidak ada "
+          "yang membuktikan sebaliknya.")
 
 
 def list_lines(result, include_low):
@@ -272,18 +271,18 @@ def list_lines(result, include_low):
     keep = [e for e in result["entries"]
             if e["category"] != "unknown" or include_low]
     if not keep:
-        raise SystemExit("nothing identified to write: only name matches were found. Run the audit "
-                         "again to read them, or pass --include-low to write those too.")
+        raise SystemExit("nothing identified to write: yang ketemu hanya kecocokan nama. Jalankan audit "
+                         "lagi untuk membacanya, atau kasih --include-low untuk menulis itu juga.")
     host = os.environ.get("TV_HOST", "")
     lines = [
-        f"# Privacy audit of the TV at {host or 'TV_HOST'}, written by tools/privacy.py.",
-        "# Voice, ACR and telemetry candidates this TV answered for. Everything is DISABLED, not",
-        "# uninstalled, and the undo is the one every list uses:",
+        f"# Audit privasi TV di {host or 'TV_HOST'}, ditulis oleh tools/privacy.py.",
+        "# Kandidat suara, ACR, dan telemetri yang TV ini jawab. Semuanya DINONAKTIFKAN, tidak",
+        "# di-uninstall, dan undo-nya sama dengan daftar lain:",
         f"#   TV_HOST={host or '<tv ip>'} tools/disable.sh privacy.txt",
         f"#   TV_HOST={host or '<tv ip>'} tools/restore.sh privacy.txt",
         "#",
-        "# Each line says what the package is and why it is here. Nothing below is proven to record",
-        "# anything: the audit reports what the firmware and the packages declare.",
+        "# Tiap baris menjelaskan paketnya dan kenapa ada di sini. Tidak ada di bawah yang terbukti merekam",
+        "# apa pun: audit melaporkan apa yang firmware dan paket nyatakan.",
     ]
     for title, group in sections(keep):
         lines.append("")
@@ -304,15 +303,15 @@ def write_list(path, result, include_low):
     if os.path.exists(path):
         # A second audit of the same TV may legitimately differ, but silently replacing a list the
         # owner is about to apply is how a hand edit disappears.
-        raise SystemExit(f"{path} already exists; move it aside or choose another name.")
+        raise SystemExit(f"{path} already exists; pindahkan atau pilih nama lain.")
     lines = list_lines(result, include_low)
     with open(path, "w") as f:
         f.write("\n".join(lines) + "\n")
     names = sum(1 for line in lines if line and not line.startswith("#"))
-    print(f"wrote {names} packages to {path}")
-    print(f"apply:   TV_HOST={os.environ.get('TV_HOST', '<tv ip>')} tools/disable.sh {path}")
+    print(f"menulis {names} paket ke {path}")
+    print(f"terapkan:   TV_HOST={os.environ.get('TV_HOST', '<tv ip>')} tools/disable.sh {path}")
     print(f"undo:    TV_HOST={os.environ.get('TV_HOST', '<tv ip>')} tools/restore.sh {path}")
-    print(f"read it first: the comments say what each one takes with it.")
+    print("baca dulu: komentarnya menjelaskan apa yang ikut hilang.")
 
 
 def main():
@@ -320,9 +319,9 @@ def main():
     include_low = "--include-low" in args
     args = [a for a in args if a != "--include-low"]
     if args and (len(args) != 2 or args[0] != "--write"):
-        sys.stderr.write("usage: privacy.py                       audit the connected TV\n"
+        sys.stderr.write("usage: privacy.py                       audit TV yang tersambung\n"
                          "       privacy.py --write <file> [--include-low]\n"
-                         "                                    write the candidates as a debloat list\n")
+                         "                                    tulis kandidat sebagai daftar debloat\n")
         return 2
 
     dev = connect()

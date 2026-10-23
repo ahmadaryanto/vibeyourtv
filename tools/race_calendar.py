@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Put this season's F1 calendar into a theme, for the launcher's race-weekend mode.
+"""Masukkan kalender F1 musim ini ke sebuah tema, untuk mode akhir pekan balapan di launcher.
 
-    race_calendar.py <theme folder>              fetch the current season and write race_calendar into
-                                                 <theme folder>/config.json, keeping every other key
+    race_calendar.py <theme folder>              ambil musim yang sedang berjalan dan tulis race_calendar ke
+                                                 <theme folder>/config.json, kunci lain tetap
     race_calendar.py <theme folder> --season 2027
 
-Then push the theme as usual: tools/theme.sh <theme folder>. The launcher never goes online; this script is
-the only thing that does, once, on your computer. The data comes from Jolpica (https://jolpi.ca), the free
-community successor to the Ergast API: no key, no account. Run it again when F1 moves a session or a new
-season starts. Races that are already over are left out.
+Lalu kirim temanya seperti biasa: tools/theme.sh <theme folder>. Launcher tidak pernah online; skrip ini
+satu-satunya yang online, sekali, di komputer kamu. Datanya dari Jolpica (https://jolpi.ca), penerus
+komunitas gratis dari API Ergast: tanpa kunci, tanpa akun. Jalankan lagi kalau F1 memindah sesi atau
+musim baru mulai. Balapan yang sudah lewat tidak dimasukkan.
 """
 import argparse
 import datetime
@@ -61,9 +61,9 @@ def calendar(races, now):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Put this season's F1 calendar into a theme.")
-    parser.add_argument("theme", help="theme folder with a config.json (created if missing)")
-    parser.add_argument("--season", default="current", help="season year, default the current one")
+    parser = argparse.ArgumentParser(description="Masukkan kalender F1 musim ini ke sebuah tema.")
+    parser.add_argument("theme", help="folder tema dengan config.json (dibuat kalau belum ada)")
+    parser.add_argument("--season", default="current", help="tahun musim, default musim yang sedang berjalan")
     args = parser.parse_args()
 
     config = Path(args.theme) / "config.json"
@@ -74,13 +74,13 @@ def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     races = calendar(table["Races"], now)
     if not races:
-        sys.exit(f"no upcoming races in the {table['season']} calendar; try --season with next year")
+        sys.exit(f"tidak ada balapan mendatang di kalender {table['season']}; coba --season tahun depan")
     theme["race_calendar"] = races
     config.parent.mkdir(parents=True, exist_ok=True)
     config.write_text(json.dumps(theme, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     first = races[0]
-    print(f"{len(races)} races from the {table['season']} season -> {config}")
-    print(f"next: round {first['round']} {first['name']}, race {first['sessions'][-1]['start']}")
+    print(f"{len(races)} balapan dari musim {table['season']} -> {config}")
+    print(f"berikutnya: ronde {first['round']} {first['name']}, balapan {first['sessions'][-1]['start']}")
 
 
 if __name__ == "__main__":

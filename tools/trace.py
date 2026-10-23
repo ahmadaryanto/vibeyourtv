@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
-"""Record Perfetto traces on the TV around a launcher scenario, to see where its time goes.
+"""Rekam jejak Perfetto di TV di sekitar satu skenario launcher, untuk lihat waktu habis di mana.
 
-tools/bench.py gives the headline numbers (key latency, jank, cold start, return to Home, PSS) with no
-extra installs. This records the full timeline instead: every thread's slices, the launcher's own
-lifecycle (onCreate, onResume, layout, draw) and the frame timeline, so a change can be traced to the
-work it removes. tools/trace_report.py turns a folder of these traces into the numbers. Read
-tools/trace.md first: it says which scenario to use and what can mislead.
+tools/bench.py memberi angka utama (latensi tombol, jank, cold start, kembali ke Home, PSS) tanpa
+instal tambahan. Ini merekam linimasa lengkap: irisan tiap thread, siklus hidup launcher
+(onCreate, onResume, layout, draw) dan linimasa frame, supaya perubahan bisa ditelusuri ke kerja
+yang dihilangkan. tools/trace_report.py mengubah folder jejak ini jadi angka. Baca
+tools/trace.md dulu: di sana skenario mana yang dipakai dan apa yang bisa menyesatkan.
 
-Recording needs nothing beyond tools/requirements.txt; the perfetto client already ships on Android 9
-and later. Set TV_HOST to the TV's IP (and TV_PORT if it is not 5555). Usage:
+Merekam tidak butuh apa pun di luar tools/requirements.txt; klien perfetto sudah ada di Android 9
+ke atas. Set TV_HOST ke IP TV (dan TV_PORT kalau bukan 5555). Usage:
 
     tools/trace.py home --runs 5 --out traces/before
     tools/trace.py cold|coldsys|home|nav --runs N --out DIR [--package PKG] [--app COMPONENT]
     tools/trace.py custom --setup 'input keyevent KEYCODE_HOME' --setup 'sleep 2' \\
                           --step 'input keyevent KEYCODE_DPAD_RIGHT' --step 'sleep 1' --out DIR
 
-Scenarios (setup runs before the recording starts, so it stays out of the trace):
-    cold     another app in front, the launcher force-stopped, then started with `am start -W`
-    coldsys  Home in front, the launcher force-stopped: Android starts it again by itself
-    home     another app in front, then the HOME key: the everyday return to Home
-    nav      Home in front, then 24 D-pad moves 0.35 s apart
-    custom   your own --setup and --step shell commands; `sleep N` steps set the length
+Skenario (setup jalan sebelum rekaman mulai, jadi tidak masuk jejak):
+    cold     aplikasi lain di depan, launcher di-force-stop, lalu dimulai dengan `am start -W`
+    coldsys  Home di depan, launcher di-force-stop: Android menyalakannya lagi sendiri
+    home     aplikasi lain di depan, lalu tombol HOME: kembali ke Home sehari-hari
+    nav      Home di depan, lalu 24 gerak D-pad berjarak 0,35 dtk
+    custom   perintah shell --setup dan --step milikmu; langkah `sleep N` menentukan lamanya
 """
 import argparse
 import base64
@@ -109,27 +109,27 @@ def scenario(name, launcher_component, other_component, setup=(), steps=()):
 
 
 def parse(argv):
-    p = argparse.ArgumentParser(description="Record Perfetto traces on the TV around a launcher scenario. "
-                                            "See tools/trace.md.")
+    p = argparse.ArgumentParser(description="Rekam jejak Perfetto di TV di sekitar skenario launcher. "
+                                            "Lihat tools/trace.md.")
     p.add_argument("scenario", choices=["cold", "coldsys", "home", "nav", "custom"])
-    p.add_argument("--runs", type=int, default=5, help="how many traces to record (default 5)")
-    p.add_argument("--out", default="traces", help="folder for the traces (default traces/)")
-    p.add_argument("--package", default="com.gathin.tvhome", help="the launcher's package (default com.gathin.tvhome)")
+    p.add_argument("--runs", type=int, default=5, help="berapa jejak yang direkam (default 5)")
+    p.add_argument("--out", default="traces", help="folder untuk jejaknya (default traces/)")
+    p.add_argument("--package", default="com.gathin.tvhome", help="paket launcher (default com.gathin.tvhome)")
     p.add_argument("--app", metavar="COMPONENT",
-                   help="the other app for cold and home, as package/activity (default: found on the TV)")
-    p.add_argument("--setup", action="append", default=[], metavar="CMD", help="custom: a setup command")
-    p.add_argument("--step", action="append", default=[], metavar="CMD", help="custom: a recorded step")
+                   help="aplikasi lain untuk cold dan home, sebagai package/activity (default: dicari di TV)")
+    p.add_argument("--setup", action="append", default=[], metavar="CMD", help="custom: satu perintah setup")
+    p.add_argument("--step", action="append", default=[], metavar="CMD", help="custom: satu langkah yang direkam")
     args = p.parse_args(argv)
     if not PACKAGE.match(args.package):
         p.error(f"not a package name: {args.package!r}")
     if args.app and not COMPONENT.match(args.app):
-        p.error(f"--app needs package/activity, not {args.app!r}")
+        p.error(f"--app needs package/activity, bukan {args.app!r}")
     if not 1 <= args.runs <= 50:
-        p.error("--runs must be between 1 and 50")
+        p.error("--runs harus antara 1 dan 50")
     if args.scenario == "custom" and not args.step:
-        p.error("custom needs at least one --step")
+        p.error("custom butuh at least one --step")
     if args.scenario != "custom" and (args.setup or args.step):
-        p.error("--setup and --step are for the custom scenario")
+        p.error("--setup dan --step hanya untuk custom scenario")
     return args
 
 
@@ -141,7 +141,7 @@ def record_one(dev, setup, steps, package, out_path, run_shell=None):
     config = base64.b64encode(perfetto_config(package, recording_ms(steps))).decode()
     said = run_shell(f"rm -f {REMOTE}; echo {config} | base64 -d | perfetto -c - -o {REMOTE} --background 2>&1")
     if re.search(r"not found|inaccessible|[Ee]rror", said):
-        raise RuntimeError("perfetto did not start on the TV (it ships with Android 9 and later): " + said.strip())
+        raise RuntimeError("perfetto tidak mulai di TV (sudah ada sejak Android 9 and later): " + said.strip())
     # Newer --background clients print their PID. Watch /proc for it: SELinux refuses `kill -0` on perfetto's
     # process from the shell (TCL C755), which would look like a finished recording and pull an empty file.
     pid = next((w for w in said.split() if w.isdigit()), None)
@@ -159,7 +159,7 @@ def record_one(dev, setup, steps, package, out_path, run_shell=None):
     size = os.path.getsize(out_path)
     if size == 0:
         os.remove(out_path)
-        raise RuntimeError("perfetto wrote an empty trace; run with --runs 1 and see tools/trace.md")
+        raise RuntimeError("perfetto menulis empty trace; jalankan dengan --runs 1 dan lihat tools/trace.md")
     return size
 
 
@@ -197,7 +197,7 @@ def main(argv=None):
     try:
         dev = tv.connect()
     except OSError as e:
-        sys.exit(f"cannot reach the TV at {tv.HOST}:{tv.PORT} ({e}). Is it on and awake, with network debugging on?")
+        sys.exit(f"cannot reach the TV di {tv.HOST}:{tv.PORT} ({e}). TV-nya nyala dan tidak tidur, dengan network debugging nyala?")
     shell = lambda cmd: dev.shell(cmd, read_timeout_s=120.0)
     try:
         home = shell("cmd package resolve-activity --brief -a android.intent.action.MAIN "
@@ -207,7 +207,7 @@ def main(argv=None):
         if args.scenario in ("cold", "home") and not other:
             other = other_app(shell, args.package)
             if not other:
-                sys.exit("could not find another app to switch to; pass --app package/activity")
+                sys.exit("tidak ketemu aplikasi lain untuk pindah; kasih --app package/activity")
         setup, steps = scenario(args.scenario, launcher, other, args.setup, args.step)
         stops = any("force-stop" in c for c in setup + steps)
         # A force-stop can take the launcher's accessibility helpers off the list (tools/bench.py): read them
@@ -231,7 +231,7 @@ def main(argv=None):
                 bench.restore_accessibility(_Shell(shell), args.package, helpers)
     finally:
         dev.close()
-    print(f"next: tools/trace_report.py {args.out}   (see tools/trace.md)")
+    print(f"berikutnya: tools/trace_report.py {args.out}   (lihat tools/trace.md)")
 
 
 class _Shell:

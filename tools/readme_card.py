@@ -1,6 +1,6 @@
-"""Stacks the README stat strip, the Featured in panel and the before/after TVs into one card (docs/card.png).
+"""Menumpuk strip statistik README, panel Featured in, dan TV sebelum/sesudah jadi satu kartu (docs/card.png).
 
-Run tools/readme_stats.py and tools/readme_featured.py first, then:
+Jalankan tools/readme_stats.py dan tools/readme_featured.py dulu, lalu:
 python3 tools/readme_card.py Fredoka.ttf docs/card.png
 """
 import sys

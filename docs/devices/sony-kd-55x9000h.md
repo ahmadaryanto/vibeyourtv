@@ -1,3 +1,9 @@
+# Sony KD-55X9000H: catatan launcher
+
+Ringkasan Bahasa Indonesia: BRAVIA — serah terima Home, Live TV, dan batas validasi.
+
+---
+
 # Sony KD-55X9000H (PA firmware): compatibility notes
 
 This is a one-day owner report from 2026-10-21, not a tested debloat list.

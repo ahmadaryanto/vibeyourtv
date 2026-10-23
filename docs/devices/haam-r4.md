@@ -1,16 +1,16 @@
-# HAAM HM4K75S11TND: selecting the satellite tuner
+# HAAM HM4K75S11TND: memilih tuner satelit
 
-Checked on a retail HM4K75S11TND whose Android model is `R4`, Android 11 / API 30,
+Dicek di HM4K75S11TND ritel yang model Android `R4`, Android 11 / API 30,
 Realtek `rtd2851m`, software `V8-T851MGL-0001103`, fingerprint
 `HAAM/HAAM/R4:11/RTT7.221026.001/3172:user/release-keys`.
-These are launcher-routing observations, not a debloat list or firmware compatibility claim.
+Observasi routing launcher, bukan daftar debloat atau klaim kompatibilitas firmware.
 
 ![Inputs menu on the tested HAAM R4](haam-r4-inputs.png)
 
-## Several tuners, one Live TV app
+## Beberapa tuner, satu apl Live TV
 
-The player is `com.apps.livetv`. It is separate from the packages that supply the
-inputs. This firmware registers all four of these as system `TYPE_TUNER` inputs:
+Pemain `com.apps.livetv`. Terpisah dari paket yang menyediakan
+input. Firmware ini mendaftarkan keempat ini sebagai input sistem `TYPE_TUNER`:
 
 | Label | Input ID |
 |---|---|
@@ -19,14 +19,14 @@ inputs. This firmware registers all four of these as system `TYPE_TUNER` inputs:
 | ANTENNA | `com.apps.dtv/.tvinput.DTVTvInputService/HW33685505` |
 | SATELLITE | `com.apps.dtv/.tvinput.DTVTvInputService/HW33685506` |
 
-The automatic tuner heuristic picks ATV here: its ID does not contain `analog`.
-Even preferring a digital input would not tell the launcher which of cable,
-antenna or satellite has the owner's dish connected. Sending a passthrough URI
-for the satellite input also opened AV on this firmware. The working route is
-the satellite input's **channel collection**, using `TvContract.buildChannelsUriForInput`
-and `TvContract.Channels.CONTENT_TYPE`, restricted to `com.apps.livetv`.
+Heuristik tuner otomatis memilih ATV di sini: ID tidak mengandung `analog`.
+Meski prefer input digital juga tidak memberi launcher mana dari kabel,
+antena atau satelit yang parabola pemilik terhubung. URI passthrough untuk input satelit
+juga membuka AV di firmware ini. Rute yang jalan adalah
+**koleksi saluran** input satelit, memakai `TvContract.buildChannelsUriForInput`
+dan `TvContract.Channels.CONTENT_TYPE`, dibatasi `com.apps.livetv`.
 
-For this exact configuration, merge these keys into your theme's `config.json`:
+Untuk konfigurasi persis ini, gabungkan kunci ini ke `config.json` tema:
 
 ```json
 {
@@ -35,46 +35,46 @@ For this exact configuration, merge these keys into your theme's `config.json`:
 }
 ```
 
-Or set the equivalent strings in `launcher/app/src/main/res/values/config.xml`.
-The ID must match a registered system tuner exactly; obtain your own IDs from
-`tools/tv.py 'dumpsys tv_input'` rather than copying a number from another model.
-If the chosen input is missing, or the configured player cannot resolve the
-channel collection, the row opens the normal Live TV app. It does not silently
-choose another tuner. Leave `live_tv_input_id` empty to retain existing automatic
-selection and OEM routing.
+Atau set string setara di `launcher/app/src/main/res/values/config.xml`.
+ID harus cocok tuner sistem terdaftar persis; dapatkan ID sendiri dari
+`tools/tv.py 'dumpsys tv_input'` alih-alih salin angka model lain.
+Jika input pilihan hilang, atau pemain terkonfigurasi tidak resolve
+koleksi saluran, baris buka apl Live TV normal. Tidak diam-diam
+pilih tuner lain. Biarkan `live_tv_input_id` kosong untuk pertahankan seleksi otomatis
+dan routing OEM.
 
-An input being registered does not mean it is configured or usable. A wrong but
-existing ID can be accepted by the Live TV app and open an empty tuner setup
-screen, so the fallback above does not run. Use a tuner verified on your own TV,
-or clear `live_tv_input_id` to restore automatic selection. In a
-[community check on a Philips 65PUS8102/12](https://github.com/Gathin23/cleanyourtv/pull/534#issuecomment-6315693748)
-(Android TV 8.0, TPM171E / MediaTek), HW0 opened the player while the registered
-HW9 opened an empty setup screen. This was an intent and focused-activity check,
-not a picture check, and those IDs must not be copied to other TVs.
+Input terdaftar tidak berarti dikonfigurasi atau usable. ID salah tapi
+ada bisa diterima apl Live TV dan buka layar setup tuner kosong,
+jadi fallback di atas tidak jalan. Pakai tuner terverifikasi di TV sendiri,
+atau kosongkan `live_tv_input_id` untuk seleksi otomatis. Di
+[cek komunitas Philips 65PUS8102/12](https://github.com/Gathin23/cleanyourtv/pull/534#issuecomment-6315693748)
+(Android TV 8.0, TPM171E / MediaTek), HW0 buka pemain sementara HW9 terdaftar
+buka layar setup kosong. Cek intent dan aktivitas fokus,
+bukan cek gambar, dan ID itu jangan disalin ke TV lain.
 
-This selects an input, not a particular programme, satellite orbital position or
-frequency. The TV's own channel database and player still control tuning. It does
-not scan, renumber channels, replace a tuner driver or change dish settings.
+Ini memilih input, bukan program tertentu, posisi orbit satelit atau
+frekuensi. Database saluran dan pemain TV masih mengontrol tuning. Tidak
+scan, renumerasi saluran, ganti driver tuner atau ubah setting parabola.
 
-## Evidence and limits
+## Bukti dan batas
 
-On the owner's customized launcher, selecting the satellite collection after AV
-opened the satellite input and an existing programme. The owner confirmed normal
-picture and sound. The native TV-input session reported `HW33685506`.
-The proposed change was also built against upstream commit `687b5ee` and tested
-as a separate application on the same TV. With the explicit satellite ID, the
-activity launch used the package-restricted channel-collection URI and the active
-TV-input session reported `HW33685506`. With a deliberately nonexistent ID, the
-launcher instead sent the normal leanback launch intent to the configured Live
-TV app. Up/Down/Left/Right were checked at the Inputs popup's first and last rows;
-Back closed the popup. The screenshot above is from that test build.
+Di launcher kustom pemilik, memilih koleksi satelit setelah AV
+buka input satelit dan program existing. Pemilik konfirmasi gambar
+dan suara normal. Sesi TV-input native melaporkan `HW33685506`.
+Perubahan yang diusulkan juga dibangun terhadap commit upstream `687b5ee` dan diuji
+sebagai aplikasi terpisah di TV sama. Dengan ID satelit eksplisit,
+launch aktivitas memakai URI koleksi saluran dibatasi paket dan sesi
+TV-input aktif melaporkan `HW33685506`. Dengan ID sengaja tidak ada, launcher
+mengirim intent launch leanback normal ke apl Live TV
+terkonfigurasi. Up/Down/Left/Right dicek di baris pertama dan terakhir popup Inputs;
+Back menutup popup. Screenshot di atas dari build uji itu.
 
-The picture/sound confirmation above belongs to the earlier customized build;
-the separate test build was verified through its launch intent and input session.
-Do not treat an empty screenshot of the video plane as failed reception; check
-the session and ask the person watching the TV.
+Konfirmasi gambar/suara di atas milik build kustom sebelumnya;
+build uji terpisah diverifikasi lewat intent launch dan sesi input.
+Jangan anggap screenshot kosong bidang video sebagai reception gagal; cek
+sesi dan tanya yang menonton TV.
 
-The TV reports AV as connected even with its jack empty. Its inactive HDMI ports
-report standby whether a cable is attached or not. Those state reports cannot
-establish physical cable presence. This tuner-selection change does not alter
-the connection indicators or hide any input rows.
+TV melaporkan AV terhubung meski jack kosong. Port HDMI tidak aktif
+melaporkan standby apakah kabel terpasang atau tidak. Laporan state itu tidak bisa
+membuktikan kehadiran kabel fisik. Perubahan seleksi tuner ini tidak mengubah
+indikator koneksi atau menyembunyikan baris input.

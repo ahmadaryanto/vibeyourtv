@@ -1,30 +1,30 @@
-# Xiaomi MiTV-MOSR4 (irobot): second unit, EU firmware
+# Xiaomi MiTV-MOSR4 (irobot): unit kedua, firmware EU
 
-Google TV / Android 11, build `RTM5.220609.003/1585` (same as the first unit), 1.4 GB RAM.
-List: [`examples/xiaomi-mitv-mosr4/debloat.txt`](../../examples/xiaomi-mitv-mosr4/debloat.txt).
-First-day report, two reboots.
+Google TV / Android 11, build `RTM5.220609.003/1585` (sama unit pertama), RAM 1,4 GB.
+Daftar: [`examples/xiaomi-mitv-mosr4/debloat.txt`](../../examples/xiaomi-mitv-mosr4/debloat.txt).
+Laporan hari pertama, dua reboot.
 
-## Takeover order
+## Urutan takeover
 
-Disabling launcherx while setupwraith was still enabled left Home on
-`setupwraith/.RecoveryActivity`. ADB was lost while the Wi-Fi was being re-saved, the TV was
-rebooted in that state, setup ran again and the TV was **factory reset**.
+Menonaktifkan launcherx sementara setupwraith masih aktif meninggalkan Home di
+`setupwraith/.RecoveryActivity`. ADB hilang saat Wi-Fi disimpan ulang, TV
+di-reboot dalam state itu, setup jalan lagi dan TV **factory reset**.
 
-If `mFocusedApp` shows `.RecoveryActivity`, re-enable launcherx first. Do not reboot there.
+Jika `mFocusedApp` menampilkan `.RecoveryActivity`, aktifkan launcherx dulu. Jangan reboot di situ.
 
-What worked, reboot-checked:
+Yang jalan, dicek reboot:
 
-1. Re-save the Wi-Fi (below), switch USB debugging back on.
-2. Disable setupwraith while launcherx is still enabled.
-3. Disable launcherx, `set-home-activity`, press Home, check `mFocusedApp`.
+1. Simpan ulang Wi-Fi (di bawah), nyalakan USB debugging lagi.
+2. Nonaktifkan setupwraith sementara launcherx masih aktif.
+3. Nonaktifkan launcherx, `set-home-activity`, tekan Home, cek `mFocusedApp`.
 
 ## Wi-Fi
 
-The network saved during setup belongs to setupwraith (`dumpsys wifi`, `cname=`). Reconnecting
-keeps that owner (same network ID). Forget it and join again; it then belongs to
-`com.android.tv.settings`. Forgetting it switched USB debugging off on this TV.
+Jaringan tersimpan saat setup milik setupwraith (`dumpsys wifi`, `cname=`). Reconnect
+mempertahankan owner itu (ID jaringan sama). Lupakan dan gabung lagi; lalu milik
+`com.android.tv.settings`. Melupakan mengalihkan USB debugging mati di TV ini.
 
-## Remote buttons
+## Tombol remote
 
 | Button | Scancode | Keycode |
 | --- | --- | --- |
@@ -34,39 +34,40 @@ keeps that owner (same network ID). Forget it and join again; it then belongs to
 | Netflix | `000c008e` | 193 `BUTTON_6` |
 | Prime Video | `000c00b0` | 194 `BUTTON_7` |
 
-With launcherx disabled all five do nothing. They are global keys for
-`com.xiaomi.android.tvsetup.partnercustomizer/.GlobalKeyReceiver`, which starts launcherx
-activities and crashes. After a few crashes Android stops starting it:
+Dengan launcherx nonaktif kelima tombol tidak melakukan apa-apa. Global key untuk
+`com.xiaomi.android.tvsetup.partnercustomizer/.GlobalKeyReceiver`, yang memulai aktivitas launcherx
+dan crash. Setelah beberapa crash Android berhenti memulainya:
 
 ```
 Unable to launch app com.xiaomi.android.tvsetup.partnercustomizer/1000 for broadcast
   Intent { act=android.intent.action.GLOBAL_BUTTON ... }: process is bad
 ```
 
-Catch the keys before they get there:
+Tangkap tombol sebelum sampai sana:
 
 ```sh
 INPUT_KEY_SERVICE=1 HOME_KEY_SERVICE=1 TV_HOST=<tv ip> launcher/build-and-install.sh
 TV_HOST=<tv ip> tools/theme.sh examples/xiaomi-mitv-mosr4
 ```
 
-`config.json` maps 190/193/194. A mapped button whose app is disabled is swallowed. Checked with
-the real remote (no `GLOBAL_BUTTON` lines, no crashes), using an equivalent key filter in a
-stand-alone launcher; not yet with `com.gathin.tvhome`. The Netflix button went to this receiver,
-not to overseaservice. The mic button keeps working.
+`config.json` memetakan 190/193/194. Tombol terpetakan yang aplikasinya nonaktif ditelan. Dicek dengan
+remote sungguhan (tanpa baris `GLOBAL_BUTTON`, tanpa crash), memakai filter kunci setara di
+launcher mandiri; belum dengan `com.gathin.tvhome`. Tombol Netflix ke receiver ini,
+bukan overseaservice. Tombol mic tetap jalan.
 
-Both helpers cost the remote's live key repeat on this set: holding volume up or down moves one step
-per press, with `InputKeyService` alone as well as with both, and `dumpsys accessibility` shows the bound
-service at `capabilities=8` (`CAPABILITY_CAN_FILTER_KEY_EVENTS`) - [#944](https://github.com/Gathin23/cleanyourtv/issues/944).
-The bisect, the ways back to either behaviour and the way the repeat is lost are in
-[the G09 note](tcl-55p71b-g09-key-repeat.md). The empty-list control was not tried here: clearing the
-list unhooks the buttons this section installs the helpers for, so "the ramp returns with nothing bound"
-is that note's measurement, not this set's.
+Kedua helper merugikan live key repeat remote di set ini: tahan volume naik/turun gerak satu langkah
+per tekan, dengan `InputKeyService` saja maupun keduanya, dan `dumpsys accessibility` menampilkan layanan terikat
+di `capabilities=8` (`CAPABILITY_CAN_FILTER_KEY_EVENTS`) - [#944](https://github.com/Gathin23/cleanyourtv/issues/944).
+Disabling launcherx while setupwraith was still enabled left Home on
+`setupwraith/.RecoveryActivity`. Bisect, cara kembali ke salah satu perilaku dan cara repeat hilang ada di
+[catatan G09](tcl-55p71b-g09-key-repeat.md). Kontrol daftar kosong tidak dicoba di sini: mengosongkan daftar
+melepas tombol yang bagian ini pasang helper untuk, jadi "the ramp returns with nothing bound"
+pengukuran catatan itu, bukan set ini.
 
-## Other
+## Lainnya
 
-- `com.mitv.tvhome.mitvplus` is re-enabled at every boot.
-- `com.xiaomi.mitv.manualhelp` exists here (`/system/customer-app`).
-- HDMI switching: `ACTION_VIEW` on a passthrough URI opens `com.mitv.livetv/.tv.MainActivity`.
-- `screencap -p` prints a banner before the PNG; capture to `/sdcard` and pull.
-- The Wi-Fi name in the top bar needs Location on.
+- `com.mitv.tvhome.mitvplus` diaktifkan lagi setiap boot.
+- `com.xiaomi.mitv.manualhelp` ada di sini (`/system/customer-app`).
+- Switching HDMI: `ACTION_VIEW` pada URI passthrough buka `com.mitv.livetv/.tv.MainActivity`.
+- `screencap -p` cetak banner sebelum PNG; tangkap ke `/sdcard` dan pull.
+- Nama Wi-Fi di bar atas butuh Location nyala.

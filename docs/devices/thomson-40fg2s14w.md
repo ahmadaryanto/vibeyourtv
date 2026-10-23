@@ -1,11 +1,9 @@
-# Thomson 40FG2S14W (Expressluck `nagata`, CVTE board, Android TV 14): the launcher runs, Home stays with Google TV
+# Thomson 40FG2S14W (Expressluck `nagata`, papan CVTE, Android TV 14): launcher jalan, Home tetap Google TV
 
-One owner-reported ADB session on one unit ([#1035](https://github.com/Gathin23/cleanyourtv/issues/1035)). The
-replacement launcher installed and opened, and its five-app dock and D-pad navigation worked. What did not work
-is Home: on this board Home stays with Google TV for as long as the stock launcher is enabled, which is the
-state the CVTE rule asks for. This is **not a tested debloat list** - six privacy and feedback packages were
-disabled and read back after a reboot, and no several days of use followed - and it is not a tested Home
-profile either.
+Satu sesi ADB dilaporkan pemilik, satu unit ([#1035](https://github.com/Gathin23/cleanyourtv/issues/1035)).
+Launcher pengganti terinstal dan terbuka, dock lima aplikasi dan navigasi D-pad jalan. Yang tidak jalan
+Home: di papan ini Home tetap Google TV selama launcher bawaan aktif, seperti aturan CVTE minta. Ini **bukan daftar debloat teruji** - enam paket privasi dan feedback
+dinonaktifkan dan dibaca kembali setelah reboot, tanpa beberapa hari pemakaian - dan bukan profil Home teruji.
 
 | Field | Observed value |
 |---|---|
@@ -18,45 +16,47 @@ profile either.
 
 ## Home
 
-- `cmd package set-home-activity --user 0 com.gathin.tvhome/.MainActivity` printed `Success`, and the Home
-  resolver still selected `com.google.android.apps.tv.launcherx`: pressing Home opened Google TV.
-- Disabling `com.google.android.tungsten.setupwraith` on its own did not change that; the resolver still picked
+- `cmd package set-home-activity --user 0 com.gathin.tvhome/.MainActivity` mencetak `Success`, dan resolver Home
+  tetap memilih `com.google.android.apps.tv.launcherx`: tekan Home membuka Google TV.
+- Menonaktifkan `com.google.android.tungsten.setupwraith` sendiri tidak mengubah itu; resolver tetap memilih
+  `launcherx`.
+  Disabling `com.google.android.tungsten.setupwraith` on its own did not change that; the resolver still picked
   `launcherx`. (Before disabling that package on any Google TV set, read
   `dumpsys wifi | grep -o 'cname=[^ ]*'`: a network saved during first setup belongs to it and goes with it.)
-- The system Home role reported `com.gathin.tvhome` while Home still opened Google TV, so the role holder is not
-  the resolver. What Home does is `cmd package resolve-activity --brief -a android.intent.action.MAIN -c
-  android.intent.category.HOME`, which is also what `tools/disable.sh`'s Home guard reads.
-- The handover itself is not broken on this firmware: `launcher/build-and-install.sh`, which starts the new
-  launcher and disables the stock one, did leave the launcher as the resolved Home. On a CVTE board with no
-  tested profile that stock launcher stays enabled ([the JVC set that hung on its boot animation with ADB
-  gone, #741](../TROUBLESHOOTING.md)), so `setupwraith` and the stock launcher were both re-enabled and Home
-  went back to Google TV.
-- Not tried, and what the next session on this board would need: the `FallbackHome` and direct-boot-aware checks
-  in [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) that decide whether the stock launcher can be disabled without
-  a boot that never finishes, and whether Home survives a reboot afterwards. Until someone runs them on this
-  exact board, treat the set as debloat-only.
+- Peran Home sistem melaporkan `com.gathin.tvhome` sementara Home tetap membuka Google TV, jadi pemegang peran bukan
+  resolver. Apa yang Home lakukan: `cmd package resolve-activity --brief -a android.intent.action.MAIN -c
+  android.intent.category.HOME`, yang juga dibaca Home guard `tools/disable.sh`.
+- Serah terima sendiri tidak rusak di firmware ini: `launcher/build-and-install.sh`, yang memulai launcher
+  baru dan menonaktifkan bawaan, memang meninggalkan launcher sebagai Home ter-resolve. Di papan CVTE tanpa
+  profil teruji launcher bawaan tetap aktif ([set JVC yang hang di animasi boot dengan ADB
+  hilang, #741](../TROUBLESHOOTING.md)), jadi `setupwraith` dan launcher bawaan keduanya diaktifkan lagi dan Home
+  kembali ke Google TV.
+- Belum dicoba, dan yang sesi berikutnya di papan ini butuhkan: cek `FallbackHome` dan direct-boot-aware di
+  [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) yang memutus apakah launcher bawaan bisa dinonaktifkan tanpa
+  boot yang tidak selesai, dan apakah Home bertahan reboot setelahnya. Sampai seseorang menjalankannya di papan
+  persis ini, anggap set hanya debloat.
 
-## Disabled, and read back after a reboot
+## Dinonaktifkan, dan dibaca kembali setelah reboot
 
-`pm disable-user --user 0`, read back after a reboot, nothing uninstalled:
+`pm disable-user --user 0`, dibaca kembali setelah reboot, tidak ada uninstall:
 
-- `tv.anoki.acr.anokiacroptin` - Anoki's automatic content recognition.
+- `tv.anoki.acr.anokiacroptin` - pengenalan konten otomatis Anoki.
 - `com.android.adservices.api`, `com.android.ondevicepersonalization.services`,
-  `com.android.federatedcompute.services` - the Android 14 Privacy Sandbox ad and on-device ML services.
-- `com.google.android.feedback`, `com.android.tv.feedbackconsent` - the bug-report uploader and the TV's consent
-  dialog for it.
+  `com.android.federatedcompute.services` - layanan iklan Privacy Sandbox Android 14 dan ML on-device.
+- `com.google.android.feedback`, `com.android.tv.feedbackconsent` - pengunggah laporan bug dan dialog
+  persetujuan TV untuk itu.
 
-## Left enabled on purpose
+## Sengaja tetap aktif
 
-The owner's streaming apps, the voice assistant, Chromecast, Miracast and the firmware updater. The six packages
-above are the whole change; this note carries no list beyond them.
+Aplikasi streaming pemilik, asisten suara, Chromecast, Miracast dan updater firmware. Enam paket
+di atas seluruh perubahan; catatan ini tidak membawa daftar di luar itu.
 
-## What this note does not establish
+## Apa yang catatan ini tidak membuktikan
 
-- One unit, one firmware, one session: no cold boot, no second reboot after the Home attempts, no screenshot,
-  and no HDMI, Live TV, casting, voice or physical-remote check.
-- The Home result belongs to `UKNV.260317.001` on `nagata`. A board whose stock launcher is
-  `com.cvte.tv.launcher.*`, or a later build, can hand Home over differently - and an owner-report on such a set
-  is worth a section here rather than a copy of this paragraph.
-- There is no `examples/` folder for this model: a list needs several days of use first (CONTRIBUTING).
-- ADB was switched off after the session.
+- Satu unit, satu firmware, satu sesi: tidak ada cold boot, tidak ada reboot kedua setelah upaya Home, tidak ada screenshot,
+  dan tidak ada cek HDMI, Live TV, casting, suara atau remote fisik.
+- Hasil Home milik `UKNV.260317.001` di `nagata`. Papan yang launcher bawaannya
+  `com.cvte.tv.launcher.*`, atau build lebih baru, bisa menyerahkan Home berbeda - dan laporan pemilik di set
+  semacam itu layak jadi bagian di sini alih-alih salinan paragraf ini.
+- Tidak ada folder `examples/` untuk model ini: daftar butuh beberapa hari pemakaian dulu (CONTRIBUTING).
+- ADB dimatikan setelah sesi.

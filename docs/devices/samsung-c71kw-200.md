@@ -1,3 +1,9 @@
+# Samsung C71KW-200: catatan kompatibilitas
+
+Ringkasan Bahasa Indonesia: TV Samsung — laporan komunitas, build spesifik, dan batas uji launcher.
+
+---
+
 # C71KW-200 (AT&T Osprey): carrier-update caveat and launcher verification
 
 Checked on one physical Android TV set-top box on 2026-10-21. The box already had

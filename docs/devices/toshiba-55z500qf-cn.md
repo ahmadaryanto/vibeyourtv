@@ -1,3 +1,9 @@
+# Toshiba 55Z500QF (China): catatan perangkat
+
+Ringkasan Bahasa Indonesia: Toshiba CN — Home, paket sistem, dan disable paket penuh.
+
+---
+
 # Toshiba 55Z500QF (China, Hisense firmware): device notes
 
 This is an owner's device report, not a tested debloat list. The packages

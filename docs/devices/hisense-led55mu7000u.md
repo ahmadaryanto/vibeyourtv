@@ -8,10 +8,10 @@
 | Firmware | `01.02.40.01` |
 | TV UI version | `JUUI 8.4.02.630` |
 
-## Advertising behavior
+## Perilaku iklan
 
-The owner changed the advertising preference, but the boot ad remained. They restored the preference to its original value (`0`). The firmware rejected `pm disable-user` for the advertising service, which remains enabled. Do not retry that command on this firmware.
+Pemilik mengubah preferensi iklan, tetapi iklan saat boot tetap muncul. Mereka mengembalikan preferensi ke nilai aslinya (`0`). Firmware menolak `pm disable-user` untuk layanan iklan, yang tetap aktif. Jangan ulangi perintah itu di firmware ini.
 
-## Debloat status
+## Status debloat
 
-No debloat list has been validated for this TV. The stock launcher remains enabled.
+Belum ada daftar debloat yang divalidasi untuk TV ini. Launcher bawaan tetap aktif.

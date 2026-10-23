@@ -1,35 +1,38 @@
-# Xiaomi MiTV-AETP0: package-name Home allowlist
+# Xiaomi MiTV-AETP0: allowlist Home nama paket
 
-Tested on MiTV-AETP0 (`dofus`, Amlogic, about 2 GB RAM), Android 9 / API 28,
-firmware `22.9.2.851`. Stock Home is `com.mitv.tvhome/.MainActivityUserMode`.
-This is a launcher-only record; no debloat list was applied.
+Diuji di MiTV-AETP0 (`dofus`, Amlogic, ~2 GB RAM), Android 9 / API 28,
+firmware `22.9.2.851`. Home bawaan `com.mitv.tvhome/.MainActivityUserMode`.
+Catatan launcher saja; tidak ada daftar debloat diterapkan.
 
-## What failed and why
+## Apa yang gagal dan mengapa
 
-The standard `com.gathin.tvhome` APK opened normally, but setting it as Home reported
+APK `com.gathin.tvhome` standar terbuka normal, tetapi set sebagai Home melaporkan
+`Success` sementara HOME tetap Xiaomi. Menonaktifkan Xiaomi Home memilih
+`com.android.tv.settings/.system.FallbackHome`; mengaktifkan Xiaomi mengembalikan pemakaian normal.
+Redirect aksesibilitas jalan di sesi saat ini, tetapi entri enabled-service
+dihapus saat reboot.
+
 `Success` while HOME still resolved to Xiaomi. Disabling Xiaomi Home selected
 `com.android.tv.settings/.system.FallbackHome`; re-enabling Xiaomi restored normal use.
-An accessibility redirect worked in the current session, but its enabled-service entry
-was removed at reboot.
 
-Read-only analysis of this device's framework found that `chooseBestActivity` retains
-system HOME candidates or packages allowed by `MitvSettings.isThirdpartyHomeAllowed`
-before considering the saved preference. The whitelist lookup compares the exact
-package name and feature flags, with no signing-certificate check in that lookup.
-The generic security-center XML returned by Xiaomi's cloud-control service listed
-`com.ts.launcher` under both `third_party_home` and `boot_autostart`.
-The protected on-device XML could not be read directly; the following installation
-and Home checks, rather than the cloud response alone, establish compatibility here.
+Analisis read-only framework perangkat ini menemukan `chooseBestActivity` mempertahankan
+kandidat HOME sistem atau paket diizinkan `MitvSettings.isThirdpartyHomeAllowed`
+sebelum preferensi tersimpan. Lookup whitelist membandingkan nama paket persis
+dan flag fitur, tanpa cek sertifikat signing di lookup itu.
+XML security-center generik dari layanan cloud-control Xiaomi mencantumkan
+`com.ts.launcher` di `third_party_home` dan `boot_autostart`.
+XML on-device terlindungi tidak bisa dibaca langsung; instalasi
+dan cek Home berikut, bukan respons cloud saja, yang membuktikan kompatibilitas di sini.
 
-## Build and install the opt-in identity
+## Build dan instal identitas opt-in
 
-Use this only after verifying the behavior and allowlist for the particular firmware.
-Keep the existing stock launcher enabled. Check `pm path com.ts.launcher` first:
-if that package is already installed, stop rather than overwrite another application.
-The alternate ID belongs to another application; keep this compatibility build local,
-and expect a signing conflict if that application's APK is installed later.
+Pakai hanya setelah verifikasi perilaku dan allowlist untuk firmware tertentu.
+Biarkan launcher bawaan aktif. Cek `pm path com.ts.launcher` dulu:
+jika paket sudah terinstal, berhenti alih-alih timpa aplikasi lain.
+ID alternatif milik aplikasi lain; simpan build kompatibilitas ini lokal,
+dan harapkan konflik signing jika APK aplikasi itu terinstal nanti.
 
-From the repository root, with the normal Java/SDK and Python prerequisites installed:
+Dari root repo, dengan prasyarat Java/SDK dan Python normal:
 
 ```bash
 export TV_HOST=192.168.1.50
@@ -42,33 +45,33 @@ PY=tools/venv/bin/python
 "$PY" -I tools/tv.py 'am start -W -n com.ts.launcher/com.gathin.tvhome.MainActivity'
 ```
 
-After inspecting the new screen, select and verify Home:
+Setelah inspeksi layar baru, pilih dan verifikasi Home:
 
 ```bash
 "$PY" -I tools/tv.py 'cmd package set-home-activity --user 0 com.ts.launcher/com.gathin.tvhome.MainActivity'
 "$PY" -I tools/tv.py 'cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME'
 ```
 
-The expected component is `com.ts.launcher/com.gathin.tvhome.MainActivity`. The Java
-namespace stays `com.gathin.tvhome`, so `com.ts.launcher/.MainActivity` is incorrect.
-The normal install/theme/restore scripts still target `com.gathin.tvhome`; use these
-manual commands for this build. Its optional theme overlay belongs in
-`/sdcard/Android/data/com.ts.launcher/files/config.json`. The original installation and
-its configuration remain separate. Without the Gradle property, builds retain the
-standard application ID.
+Komponen yang diharapkan `com.ts.launcher/com.gathin.tvhome.MainActivity`. Namespace Java
+tetap `com.gathin.tvhome`, jadi `com.ts.launcher/.MainActivity` salah.
+Skrip install/tema/restore normal masih menarget `com.gathin.tvhome`; pakai perintah
+manual ini untuk build ini. Overlay tema opsional di
+`/sdcard/Android/data/com.ts.launcher/files/config.json`. Instalasi asli dan
+konfigurasinya terpisah. Tanpa properti Gradle, build mempertahankan
+application ID standar.
 
-## Validation and recovery
+## Validasi dan pemulihan
 
-On-device testing used the 2.0 launcher sources with the alternate ID: installation,
-default-HOME resolution and Home from Settings passed, with Xiaomi Home still enabled
-and no launcher accessibility service enabled. Jellyfin and Synology DS Video were
-kept in the dock. The owner confirmed the replacement worked after reboot. ADB briefly
-opened during reboot and then closed, so post-boot foreground inspection was not captured.
-The current-source build is checked separately in the PR; it was not installed as part
-of that reboot test. Other firmware versions, OTA persistence and extended daily use
-remain unverified.
+Uji on-device memakai sumber launcher 2.0 dengan ID alternatif: instalasi,
+resolusi HOME default dan Home dari Settings lulus, dengan Xiaomi Home masih aktif
+dan tanpa layanan aksesibilitas launcher. Jellyfin dan Synology DS Video
+di dock. Pemilik konfirmasi pengganti jalan setelah reboot. ADB sebentar
+terbuka saat reboot lalu tertutup, jadi inspeksi foreground pasca-boot tidak tertangkap.
+Build sumber saat ini dicek terpisah di PR; tidak diinstal sebagai bagian
+uji reboot itu. Versi firmware lain, persistensi OTA dan pemakaian harian extended
+belum diverifikasi.
 
-To restore the recorded stock Home on this firmware:
+Untuk restore Home bawaan tercatat di firmware ini:
 
 ```bash
 "$PY" -I tools/tv.py 'pm enable --user 0 com.mitv.tvhome'
@@ -77,9 +80,9 @@ To restore the recorded stock Home on this firmware:
 "$PY" -I tools/tv.py 'cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME'
 ```
 
-Re-enable ADB under Account & Security if it closes at reboot. Directly starting
-`MainActivityUserMode` from shell requires Xiaomi's `HOME_STATE` permission; use the
-Home key after restoring the preference. No root, property changes, system-app
-installation or removal of stock Home is required by the successful procedure.
+Aktifkan ADB lagi di Account & Security jika tertutup saat reboot. Start langsung
+`MainActivityUserMode` dari shell butuh izin `HOME_STATE` Xiaomi; pakai
+tombol Home setelah restore preferensi. Tidak perlu root, ubah properti, instal
+aplikasi sistem atau hapus Home bawaan untuk prosedur sukses.
 
 ![Alternate-ID launcher on the tested TV](xiaomi-mitv-aetp0-home.png)

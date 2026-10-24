@@ -1,6 +1,12 @@
 <p align="center">
-  <a href="https://cleanyour.tv"><img src="docs/banner.png" alt="CleanYourTV：テレビのホーム画面をすっきりと" width="800"></a>
+  <img src="docs/images/banner@2x.png" alt="VibeYourTV. Forked from CleanYourTV by Gathin." width="1024">
 </p>
+
+<p align="center">
+  <a href="https://x.ai/bot/7iH14dp1VnBLUbqq2oEne"><img src="https://img.shields.io/badge/Pasang%20di%20Grok%20Bot-Install%20in%20Grok%20Bot-cfffcf?style=for-the-badge&labelColor=15181e" alt="Pasang di Grok Bot / Install in Grok Bot"></a>
+</p>
+
+<p align="center">手動の準備は飛ばせます。VibeYourTV のボットが、Wi-Fi 上の adb で手順ごとに案内します。</p>
 
 <p align="center">
   <a href="README.md">English</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="README.vi.md">Tiếng Việt</a> · 日本語

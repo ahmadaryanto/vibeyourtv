@@ -1,6 +1,12 @@
 <p align="center">
-  <a href="https://cleanyour.tv"><img src="docs/banner.png" alt="CleanYourTV: trả lại cho TV một màn hình chính gọn gàng" width="800"></a>
+  <img src="docs/images/banner@2x.png" alt="VibeYourTV. Forked from CleanYourTV by Gathin." width="1024">
 </p>
+
+<p align="center">
+  <a href="https://x.ai/bot/7iH14dp1VnBLUbqq2oEne"><img src="https://img.shields.io/badge/Pasang%20di%20Grok%20Bot-Install%20in%20Grok%20Bot-cfffcf?style=for-the-badge&labelColor=15181e" alt="Pasang di Grok Bot / Install in Grok Bot"></a>
+</p>
+
+<p align="center">Bỏ qua thiết lập thủ công. Bot VibeYourTV hướng dẫn bạn từng bước qua Wi-Fi bằng adb.</p>
 
 <p align="center">
   <a href="README.md">English</a> · <a href="README.zh-CN.md">简体中文</a> · Tiếng Việt · <a href="README.ja.md">日本語</a>

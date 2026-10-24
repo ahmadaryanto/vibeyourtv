@@ -6,6 +6,10 @@
 
 *Sapaan memakai namamu (`greeting_name`). Harga BTC hidup di bawah tanggal (`crypto_ticker`). Dock-nya kaca buram, berisi aplikasi yang kamu pilih. Wallpaper-nya fotomu sendiri.*
 
+## Pasang sebagai Grok Bot
+
+Lewati penyiapan manual. Tambahkan bot VibeYourTV ke Grok Bot-mu, lalu ia memandumu langkah demi langkah lewat Wi-Fi dengan adb: <https://x.ai/bot/7iH14dp1VnBLUbqq2oEne>
+
 ## Tutorial: Pakai Grok Bot
 
 Grok Bot adalah asisten AI yang bisa menjalankan perintah di komputermu (Windows atau Mac) setelah komputer itu terhubung ke bot. Tidak perlu aplikasi di ponsel. Hasilnya seperti [tangkapan layar di atas](docs/images/vibeyourtv-home.jpg): sapaan dengan namamu, harga BTC di bawah tanggal, dock kaca buram, dan fotomu sebagai wallpaper.

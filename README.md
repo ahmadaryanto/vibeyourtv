@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="docs/images/banner@2x.png" alt="VibeYourTV. Forked from CleanYourTV by Gathin." width="1024">
+</p>
+
+<p align="center">
   <a href="https://x.ai/bot/7iH14dp1VnBLUbqq2oEne"><img src="https://img.shields.io/badge/Pasang%20di%20Grok%20Bot-Install%20in%20Grok%20Bot-cfffcf?style=for-the-badge&labelColor=15181e" alt="Pasang di Grok Bot / Install in Grok Bot"></a>
 </p>
 
@@ -58,10 +62,6 @@ Grok Bot memasang adb (platform-tools) di komputer, lalu menyambung ke TV. Di TV
 | **device offline** | Nyalakan TV (bukan standby yang memutus ADB), pastikan satu Wi-Fi, lalu sambungkan lagi ke `IP:5555`. |
 | **Penyimpanan penuh** | Minta bot mengosongkan cache aplikasi yang besar. Hapus aplikasi hanya yang memang tidak terpakai, dan hanya setelah kamu setuju. |
 | **Mau kembali seperti semula** | Jalankan `tools/restore.sh` dengan daftar yang tadi diterapkan. Penjelasannya di [Mengembalikan TV kamu](#mengembalikan-tv-kamu). Dari TV, Settings → Apps juga bisa menyalakan lagi paket yang dimatikan. |
-
-<p align="center">
-  <a href="https://cleanyour.tv"><img src="https://raw.githubusercontent.com/Gathin23/cleanyourtv/main/docs/banner.png" alt="CleanYourTV. TV-mu, tanpa iklan. Bersihkan bloatware dari Android TV atau Google TV lewat Wi-Fi dan ganti layar beranda yang penuh iklan dengan peluncur bersih yang mirip Apple TV. Tanpa root, tanpa kabel, tidak ada yang dicopot, dan restore satu baris." width="800"></a>
-</p>
 
 <p align="center">
   <a href="https://github.com/Gathin23/cleanyourtv/stargazers"><img src="https://img.shields.io/github/stars/Gathin23/cleanyourtv?style=flat&cacheSeconds=1800&color=cfffcf&labelColor=15181e" alt="Bintang"></a>

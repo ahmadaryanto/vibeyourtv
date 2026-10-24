@@ -315,6 +315,11 @@
          Off by default. A theme turns it on with "crypto_ticker": true. Needs the INTERNET permission. -->
     <bool name="crypto_ticker">false</bool>
 
+    <!-- On-TV theme picker: a small header button and the Menu key open built-in presets (Saya, Orang Tua,
+         Anak, Remaja, and the four seasons). Off by default, so the button is not drawn, a stored preset is
+         not applied, and a pushed config.json behaves as before. A theme can set "theme_picker": true. -->
+    <bool name="theme_picker">false</bool>
+
     <!-- Time-of-day backdrop behind everything: a dark gradient that follows the clock, with a warm
          horizon glow around sunrise and sunset. 0 keeps the plain background (the default); 1 to 100
          sets its opacity. Around 60 reads clearly without hiding a wallpaper. Can also be set with

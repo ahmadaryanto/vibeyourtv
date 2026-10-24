@@ -477,6 +477,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // the theme's background, so launch looks the same.
         getWindow().setBackgroundDrawable(null);
         wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
+        // Season shapes sit over the wallpaper and under the tiles. Off unless a preset or config.json
+        // asked for them, and off again while motion or animations are disabled.
+        if (cfg.seasonMotion && !cfg.reducedMotion && !cfg.seasonOverlay.isEmpty()) {
+            seasonKind = cfg.seasonOverlay;
+            season = new SeasonOverlay(this);
+            root.addView(season, Math.min(1, root.getChildCount()), new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            season.start(seasonKind);
+        }
         sky = findViewById(R.id.sky);
         sky.setIntensity(cfg.skyIntensity);
         glass = findViewById(R.id.glass);
@@ -510,6 +519,29 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         greeting = findViewById(R.id.greeting);
         clockBlock = findViewById(R.id.leftBlock);
         greetingColor = greeting.getCurrentTextColor();
+        if (cfg.lightChrome || cfg.largeText) {
+            TextView clock = findViewById(R.id.clock);
+            TextView ampm = findViewById(R.id.ampm);
+            TextView date = findViewById(R.id.date);
+            if (cfg.lightChrome) {
+                int ink = 0xFF1C1C1E;
+                greeting.setTextColor(0xB31C1C1E);
+                greetingColor = greeting.getCurrentTextColor();
+                clock.setTextColor(ink);
+                ampm.setTextColor(0xB31C1C1E);
+                date.setTextColor(0xCC1C1C1E);
+                shamsiDate = findViewById(R.id.shamsiDate);
+                shamsiDate.setTextColor(ink);
+                heroName.setTextColor(ink);
+            }
+            if (cfg.largeText) {
+                greeting.setTextSize(16);
+                clock.setTextSize(64);
+                date.setTextSize(20);
+                if (shamsiDate == null) shamsiDate = findViewById(R.id.shamsiDate);
+                shamsiDate.setTextSize(22);
+            }
+        }
         if (getResources().getBoolean(R.bool.rtl_menu_bar)) {
             // Center Hebrew greetings over the numeric time, independent of a visible AM/PM label.
             findViewById(R.id.clock).addOnLayoutChangeListener((v, l, t, right, bottom, ol, ot, or, ob) -> {
@@ -741,10 +773,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             showSettingsMenu();
             return true;
         });
+        if (!cfg.showSettingsPill) btnSettings.setVisibility(View.GONE);
+        btnTheme = findViewById(R.id.btnTheme);
+        themePicker = cfg.themePicker;
+        btnTheme.setVisibility(themePicker ? View.VISIBLE : View.GONE);
+        btnTheme.setOnClickListener(v -> openThemePicker());
 
         // Keep focus on the top bar at its ends and at the top: Android's focus finder would otherwise
         // jump to a tile far below when there is nothing in that direction.
         boolean rtlMenuBar = getResources().getBoolean(R.bool.rtl_menu_bar);
+        View inputsEdge = edgeButton(true);
+        View settingsEdge = edgeButton(false);
         View.OnKeyListener pillKeys = (v, keyCode, event) -> {
             if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP) return true;
@@ -753,9 +792,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 focusTile(lastFocused % COLUMNS);
                 return true;
             }
-            int firstButton = btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : firstTopButton().getId();
-            int leftButton = rtlMenuBar ? R.id.btnSettings : firstButton;
-            int rightButton = rtlMenuBar ? firstButton : R.id.btnSettings;
+            int leftButton = (rtlMenuBar ? settingsEdge : inputsEdge).getId();
+            int rightButton = (rtlMenuBar ? inputsEdge : settingsEdge).getId();
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
             return keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && v.getId() == rightButton;
         };
@@ -764,8 +802,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnSettings.setOnKeyListener(pillKeys);
         btnReorder.setOnKeyListener(pillKeys);
         btnLibraryTop.setOnKeyListener(pillKeys);
+        btnTheme.setOnKeyListener(pillKeys);
         if (advancedEffects) {
-            for (View button : new View[]{btnInputs, btnWifi, btnReorder, btnLibraryTop, btnSettings}) {
+            for (View button : new View[]{btnInputs, btnWifi, btnReorder, btnLibraryTop, btnTheme, btnSettings}) {
                 button.setOnFocusChangeListener((view, focused) -> view.animate()
                         .scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f)
                         .setDuration(reducedMotion ? Motion.REDUCED_MS : 160).start());
@@ -912,6 +951,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         restartIdleClock();
         startCryptoTicker();
+        if (season != null) season.start(seasonKind);
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
         switch (tileRefresh.onResume(packagesChangedSinceRebuild())) {
@@ -1121,6 +1161,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         handler.removeCallbacks(minuteTick);
         stopStats();
         if (diya != null) diya.stop();
+        if (season != null) season.stop();
         cancelPendingFocusScroll();
         // Nothing of ours stays on screen over another app; an undecided prompt simply returns next time.
         if (cardPrompt != null) cardPrompt.dismiss();
@@ -1228,6 +1269,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 }
                 return true;
             }
+        }
+        if (themePicker && !reordering && openPopup == null && cardPrompt == null
+                && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) openThemePicker();
+            return true;
         }
         if (!reordering) return super.dispatchKeyEvent(event);
         if (dockEditing) return dispatchDockEdit(event);
@@ -2219,10 +2265,29 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         hideHero();
     }
 
-    /** The first top-bar button after Inputs that is shown: the network pill, Reorder, then Settings (always there). */
+    /** The first top-bar button after Inputs that is shown. */
     private View firstTopButton() {
         if (btnWifi.getVisibility() == View.VISIBLE) return btnWifi;
         if (btnReorder.getVisibility() == View.VISIBLE) return btnReorder;
+        if (btnLibraryTop.getVisibility() == View.VISIBLE) return btnLibraryTop;
+        if (btnTheme != null && btnTheme.getVisibility() == View.VISIBLE) return btnTheme;
+        return findViewById(R.id.btnSettings);
+    }
+
+    /** The visible pill at the Inputs end (true) or the Settings end (false) of the header. */
+    private View edgeButton(boolean towardInputs) {
+        int[] ids = {R.id.btnInputs, R.id.btnWifi, R.id.btnReorder, R.id.btnLibraryTop, R.id.btnTheme, R.id.btnSettings};
+        if (towardInputs) {
+            for (int id : ids) {
+                View button = findViewById(id);
+                if (button.getVisibility() == View.VISIBLE) return button;
+            }
+        } else {
+            for (int i = ids.length - 1; i >= 0; i--) {
+                View button = findViewById(ids[i]);
+                if (button.getVisibility() == View.VISIBLE) return button;
+            }
+        }
         return findViewById(R.id.btnSettings);
     }
 
@@ -2556,6 +2621,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private ColorStateList wifiOnlineTint, wifiPlainTint;
     /** The app library button in the top bar (library_button). */
     private View btnLibraryTop;
+    /** Theme picker button (theme_picker). Gone unless the switch is on. */
+    private View btnTheme;
+    /** Falling snow, leaves, frost or petals. Null unless that preset's motion is on. */
+    private SeasonOverlay season;
+    private String seasonKind = "";
+    private boolean themePicker;
     /** The open library came from that button: closing it returns there instead of scrolling to the grid's end. */
     private boolean libraryFromTopBar;
 
@@ -3009,6 +3080,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     // ---- launcher settings and module cards -------------------------------------------------------
 
+    private void openThemePicker() {
+        ThemePicker.open(this);
+    }
+
     /** top_menu: the gear's dropdown, standing in for the Inputs, Wi-Fi and Settings pills. */
     private void showTopMenu() {
         View anchor = findViewById(R.id.btnSettings);
@@ -3016,6 +3091,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (220 * density));
         // Inputs opens its own list once this one has closed.
+        if (themePicker) addInputRow(rows, popup, android.R.drawable.ic_menu_manage, getString(R.string.theme_picker), -1,
+                this::openThemePicker);
         if (showInputsMenuRow) addInputRow(rows, popup, R.drawable.ic_input, getString(R.string.inputs), -1, () -> root.post(this::showInputs));
         addInputRow(rows, popup, R.drawable.ic_wifi, getString(R.string.quick_network), -1, this::openNetworkPill);
         CharSequence network = wifiIconOnly ? btnWifi.getContentDescription() : btnWifi.getText();
@@ -3044,6 +3121,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (200 * density));
+        if (themePicker) addSettingsMenuRow(rows, popup, R.string.theme_picker, this::openThemePicker);
         if (!launcherSettingsButton) addSettingsMenuRow(rows, popup, R.string.launcher_settings, () -> startActivityForResult(
                 new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
         if (moduleCards) addSettingsMenuRow(rows, popup, R.string.module_cards, this::showModuleCards);

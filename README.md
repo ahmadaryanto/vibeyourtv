@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://x.ai/bot/7iH14dp1VnBLUbqq2oEne"><img src="https://img.shields.io/badge/Pasang%20di%20Grok%20Bot-Install%20in%20Grok%20Bot-cfffcf?style=for-the-badge&labelColor=15181e" alt="Pasang di Grok Bot / Install in Grok Bot"></a>
+</p>
+
+<p align="center">Lewati penyiapan manual. Bot VibeYourTV memandumu langkah demi langkah lewat Wi-Fi dengan adb.</p>
+
 > **VibeYourTV** adalah fork dari [CleanYourTV](https://github.com/Gathin23/cleanyourtv) karya **Gathin** (lisensi MIT, hak cipta Gathin tetap utuh). Diterjemahkan dan dikembangkan oleh Ahmad Jeffry Aryanto ([@orpheuskaze](https://x.com/orpheuskaze)).
 
 <p align="center">
@@ -8,7 +14,7 @@
 
 ## Pasang sebagai Grok Bot
 
-Lewati penyiapan manual. Tambahkan bot VibeYourTV ke Grok Bot-mu, lalu ia memandumu langkah demi langkah lewat Wi-Fi dengan adb: <https://x.ai/bot/7iH14dp1VnBLUbqq2oEne>
+Lewati penyiapan manual. Tambahkan bot VibeYourTV ke Grok Bot-mu, lalu ia memandumu langkah demi langkah lewat Wi-Fi dengan adb: **[Pasang di Grok Bot](https://x.ai/bot/7iH14dp1VnBLUbqq2oEne)**
 
 ## Tutorial: Pakai Grok Bot
 

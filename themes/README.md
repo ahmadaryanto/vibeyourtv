@@ -118,6 +118,7 @@ Key baru butuh screenshot di sana dalam PR yang sama.
 | `ambient_glow` | bool | Glow di belakang dock warna app fokus (default `true`); `false` hanya `background_color` atau wallpaper |
 | `app_glow` | bool | Highlight fokus glow warna app di setiap tile, seperti `cinematic_home` di dock (default `false`) |
 | `fade_rows` | bool | Baris fade saat scroll ke bawah jam, bukan potong keras; wallpaper/sky tembus. Grid draw ke hardware layer (~6 MB VRAM 1080p) (default `false`) |
+| `theme_picker` | bool | Tombol pemilih tema di beranda, plus tombol Menu. Mati secara bawaan: tidak ada tombol, preset yang tersimpan tidak diterapkan, dan `config.json` yang didorong berlaku seperti biasa. `"theme_picker": true` menyalakannya |
 
 ## Wallpapers
 
@@ -195,3 +196,11 @@ Buka PR dengan folder baru di sini berisi:
 
 Lalu tambahkan baris ke tabel di atas dengan screenshot, seperti yang lain. Dock generik (streaming
 besar) kecuali tema untuk TV tertentu, dan sebut TV uji di deskripsi PR.
+
+## Pemilih di TV
+
+`theme_picker` (mati secara bawaan) menambah tombol di beranda. Preset bawaan memakai kunci yang sudah ada
+ditambah beberapa kunci yang hanya dibaca dari JSON: `show_settings_pill` (default true), `large_text`,
+`light_chrome`, `season_overlay` (`snow`, `leaves`, `frost`, `petals`), dan `season_motion`. Memilih preset
+tidak menimpa `config.json`; file itu tampil sebagai Kustom. Gerak musim berhenti kalau `season_motion`
+false, animasi launcher mati, atau `reduced_motion` nyala.

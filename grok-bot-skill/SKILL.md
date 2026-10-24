@@ -165,6 +165,8 @@ adb shell am start -a android.intent.action.MAIN -c android.intent.category.HOME
 
 Undo a theme with `tools/theme.sh --reset`, or `content delete --uri content://com.gathin.tvhome.theme/config.json` and the same for `wallpaper.jpg`.
 
+If `theme_picker` is true (`config.xml`, or `"theme_picker": true` in `config.json`), the person can switch looks on the TV with the round Tema button or the Menu key. The built-in presets are Saya, Orang Tua, Anak, Remaja, Salju, Musim Gugur, Musim Dingin, and Musim Semi. A pushed `config.json` is not overwritten by those presets; it shows up in the picker as Kustom, and a new push selects Kustom again. Seasonal motion (snow, leaves, frost, petals) stays off the wallpaper file and can be turned off in the picker. The Anak preset can ask for a 4-digit PIN before leaving; do not invent a PIN.
+
 ## 7. Close ADB when finished
 
 After the person says they are done: turn USB debugging and network debugging off on the TV, revoke USB debugging authorisations, and reboot. Do not leave port 5555 open.

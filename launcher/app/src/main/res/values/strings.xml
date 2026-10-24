@@ -145,4 +145,43 @@
     <!-- Cinematic top shelf (cinematic_home): the line under the focused dock app's name; %1$s is when it was
          last opened, e.g. "5 minutes ago" or "yesterday, 9:40 pm". -->
     <string name="last_opened">Last opened %1$s</string>
+
+    <!-- On-TV theme picker. Indonesian on every locale: the labels are the preset names. -->
+    <string name="theme_picker" translatable="false">Tema</string>
+    <string name="theme_picker_title" translatable="false">Tema</string>
+    <string name="theme_saya" translatable="false">Saya</string>
+    <string name="theme_saya_hint" translatable="false">Foto wallpaper, 5 kolom, glow, dock 70%, ticker BTC, sapaan.</string>
+    <string name="theme_orang_tua" translatable="false">Orang Tua</string>
+    <string name="theme_orang_tua_hint" translatable="false">Semua aplikasi, teks lebih besar, foto keluarga, ticker BTC.</string>
+    <string name="theme_anak" translatable="false">Anak</string>
+    <string name="theme_anak_hint" translatable="false">Ubin besar, tanpa tombol pengaturan dan input, cerah, tanpa ticker.</string>
+    <string name="theme_remaja" translatable="false">Remaja</string>
+    <string name="theme_remaja_hint" translatable="false">Gelap dengan glow warna. Ticker BTC opsional.</string>
+    <string name="theme_salju" translatable="false">Salju</string>
+    <string name="theme_salju_hint" translatable="false">Putih dan biru, salju halus. Foto wallpaper tetap.</string>
+    <string name="theme_gugur" translatable="false">Musim Gugur</string>
+    <string name="theme_gugur_hint" translatable="false">Oranye cokelat, daun yang pelan. Foto wallpaper tetap.</string>
+    <string name="theme_dingin" translatable="false">Musim Dingin</string>
+    <string name="theme_dingin_hint" translatable="false">Biru es, kaca buram. Foto wallpaper tetap.</string>
+    <string name="theme_semi" translatable="false">Musim Semi</string>
+    <string name="theme_semi_hint" translatable="false">Pastel lembut, kelopak ringan. Foto wallpaper tetap.</string>
+    <string name="theme_kustom" translatable="false">Kustom</string>
+    <string name="theme_kustom_hint" translatable="false">config.json yang didorong dari komputer. Tidak ditimpa preset.</string>
+    <string name="theme_motion_on" translatable="false">Gerak musim: Nyala</string>
+    <string name="theme_motion_off" translatable="false">Gerak musim: Mati</string>
+    <string name="theme_ticker_on" translatable="false">Ticker BTC: Nyala</string>
+    <string name="theme_ticker_off" translatable="false">Ticker BTC: Mati</string>
+    <string name="theme_pin_set" translatable="false">PIN anak: belum diatur</string>
+    <string name="theme_pin_on" translatable="false">PIN anak: aktif</string>
+    <string name="theme_pin_enter" translatable="false">PIN untuk keluar dari Anak</string>
+    <string name="theme_pin_current" translatable="false">PIN saat ini</string>
+    <string name="theme_pin_new" translatable="false">PIN baru, 4 angka</string>
+    <string name="theme_pin_again" translatable="false">Ulangi PIN</string>
+    <string name="theme_pin_wrong" translatable="false">PIN salah</string>
+    <string name="theme_pin_saved" translatable="false">PIN disimpan</string>
+    <string name="theme_pin_cleared" translatable="false">PIN dihapus</string>
+    <string name="theme_pin_mismatch" translatable="false">PIN tidak sama</string>
+    <string name="theme_pin_delete" translatable="false">Hapus</string>
+    <string name="theme_pin_cancel" translatable="false">Batal</string>
+    <string name="theme_pin_clear" translatable="false">Hapus PIN</string>
 </resources>

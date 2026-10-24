@@ -97,6 +97,28 @@ Layar beranda ini bisa kamu ubah tanpa menyentuh kode. Contoh di Sharp AQUOS Goo
 - **Sapa dengan namamu.** Di `config.json` isi `"greeting_name": "Nama Kamu"`. Sapaan waktu (pagi, siang, sore, malam) akan diikuti nama itu.
 - **Harga Bitcoin langsung.** Isi `"crypto_ticker": true` supaya baris harga BTC muncul di bawah tanggal. Harganya diambil dari CoinGecko dan disegarkan tiap 5 menit selama Beranda sedang terbuka. Mati secara bawaan.
 
+### Pemilih tema di TV
+
+Nyalakan sekali dengan `"theme_picker": true` di `config.json`, atau ubah `theme_picker` di `config.xml` sebelum membangun. Sesudah itu tema diganti dari remote, tanpa komputer.
+
+Tombol bulat di kanan atas, atau tombol **Menu**, membuka lembar tema. OK menerapkan preset itu saat itu juga, dan pilihannya tetap setelah reboot.
+
+| Preset | Isinya |
+|---|---|
+| **Saya** | Foto `wallpaper.jpg`, 5 kolom, glow, dock 70%, ticker BTC, sapaan waktu |
+| **Orang Tua** | Semua aplikasi, teks lebih besar, foto yang sama, ticker BTC |
+| **Anak** | Ubin besar, tombol Pengaturan dan Input disembunyikan, latar biru, tanpa ticker. PIN 4 angka opsional untuk keluar |
+| **Remaja** | Gelap dengan glow warna. Ticker BTC bisa dinyalakan di lembar yang sama |
+| **Salju** | Putih biru, kaca buram, salju halus. Foto tetap |
+| **Musim Gugur** | Oranye cokelat, daun yang bergerak pelan. Foto tetap |
+| **Musim Dingin** | Biru es, kaca buram, kilau tipis. Foto tetap |
+| **Musim Semi** | Pastel, kelopak ringan. Foto tetap |
+| **Kustom** | Muncul kalau ada `config.json` dari adb atau content provider. Memilih preset lain tidak menimpa file itu. Mendorong file baru kembali ke Kustom |
+
+**Gerak musim** mematikan salju, daun, kilau, dan kelopak. Geraknya sedikit (sekitar 20 bingkai per detik, tanpa lapisan perangkat keras) dan juga mati kalau animasi launcher mati atau `reduced_motion` nyala.
+
+PIN anak diatur di lembar yang sama. Kosong berarti Anak bisa ditinggalkan tanpa PIN. Kalau PIN lupa, `adb shell pm clear com.gathin.tvhome` menghapus PIN bersama urutan aplikasi di TV itu.
+
 | | | | |
 |---|---|---|---|
 | ![Tema bawaan](themes/default/screenshot.jpg) | ![Tema aurora](themes/aurora/screenshot.jpg) | ![Tema kaca](themes/glass/screenshot.jpg) | ![Tema enam kolom](themes/six-columns/screenshot.jpg) |

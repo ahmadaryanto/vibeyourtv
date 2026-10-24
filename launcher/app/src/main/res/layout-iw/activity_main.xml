@@ -344,6 +344,14 @@
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
+                    android:id="@+id/btnTheme"
+                    style="@style/TopButtonIcon"
+                    android:visibility="gone"
+                    android:contentDescription="@string/theme_picker"
+                    android:drawableStart="@drawable/ic_theme"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
                     android:id="@+id/btnLibraryTop"
                     style="@style/TopButtonIcon"
                     android:visibility="gone"

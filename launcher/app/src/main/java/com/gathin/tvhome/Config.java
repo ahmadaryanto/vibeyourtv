@@ -178,6 +178,23 @@ final class Config {
     final boolean appGlow;
     /** A small live BTC price line under the date (config.json, crypto_ticker); default off. */
     boolean cryptoTicker;
+    /**
+     * On-TV preset picker (config.xml / config.json {@code theme_picker}). Off: no button, and a stored
+     * preset is not applied, so a pushed config.json looks the same as before.
+     */
+    boolean themePicker;
+    /** Settings pill in the header (config.json {@code show_settings_pill}). True when the key is absent. */
+    boolean showSettingsPill = true;
+    /** Larger clock, greeting and tile names (config.json {@code large_text}). */
+    boolean largeText;
+    /** Dark header type, for a light seasonal background (config.json {@code light_chrome}). */
+    boolean lightChrome;
+    /** {@link ThemePresets#SNOW}, leaves, frost, petals, or empty. */
+    String seasonOverlay = "";
+    /** Draw {@link #seasonOverlay}. Also cleared by the picker's season-motion switch. */
+    boolean seasonMotion;
+    /** Preset id the picker highlights while {@link #themePicker} is on; empty when the switch is off. */
+    String activePreset = "";
     /** The rows fade out under the clock instead of being cut off (config.xml, fade_rows); TopFade. */
     final boolean fadeRows;
     /** Minutes Home may sit untouched before the clock screensaver (config.xml, home_idle_clock_minutes); 0 is off. */
@@ -377,6 +394,12 @@ final class Config {
         boolean ambientGlow = res.getBoolean(R.bool.ambient_glow);
         boolean appGlow = res.getBoolean(R.bool.app_glow);
         boolean cryptoTicker = res.getBoolean(R.bool.crypto_ticker);
+        boolean themePicker = res.getBoolean(R.bool.theme_picker);
+        boolean showSettingsPill = true;
+        boolean largeText = false;
+        boolean lightChrome = false;
+        String seasonOverlay = "";
+        boolean seasonMotion = false;
         boolean fadeRows = res.getBoolean(R.bool.fade_rows);
         int idleClockMinutes = res.getInteger(R.integer.home_idle_clock_minutes);
         boolean keyFilter = res.getBoolean(R.bool.key_filter);
@@ -395,7 +418,30 @@ final class Config {
         File dir = dir(ctx);
         File file = dir != null ? new File(dir, FILE_NAME) : null;
         boolean mounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-        JSONObject json = readOverlay(ctx, file, mounted);
+        JSONObject fileJson = readOverlay(ctx, file, mounted);
+        JSONObject json = fileJson;
+        if (fileJson != null) themePicker = bool(fileJson, "theme_picker", themePicker);
+        // A theme push or reset invalidates choices made on the TV. On first use, remember the
+        // current theme without clearing choices from an older launcher version. Unmounted storage
+        // looks like a theme reset; compare only once the file is readable.
+        SharedPreferences choices = ctx.getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE);
+        if (mounted) syncThemeChoices(choices, dir, file);
+        String savedPreset = choices.getString(ThemePresets.PRESET_KEY, "");
+        boolean presetLocks = false;
+        if (themePicker && ThemePresets.isBuiltin(savedPreset)) {
+            String presetText = ThemePresets.overlayJson(savedPreset,
+                    choices.getBoolean(ThemePresets.TEEN_TICKER_KEY, false),
+                    choices.getBoolean(ThemePresets.SEASON_MOTION_KEY, true));
+            // The built-in look replaces the overlay for this load. config.json stays on disk.
+            if (presetText != null) {
+                try {
+                    json = new JSONObject(presetText);
+                    presetLocks = true;
+                } catch (JSONException ignored) {
+                    json = fileJson;
+                }
+            }
+        }
         if (json != null) {
             applied = true;
             dock = stringList(json, "dock_apps", dock);
@@ -471,16 +517,21 @@ final class Config {
             JSONObject moods = json.optJSONObject("wallpaper_moods");
             if (moods != null) wallpaperMoods = moods(moods);
             glowStyle = string(json, "glow_style", glowStyle);
+            showSettingsPill = bool(json, "show_settings_pill", true);
+            largeText = bool(json, "large_text", false);
+            lightChrome = bool(json, "light_chrome", false);
+            seasonOverlay = ThemePresets.canonicalSeason(string(json, "season_overlay", ""));
+            seasonMotion = bool(json, "season_motion", false)
+                    && choices.getBoolean(ThemePresets.SEASON_MOTION_KEY, true);
         }
-        // A theme push or reset invalidates choices made on the TV. On first use, remember the
-        // current theme without clearing choices from an older launcher version.
-        SharedPreferences choices = ctx.getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE);
-        // Unmounted storage looks like a theme reset; compare only once the file is readable.
-        if (mounted) syncThemeChoices(choices, dir, file);
-        int chosenColumns = choices.getInt("columns", columns);
-        if (chosenColumns >= 4 && chosenColumns <= 7) columns = chosenColumns;
-        int chosenRows = choices.getInt(ROWS_BELOW_DOCK_KEY, rowsBelow);
-        if (chosenRows >= 0 && chosenRows <= 3) rowsBelow = chosenRows;
+        // A built-in preset owns columns, rows, dock opacity and the wallpaper pick. Launcher
+        // settings' motion switches still apply, including while a preset is on.
+        if (!presetLocks) {
+            int chosenColumns = choices.getInt("columns", columns);
+            if (chosenColumns >= 4 && chosenColumns <= 7) columns = chosenColumns;
+            int chosenRows = choices.getInt(ROWS_BELOW_DOCK_KEY, rowsBelow);
+            if (chosenRows >= 0 && chosenRows <= 3) rowsBelow = chosenRows;
+        }
         animations = choices.getBoolean("animations", animations);
         advancedEffects = choices.getBoolean("advanced_effects", advancedEffects);
         File wallpaper = dir != null ? new File(dir, WALLPAPER_NAME) : null;
@@ -491,7 +542,7 @@ final class Config {
         int rotationMinutes = json == null ? 0 : integer(json, "wallpaper_rotation_minutes", 0, 0, 1440);
         int wallpaperDim = json == null ? 0 : integer(json, "wallpaper_dim", 0, 0, 90);
         int dockOpacity = json == null ? 100 : integer(json, "dock_opacity", 100, 30, 100);
-        dockOpacity = chosenDockOpacity(choices.getInt(DOCK_OPACITY_KEY, -1), dockOpacity);
+        if (!presetLocks) dockOpacity = chosenDockOpacity(choices.getInt(DOCK_OPACITY_KEY, -1), dockOpacity);
         String wallpaperOrder = json == null ? WallpaperRotation.ORDER_SHUFFLE
                 : string(json, "wallpaper_order", WallpaperRotation.ORDER_SHUFFLE);
         // An unknown order must not silently change how an existing collection rotates.
@@ -502,15 +553,18 @@ final class Config {
         }
         if (wallpapers.isEmpty() && wallpaper != null) wallpapers.add(wallpaper);
         // An on-TV wallpaper pick overrides the theme: a filename from the wallpapers/
-        // collection, or "none". Unset means the theme decides (off by default).
-        String wallpaperChoice = choices.getString(WALLPAPER_CHOICE_KEY, null);
-        List<File> chosen = WallpaperRotation.chosen(dir == null ? Collections.emptyList()
-                : WallpaperRotation.images(new File(dir, "wallpapers")), wallpaper, wallpaperChoice);
-        if (chosen != null) {
-            wallpapers.clear();
-            wallpapers.addAll(chosen);
-            wallpaper = chosen.isEmpty() ? null : chosen.get(0);
-            wallpaperEnabled = !chosen.isEmpty();
+        // collection, or "none". Unset means the theme decides (off by default). A built-in
+        // preset keeps its own wallpaper flag and the picture already on the TV.
+        if (!presetLocks) {
+            String wallpaperChoice = choices.getString(WALLPAPER_CHOICE_KEY, null);
+            List<File> chosen = WallpaperRotation.chosen(dir == null ? Collections.emptyList()
+                    : WallpaperRotation.images(new File(dir, "wallpapers")), wallpaper, wallpaperChoice);
+            if (chosen != null) {
+                wallpapers.clear();
+                wallpapers.addAll(chosen);
+                wallpaper = chosen.isEmpty() ? null : chosen.get(0);
+                wallpaperEnabled = !chosen.isEmpty();
+            }
         }
         // A festive skin comes only from a theme; config.xml has no festival.
         Festival festival = json == null ? Festival.NONE : Festival.parse(string(json, "festival", ""),
@@ -526,6 +580,13 @@ final class Config {
                 festival, inputKeycodes, appKeys, stockHomeRedirect, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, ambientGlow, appGlow, fadeRows,
                 Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough);
         config.cryptoTicker = cryptoTicker;
+        config.themePicker = themePicker;
+        config.showSettingsPill = showSettingsPill;
+        config.largeText = largeText;
+        config.lightChrome = lightChrome;
+        config.seasonOverlay = seasonOverlay;
+        config.seasonMotion = seasonMotion && animations;
+        config.activePreset = themePicker ? ThemePresets.activeId(savedPreset, fileJson != null) : "";
         return config;
     }
 
@@ -570,11 +631,15 @@ final class Config {
             SharedPreferences.Editor editor = choices.edit();
             if (!"absent".equals(token)) editor.remove("columns").remove("animations")
                     .remove("advanced_effects").remove(ROWS_BELOW_DOCK_KEY).remove(WALLPAPER_CHOICE_KEY)
-                    .remove(DOCK_OPACITY_KEY);
+                    .remove(DOCK_OPACITY_KEY)
+                    .putString(ThemePresets.PRESET_KEY, ThemePresets.presetAfterFileChange(
+                            choices.getString(ThemePresets.PRESET_KEY, ""), true));
             editor.putString(THEME_SIGNATURE_KEY, signature).commit();
         } else if (!seen.equals(signature)) {
             choices.edit().remove("columns").remove("animations").remove("advanced_effects")
                     .remove(ROWS_BELOW_DOCK_KEY).remove(WALLPAPER_CHOICE_KEY).remove(DOCK_OPACITY_KEY)
+                    .putString(ThemePresets.PRESET_KEY, ThemePresets.presetAfterFileChange(
+                            choices.getString(ThemePresets.PRESET_KEY, ""), true))
                     .putString(THEME_SIGNATURE_KEY, signature).commit();
         }
     }

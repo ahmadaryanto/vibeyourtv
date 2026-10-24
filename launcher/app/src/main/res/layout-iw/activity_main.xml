@@ -348,7 +348,7 @@
                     style="@style/TopButtonIcon"
                     android:visibility="gone"
                     android:contentDescription="@string/theme_picker"
-                    android:drawableStart="@drawable/ic_theme"
+                    android:drawableStart="@android:drawable/ic_menu_manage"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView

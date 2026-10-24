@@ -11,56 +11,59 @@ import static org.junit.Assert.assertTrue;
 
 public class ThemePresetsTest {
     @Test public void sayaIsTheDescribedHome() {
-        String o = ThemePresets.overlayJson(ThemePresets.SAYA, false, true);
-        assertEquals("5", value(o, "columns"));
-        assertEquals("true", value(o, "app_glow"));
-        assertEquals("70", value(o, "dock_opacity"));
-        assertEquals("true", value(o, "crypto_ticker"));
-        assertEquals("true", value(o, "wallpaper"));
-        assertNull(value(o, "greeting_name"));
-        assertNull(value(o, "theme_picker"));
+        assertEquals(5, ThemePresets.columns(ThemePresets.SAYA));
+        assertEquals(1, ThemePresets.glow(ThemePresets.SAYA));
+        assertEquals(70, ThemePresets.opacity(ThemePresets.SAYA));
+        assertTrue(ThemePresets.ticker(ThemePresets.SAYA, false));
+        assertTrue(ThemePresets.wallpaper(ThemePresets.SAYA));
+        // No greeting name and no background of its own: the photo and the time greeting stay.
+        assertEquals(0, ThemePresets.background(ThemePresets.SAYA));
+        assertFalse(ThemePresets.light(ThemePresets.SAYA));
     }
 
     @Test public void parentsKeepThePhotoAndLargerType() {
-        String o = ThemePresets.overlayJson(ThemePresets.ORANG_TUA, false, true);
-        assertEquals("true", value(o, "app_library"));
-        assertEquals("true", value(o, "large_text"));
-        assertEquals("true", value(o, "crypto_ticker"));
-        assertEquals("true", value(o, "wallpaper"));
-        assertEquals("true", value(o, "show_settings_pill"));
-        assertTrue(Integer.parseInt(value(o, "columns")) < 5);
+        assertEquals(1, ThemePresets.library(ThemePresets.ORANG_TUA));
+        assertTrue(ThemePresets.large(ThemePresets.ORANG_TUA));
+        assertTrue(ThemePresets.ticker(ThemePresets.ORANG_TUA, false));
+        assertTrue(ThemePresets.wallpaper(ThemePresets.ORANG_TUA));
+        assertTrue(ThemePresets.settingsPill(ThemePresets.ORANG_TUA));
+        assertTrue(ThemePresets.columns(ThemePresets.ORANG_TUA) < 5);
     }
 
     @Test public void kidsHidesSettingsAndInputs() {
-        String o = ThemePresets.overlayJson(ThemePresets.ANAK, true, true);
-        assertEquals("false", value(o, "show_settings_pill"));
-        assertEquals("false", value(o, "show_inputs_pill"));
-        assertEquals("false", value(o, "crypto_ticker"));
-        assertEquals("false", value(o, "wallpaper"));
-        assertEquals("true", value(o, "large_text"));
-        assertEquals("3", value(o, "columns"));
+        assertFalse(ThemePresets.settingsPill(ThemePresets.ANAK));
+        assertFalse(ThemePresets.inputsPill(ThemePresets.ANAK));
+        assertFalse(ThemePresets.ticker(ThemePresets.ANAK, true));
+        assertFalse(ThemePresets.wallpaper(ThemePresets.ANAK));
+        assertTrue(ThemePresets.large(ThemePresets.ANAK));
+        assertEquals(3, ThemePresets.columns(ThemePresets.ANAK));
+        assertTrue(ThemePresets.rowsZero(ThemePresets.ANAK));
+        assertEquals(0, ThemePresets.glow(ThemePresets.ANAK));
     }
 
     @Test public void teensTickerIsOptional() {
-        assertEquals("false", value(ThemePresets.overlayJson(ThemePresets.REMAJA, false, true), "crypto_ticker"));
-        assertEquals("true", value(ThemePresets.overlayJson(ThemePresets.REMAJA, true, true), "crypto_ticker"));
-        assertEquals("true", value(ThemePresets.overlayJson(ThemePresets.REMAJA, false, true), "app_glow"));
-        assertEquals("#0E0F14", value(ThemePresets.overlayJson(ThemePresets.REMAJA, false, true), "background_color"));
+        assertFalse(ThemePresets.ticker(ThemePresets.REMAJA, false));
+        assertTrue(ThemePresets.ticker(ThemePresets.REMAJA, true));
+        assertEquals(1, ThemePresets.glow(ThemePresets.REMAJA));
+        assertEquals(0xFF0E0F14, ThemePresets.background(ThemePresets.REMAJA));
     }
 
     @Test public void seasonsKeepTheWallpaperAndCanStopMoving() {
-        assertSeason(ThemePresets.SALJU, ThemePresets.SNOW, true);
-        assertSeason(ThemePresets.GUGUR, ThemePresets.LEAVES, true);
-        assertSeason(ThemePresets.DINGIN, ThemePresets.FROST, true);
-        assertSeason(ThemePresets.SEMI, ThemePresets.PETALS, true);
-        assertEquals("false", value(ThemePresets.overlayJson(ThemePresets.SALJU, false, false), "season_motion"));
-        assertEquals("true", value(ThemePresets.overlayJson(ThemePresets.SEMI, false, false), "light_chrome"));
-        assertEquals("true", value(ThemePresets.overlayJson(ThemePresets.DINGIN, false, true), "dock_glass"));
+        assertSeason(ThemePresets.SALJU, ThemePresets.SNOW);
+        assertSeason(ThemePresets.GUGUR, ThemePresets.LEAVES);
+        assertSeason(ThemePresets.DINGIN, ThemePresets.FROST);
+        assertSeason(ThemePresets.SEMI, ThemePresets.PETALS);
+        assertFalse(ThemePresets.motion(ThemePresets.SALJU, false));
+        assertTrue(ThemePresets.motion(ThemePresets.SALJU, true));
+        assertFalse(ThemePresets.motion(ThemePresets.SAYA, true));
+        assertTrue(ThemePresets.light(ThemePresets.SEMI));
+        assertTrue(ThemePresets.glass(ThemePresets.DINGIN));
+        assertTrue(ThemePresets.light(ThemePresets.SALJU));
     }
 
     @Test public void customFileIsNotABuiltinAndIsNotWrittenByAPreset() {
         assertFalse(ThemePresets.isBuiltin(ThemePresets.KUSTOM));
-        assertNull(ThemePresets.overlayJson(ThemePresets.KUSTOM, false, true));
+        assertEquals(-1, ThemePresets.glow(ThemePresets.KUSTOM));
         assertEquals(ThemePresets.KUSTOM, ThemePresets.activeId("", true));
         assertEquals("", ThemePresets.activeId("", false));
         assertEquals(ThemePresets.SAYA, ThemePresets.activeId(ThemePresets.SAYA, true));
@@ -92,23 +95,34 @@ public class ThemePresetsTest {
         assertEquals(-1, ThemePresets.remoteDigit(KeyEvent.KEYCODE_DPAD_CENTER));
     }
 
+    @Test public void overlayJsonMatchesTheTable() {
+        String saya = ThemePresets.overlayJson(ThemePresets.SAYA, false, true);
+        assertEquals("5", value(saya, "columns"));
+        assertEquals("true", value(saya, "crypto_ticker"));
+        assertEquals("true", value(saya, "wallpaper"));
+        assertEquals(null, value(saya, "greeting_name"));
+        String kids = ThemePresets.overlayJson(ThemePresets.ANAK, true, true);
+        assertEquals("false", value(kids, "show_settings_pill"));
+        assertEquals("false", value(kids, "wallpaper"));
+        assertEquals("0", value(kids, "rows_below_dock"));
+        String teen = ThemePresets.overlayJson(ThemePresets.REMAJA, true, true);
+        assertEquals("true", value(teen, "crypto_ticker"));
+        assertEquals("#0E0F14", value(teen, "background_color"));
+        String snow = ThemePresets.overlayJson(ThemePresets.SALJU, false, false);
+        assertEquals("snow", value(snow, "season_overlay"));
+        assertEquals("false", value(snow, "season_motion"));
+        assertEquals("true", value(snow, "light_chrome"));
+        assertNull(ThemePresets.overlayJson(ThemePresets.KUSTOM, false, true));
+    }
+
     @Test public void unknownSeasonNamesAreDropped() {
         assertEquals("", ThemePresets.canonicalSeason("rain"));
         assertEquals(ThemePresets.SNOW, ThemePresets.canonicalSeason(" Snow "));
     }
 
-    private static void assertSeason(String id, String kind, boolean motion) {
-        String o = ThemePresets.overlayJson(id, true, motion);
-        assertEquals(kind, value(o, "season_overlay"));
-        assertEquals(motion ? "true" : "false", value(o, "season_motion"));
-        assertEquals("true", value(o, "wallpaper"));
-        assertEquals("false", value(o, "crypto_ticker"));
-    }
-
-    /** The value of one flat key, or null. Strings come back without quotes. */
     private static String value(String json, String key) {
         String needle = "\"" + key + "\":";
-        int at = json.indexOf(needle);
+        int at = json.lastIndexOf(needle);
         if (at < 0) return null;
         int start = at + needle.length();
         if (json.charAt(start) == '"') {
@@ -118,5 +132,12 @@ public class ThemePresetsTest {
         int end = start;
         while (end < json.length() && json.charAt(end) != ',' && json.charAt(end) != '}') end++;
         return json.substring(start, end);
+    }
+
+    private static void assertSeason(String id, String kind) {
+        assertEquals(kind, ThemePresets.season(id));
+        assertTrue(ThemePresets.wallpaper(id));
+        assertFalse(ThemePresets.ticker(id, true));
+        assertTrue(ThemePresets.skyOff(id));
     }
 }

@@ -427,19 +427,16 @@ final class Config {
         SharedPreferences choices = ctx.getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE);
         if (mounted) syncThemeChoices(choices, dir, file);
         String savedPreset = choices.getString(ThemePresets.PRESET_KEY, "");
-        boolean presetLocks = false;
-        if (themePicker && ThemePresets.isBuiltin(savedPreset)) {
-            String presetText = ThemePresets.overlayJson(savedPreset,
-                    choices.getBoolean(ThemePresets.TEEN_TICKER_KEY, false),
-                    choices.getBoolean(ThemePresets.SEASON_MOTION_KEY, true));
-            // The built-in look replaces the overlay for this load. config.json stays on disk.
-            if (presetText != null) {
-                try {
-                    json = new JSONObject(presetText);
-                    presetLocks = true;
-                } catch (JSONException ignored) {
-                    json = fileJson;
-                }
+        // A built-in preset replaces the overlay for this load. config.json stays on disk.
+        boolean presetLocks = themePicker && ThemePresets.isBuiltin(savedPreset);
+        if (presetLocks) {
+            try {
+                json = new JSONObject(ThemePresets.overlayJson(savedPreset,
+                        choices.getBoolean(ThemePresets.TEEN_TICKER_KEY, false),
+                        choices.getBoolean(ThemePresets.SEASON_MOTION_KEY, true)));
+                applied = true;
+            } catch (JSONException ignored) {
+                presetLocks = false;
             }
         }
         if (json != null) {

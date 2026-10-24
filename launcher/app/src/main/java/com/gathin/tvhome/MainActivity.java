@@ -777,7 +777,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnTheme = findViewById(R.id.btnTheme);
         themePicker = cfg.themePicker;
         btnTheme.setVisibility(themePicker ? View.VISIBLE : View.GONE);
-        btnTheme.setOnClickListener(v -> ThemePicker.open(this));
+        btnTheme.setOnClickListener(v -> openThemePicker());
 
         // Keep focus on the top bar at its ends and at the top: Android's focus finder would otherwise
         // jump to a tile far below when there is nothing in that direction.
@@ -949,9 +949,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             recreate();
             return;
         }
-        if (season != null) season.start(seasonKind);
         restartIdleClock();
         startCryptoTicker();
+        if (season != null) season.start(seasonKind);
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
         switch (tileRefresh.onResume(packagesChangedSinceRebuild())) {
@@ -1154,7 +1154,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         stopCryptoTicker();
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
-        if (season != null) season.stop();
         stopAmbientAnimation();
         hero.animate().cancel();
         ambient.animate().cancel();
@@ -1162,6 +1161,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         handler.removeCallbacks(minuteTick);
         stopStats();
         if (diya != null) diya.stop();
+        if (season != null) season.stop();
         cancelPendingFocusScroll();
         // Nothing of ours stays on screen over another app; an undecided prompt simply returns next time.
         if (cardPrompt != null) cardPrompt.dismiss();
@@ -1272,7 +1272,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         if (themePicker && !reordering && openPopup == null && cardPrompt == null
                 && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
-            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) ThemePicker.open(this);
+            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) openThemePicker();
             return true;
         }
         if (!reordering) return super.dispatchKeyEvent(event);
@@ -2623,10 +2623,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private View btnLibraryTop;
     /** Theme picker button (theme_picker). Gone unless the switch is on. */
     private View btnTheme;
-    private boolean themePicker;
     /** Falling snow, leaves, frost or petals. Null unless that preset's motion is on. */
     private SeasonOverlay season;
     private String seasonKind = "";
+    private boolean themePicker;
     /** The open library came from that button: closing it returns there instead of scrolling to the grid's end. */
     private boolean libraryFromTopBar;
 
@@ -3080,6 +3080,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     // ---- launcher settings and module cards -------------------------------------------------------
 
+    private void openThemePicker() {
+        ThemePicker.open(this);
+    }
+
     /** top_menu: the gear's dropdown, standing in for the Inputs, Wi-Fi and Settings pills. */
     private void showTopMenu() {
         View anchor = findViewById(R.id.btnSettings);
@@ -3087,8 +3091,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (220 * density));
         // Inputs opens its own list once this one has closed.
-        if (themePicker) addInputRow(rows, popup, R.drawable.ic_theme, getString(R.string.theme_picker), -1,
-                () -> ThemePicker.open(this));
+        if (themePicker) addInputRow(rows, popup, android.R.drawable.ic_menu_manage, getString(R.string.theme_picker), -1,
+                this::openThemePicker);
         if (showInputsMenuRow) addInputRow(rows, popup, R.drawable.ic_input, getString(R.string.inputs), -1, () -> root.post(this::showInputs));
         addInputRow(rows, popup, R.drawable.ic_wifi, getString(R.string.quick_network), -1, this::openNetworkPill);
         CharSequence network = wifiIconOnly ? btnWifi.getContentDescription() : btnWifi.getText();
@@ -3117,7 +3121,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (200 * density));
-        if (themePicker) addSettingsMenuRow(rows, popup, R.string.theme_picker, () -> ThemePicker.open(this));
+        if (themePicker) addSettingsMenuRow(rows, popup, R.string.theme_picker, this::openThemePicker);
         if (!launcherSettingsButton) addSettingsMenuRow(rows, popup, R.string.launcher_settings, () -> startActivityForResult(
                 new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
         if (moduleCards) addSettingsMenuRow(rows, popup, R.string.module_cards, this::showModuleCards);

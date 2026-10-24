@@ -101,7 +101,7 @@ Layar beranda ini bisa kamu ubah tanpa menyentuh kode. Contoh di Sharp AQUOS Goo
 
 Nyalakan sekali dengan `"theme_picker": true` di `config.json`, atau ubah `theme_picker` di `config.xml` sebelum membangun. Sesudah itu tema diganti dari remote, tanpa komputer.
 
-Tombol bulat di kanan atas, atau tombol **Menu**, membuka lembar tema. OK menerapkan preset itu saat itu juga, dan pilihannya tetap setelah reboot.
+Tombol bulat di kanan atas, atau tombol **Menu**, membuka daftar tema. D-pad memilih, OK menerapkan preset itu saat itu juga, dan pilihannya tetap setelah reboot. PIN diisi dengan angka di remote, atau atas/bawah lalu kanan.
 
 | Preset | Isinya |
 |---|---|
@@ -117,7 +117,7 @@ Tombol bulat di kanan atas, atau tombol **Menu**, membuka lembar tema. OK menera
 
 **Gerak musim** mematikan salju, daun, kilau, dan kelopak. Geraknya sedikit (sekitar 20 bingkai per detik, tanpa lapisan perangkat keras) dan juga mati kalau animasi launcher mati atau `reduced_motion` nyala.
 
-PIN anak diatur di lembar yang sama. Kosong berarti Anak bisa ditinggalkan tanpa PIN. Kalau PIN lupa, `adb shell pm clear com.gathin.tvhome` menghapus PIN bersama urutan aplikasi di TV itu.
+PIN anak diatur di daftar yang sama. Kosong berarti Anak bisa ditinggalkan tanpa PIN. Di langkah PIN baru, tombol hapus menghapus PIN. Kalau PIN lupa, `adb shell pm clear com.gathin.tvhome` menghapus PIN bersama urutan aplikasi di TV itu.
 
 | | | | |
 |---|---|---|---|
